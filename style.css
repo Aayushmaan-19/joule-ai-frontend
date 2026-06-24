@@ -4,6 +4,10 @@ body {
   height: 100%;
 }
 
+*{
+  box-sizing:border-box;
+}
+
 body {
   margin: 0;
   font-family: system-ui;
@@ -783,8 +787,8 @@ body.voice-active .navbar {
   transform: scale(1.08);
 }
 
-.chat {
-  max-width: 80%;
+.chat{
+  max-width: min(88%, 650px);
 }
 
 @media (max-width:768px){
@@ -2608,7 +2612,7 @@ input:focus {
 .profile-panel {
   position: relative;
 
-  width: 430px;
+  width: min(430px, 92vw);
 
   padding: 42px;
 
@@ -3844,17 +3848,17 @@ input:focus {
 @media (max-width: 768px) {
 
   .navbar{
-    top: 12px;
-    right: 12px;
+    top: 10px;
+    right: 10px;
   }
 
   .signup-btn{
-    padding: 10px 16px;
-    font-size: 14px;
+    padding: 8px 14px;
+    font-size: 13px;
   }
 
   .header-wrapper{
-    margin-top: 70px;
+    margin-top: 25px;
   }
 
   .header{
@@ -3863,8 +3867,8 @@ input:focus {
   }
 
   .logo-svg{
-    width: 48px;
-    height: 48px;
+    width: 60px;
+    height: 60px;
   }
 
   .logo-text{
@@ -3903,6 +3907,14 @@ input:focus {
   .input-area{
     padding: 10px;
   }
+}
+
+@media (max-width:768px){
+
+  #main{
+    height: 100dvh;
+  }
+
 }
 
 @media (max-width: 400px){
