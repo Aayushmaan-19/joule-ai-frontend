@@ -11,8 +11,23 @@
 
     <link rel="icon" type="image/png" href="Assets/logo/favicon.png" />
 
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5133102045688175"
-     crossorigin="anonymous"></script>
+    <meta
+      name="description"
+      content="Joule AI is an advanced AI platform offering intelligent tools, chat assistance, productivity features, and AI-powered solutions."
+    />
+
+    <meta
+      name="keywords"
+      content="AI, artificial intelligence, AI assistant, chatbot, productivity, Joule AI"
+    />
+
+    <meta name="author" content="Joule AI" />
+
+    <script
+      async
+      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5133102045688175"
+      crossorigin="anonymous"
+    ></script>
 
     <link
       href="https://fonts.googleapis.com/css2?family=Allura&display=swap"
@@ -61,54 +76,130 @@
           <p class="subtitle" id="authSubtitle">Create your Joule account</p>
 
           <form id="authForm">
-            <input id="authEmail" type="email" placeholder="Email" autocomplete="email" required />
+            <input
+              id="authEmail"
+              type="email"
+              placeholder="Email"
+              autocomplete="email"
+              required
+            />
 
             <div class="password-field">
-              <input id="authPassword" type="password" placeholder="Password" autocomplete="current-password" minlength="6" required />
-              <button type="button" id="togglePassword" class="password-toggle" aria-label="Show password">
-                <svg id="eyeIcon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path id="eyeShape" d="M1.5 12s4-7.5 10.5-7.5S22.5 12 22.5 12s-4 7.5-10.5 7.5S1.5 12 1.5 12Z" />
+              <input
+                id="authPassword"
+                type="password"
+                placeholder="Password"
+                autocomplete="current-password"
+                minlength="6"
+                required
+              />
+              <button
+                type="button"
+                id="togglePassword"
+                class="password-toggle"
+                aria-label="Show password"
+              >
+                <svg
+                  id="eyeIcon"
+                  viewBox="0 0 24 24"
+                  width="20"
+                  height="20"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    id="eyeShape"
+                    d="M1.5 12s4-7.5 10.5-7.5S22.5 12 22.5 12s-4 7.5-10.5 7.5S1.5 12 1.5 12Z"
+                  />
                   <circle id="eyePupil" cx="12" cy="12" r="3.2" />
                 </svg>
               </button>
             </div>
 
             <p id="authError" class="auth-error hidden"></p>
-            <button type="submit" class="continue-btn" id="authSubmitBtn">Continue</button>
+            <button type="submit" class="continue-btn" id="authSubmitBtn">
+              Continue
+            </button>
           </form>
 
           <p class="auth-toggle">
             <span id="authToggleText">Already have an account?</span>
-            <button type="button" id="authToggleBtn" class="link-btn">Log in</button>
+            <button type="button" id="authToggleBtn" class="link-btn">
+              Log in
+            </button>
           </p>
 
-          <div class="divider"><span></span><p>OR</p><span></span></div>
+          <div class="divider">
+            <span></span>
+            <p>OR</p>
+            <span></span>
+          </div>
           <button class="google-btn">Continue with Google</button>
         </div>
 
         <!-- OTP VERIFICATION VIEW -->
         <div id="otpView" class="auth-view hidden">
           <h2>Verify your email</h2>
-          <p class="subtitle">Enter the 6-digit code sent to <strong id="otpEmailDisplay"></strong></p>
+          <p class="subtitle">
+            Enter the 6-digit code sent to
+            <strong id="otpEmailDisplay"></strong>
+          </p>
 
           <form id="otpForm" class="otp-form">
             <div class="otp-inputs" id="otpInputs">
-              <input type="text" inputmode="numeric" maxlength="1" class="otp-box" />
-              <input type="text" inputmode="numeric" maxlength="1" class="otp-box" />
-              <input type="text" inputmode="numeric" maxlength="1" class="otp-box" />
-              <input type="text" inputmode="numeric" maxlength="1" class="otp-box" />
-              <input type="text" inputmode="numeric" maxlength="1" class="otp-box" />
-              <input type="text" inputmode="numeric" maxlength="1" class="otp-box" />
+              <input
+                type="text"
+                inputmode="numeric"
+                maxlength="1"
+                class="otp-box"
+              />
+              <input
+                type="text"
+                inputmode="numeric"
+                maxlength="1"
+                class="otp-box"
+              />
+              <input
+                type="text"
+                inputmode="numeric"
+                maxlength="1"
+                class="otp-box"
+              />
+              <input
+                type="text"
+                inputmode="numeric"
+                maxlength="1"
+                class="otp-box"
+              />
+              <input
+                type="text"
+                inputmode="numeric"
+                maxlength="1"
+                class="otp-box"
+              />
+              <input
+                type="text"
+                inputmode="numeric"
+                maxlength="1"
+                class="otp-box"
+              />
             </div>
 
             <p id="otpError" class="auth-error hidden"></p>
             <p id="otpSuccess" class="auth-success hidden"></p>
-            <button type="submit" class="continue-btn" id="otpSubmitBtn">Verify</button>
+            <button type="submit" class="continue-btn" id="otpSubmitBtn">
+              Verify
+            </button>
           </form>
 
           <p class="auth-toggle">
             <span id="otpResendText">Didn't get a code?</span>
-            <button type="button" id="otpResendBtn" class="link-btn">Resend code</button>
+            <button type="button" id="otpResendBtn" class="link-btn">
+              Resend code
+            </button>
           </p>
         </div>
       </div>
@@ -121,21 +212,60 @@
         <h2>Your Profile</h2>
 
         <div class="profile-avatar-preview">
-          <img id="profilePreviewImg" src="Assets/Avatars/avatar1.png" alt="Avatar" />
+          <img
+            id="profilePreviewImg"
+            src="Assets/Avatars/avatar1.png"
+            alt="Avatar"
+          />
         </div>
 
         <div class="avatar-grid" id="avatarGrid">
-          <button class="avatar-option" data-avatar="Assets/Avatars/avatar1.png"><img src="Assets/Avatars/avatar1.png" alt="" /></button>
-          <button class="avatar-option" data-avatar="Assets/Avatars/avatar2.png"><img src="Assets/Avatars/avatar2.png" alt="" /></button>
-          <button class="avatar-option" data-avatar="Assets/Avatars/avatar3.png"><img src="Assets/Avatars/avatar3.png" alt="" /></button>
-          <button class="avatar-option" data-avatar="Assets/Avatars/avatar4.png"><img src="Assets/Avatars/avatar4.png" alt="" /></button>
-          <button class="avatar-option" data-avatar="Assets/Avatars/avatar5.png"><img src="Assets/Avatars/avatar5.png" alt="" /></button>
-          <button class="avatar-option" data-avatar="Assets/Avatars/avatar6.png"><img src="Assets/Avatars/avatar6.png" alt="" /></button>
+          <button
+            class="avatar-option"
+            data-avatar="Assets/Avatars/avatar1.png"
+          >
+            <img src="Assets/Avatars/avatar1.png" alt="" />
+          </button>
+          <button
+            class="avatar-option"
+            data-avatar="Assets/Avatars/avatar2.png"
+          >
+            <img src="Assets/Avatars/avatar2.png" alt="" />
+          </button>
+          <button
+            class="avatar-option"
+            data-avatar="Assets/Avatars/avatar3.png"
+          >
+            <img src="Assets/Avatars/avatar3.png" alt="" />
+          </button>
+          <button
+            class="avatar-option"
+            data-avatar="Assets/Avatars/avatar4.png"
+          >
+            <img src="Assets/Avatars/avatar4.png" alt="" />
+          </button>
+          <button
+            class="avatar-option"
+            data-avatar="Assets/Avatars/avatar5.png"
+          >
+            <img src="Assets/Avatars/avatar5.png" alt="" />
+          </button>
+          <button
+            class="avatar-option"
+            data-avatar="Assets/Avatars/avatar6.png"
+          >
+            <img src="Assets/Avatars/avatar6.png" alt="" />
+          </button>
         </div>
 
         <form id="profileForm">
           <label class="field-label" for="profileName">Display name</label>
-          <input id="profileName" type="text" placeholder="Your name" maxlength="40" />
+          <input
+            id="profileName"
+            type="text"
+            placeholder="Your name"
+            maxlength="40"
+          />
           <label class="field-label">Email</label>
           <input id="profileEmail" type="email" disabled />
           <p id="profileStatus" class="auth-success hidden"></p>
@@ -165,12 +295,10 @@
 
     <!-- ======================== APP LAYOUT ======================== -->
     <div id="app">
-
       <!-- SIDEBAR (injected here by sidebar.js) -->
 
       <!-- MAIN COLUMN -->
       <div id="main">
-
         <div class="header-wrapper">
           <div class="header">
             <svg class="logo-svg" viewBox="0 0 60 60">
@@ -181,30 +309,61 @@
           </div>
         </div>
 
-        <div class="signature">Owner : Aayushmaan👑</div>
+        <div class="signature">Owner : Aayushmaan</div>
 
         <nav class="navbar">
-          <button id="sidebarOpenBtn" class="sidebar-open-btn hidden" aria-label="Open chat history" title="Chat history">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="9 6 15 12 9 18"/>
+          <button
+            id="sidebarOpenBtn"
+            class="sidebar-open-btn hidden"
+            aria-label="Open chat history"
+            title="Chat history"
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="9 6 15 12 9 18" />
             </svg>
           </button>
           <button id="openAuth" class="signup-btn">Sign Up</button>
-          <button id="profileBtn" class="profile-btn hidden" aria-label="Open profile">
-            <img id="profileAvatar" src="Assets/Avatars/avatar1.png" alt="Profile" />
+          <button
+            id="profileBtn"
+            class="profile-btn hidden"
+            aria-label="Open profile"
+          >
+            <img
+              id="profileAvatar"
+              src="Assets/Avatars/avatar1.png"
+              alt="Profile"
+            />
           </button>
         </nav>
 
         <div class="controls">
           <button class="icon-btn" id="musicBtn" aria-label="Toggle Music">
-            <img src="Assets/Icons/play.svg" class="icon" id="musicIcon" alt="" />
+            <img
+              src="Assets/Icons/play.svg"
+              class="icon"
+              id="musicIcon"
+              alt=""
+            />
           </button>
           <button class="icon-btn" id="clearBtn" aria-label="Clear Chat">
             <img src="Assets/Icons/trash.svg" class="icon" alt="" />
           </button>
           <button class="icon-btn" id="themeBtn" aria-label="Toggle Theme">
-            <img src="Assets/Icons/sparkles.svg" class="icon" id="themeIcon" alt="" />
+            <img
+              src="Assets/Icons/sparkles.svg"
+              class="icon"
+              id="themeIcon"
+              alt=""
+            />
           </button>
         </div>
 
@@ -220,14 +379,22 @@
             <img src="Assets/Icons/send.svg" class="icon" alt="" />
           </button>
         </div>
-
-      </div><!-- /#main -->
-    </div><!-- /#app -->
+      </div>
+      <!-- /#main -->
+    </div>
+    <!-- /#app -->
 
     <audio id="audio"></audio>
     <div id="voice-toast"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script type="module" src="./js/main.js"></script>
+
+    <footer class="footer">
+      <a href="/privacy-policy.html">Privacy Policy</a>
+      <a href="/terms.html">Terms of Service</a>
+      <a href="/about.html">About Us</a>
+      <a href="/contact.html">Contact</a>
+    </footer>
   </body>
 </html>
