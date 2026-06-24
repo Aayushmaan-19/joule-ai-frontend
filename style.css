@@ -784,7 +784,13 @@ body.voice-active .navbar {
 }
 
 .chat {
-  max-width: min(75%, 500px);
+  max-width: 80%;
+}
+
+@media (max-width:768px){
+  .chat{
+    max-width:85%;
+  }
 }
 
 .bot .chat {
@@ -3828,4 +3834,90 @@ input:focus {
 
 .shinigami .bubble-btn.speaking {
   color: #ff2e2e;
+}
+
+
+/* =================================
+   MOBILE RESPONSIVE FIXES
+================================= */
+
+@media (max-width: 768px) {
+
+  .navbar{
+    top: 12px;
+    right: 12px;
+  }
+
+  .signup-btn{
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+
+  .header-wrapper{
+    margin-top: 70px;
+  }
+
+  .header{
+    padding: 12px 20px;
+    transform: scale(.9);
+  }
+
+  .logo-svg{
+    width: 48px;
+    height: 48px;
+  }
+
+  .logo-text{
+    font-size: 32px;
+  }
+
+  .signature{
+    font-size: 14px;
+    text-align: center;
+    padding: 0 12px;
+  }
+
+  .controls{
+    gap: 8px;
+  }
+
+  .icon-btn{
+    width: 40px;
+    height: 40px;
+  }
+
+  .chat-container{
+    padding: 12px;
+  }
+
+  .chat{
+    max-width: 85%;
+    font-size: 14px;
+  }
+
+  .message img{
+    width: 32px;
+    height: 32px;
+  }
+
+  .input-area{
+    padding: 10px;
+  }
+}
+
+@media (max-width: 400px){
+
+  .header{
+    transform: scale(.82);
+  }
+
+  .chat{
+    max-width: 90%;
+  }
+
+  .signup-btn{
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+
 }
