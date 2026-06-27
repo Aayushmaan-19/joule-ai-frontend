@@ -34,10 +34,11 @@ import { login } from "../auth/login.js";
 import { sendOtp } from "../auth/sendOtp.js";
 import { verifyOtp } from "../auth/verifyOtp.js";
 import { signInWithGoogle } from "../auth/googleAuth.js";
+import { deleteUnverifiedAccount } from "../auth/signup.js";
 
 const authModal = modalOverlay.querySelector(".auth-modal");
 
-let mode = "signup"; // "signup" | "login"
+let mode = "signup";
 let resendCooldownUntil = 0;
 
 /* =========================
@@ -51,8 +52,6 @@ function animateModalHeightTo(targetEl) {
 
   authModal.style.height = `${startHeight}px`;
 
-  // Force layout so the browser registers the starting height
-  // before we measure the target height in the next frame.
   void authModal.offsetHeight;
 
   requestAnimationFrame(() => {
@@ -81,14 +80,14 @@ function openModal() {
 }
 
 function closeAuthModal() {
-  modalOverlay.classList.add("hidden");
+  if (!otpView.classList.contains("hidden")) {
+    deleteUnverifiedAccount();
+  }
 
-  // Snap back to the signup/login view instantly (no animation)
-  // so the modal always reopens in a clean state.
+  modalOverlay.classList.add("hidden");
   authModal.style.height = "";
   authView.classList.remove("hidden");
   otpView.classList.add("hidden");
-
   resetAuthForm();
 }
 
@@ -109,8 +108,6 @@ modalOverlay.addEventListener("click", e => {
 function switchView(fromEl, toEl) {
   toEl.classList.remove("hidden");
 
-  // Temporarily make the incoming view invisible-but-measurable so
-  // we can read its natural height before it's actually shown.
   toEl.style.position = "absolute";
   toEl.style.top = "42px";
   toEl.style.left = "42px";
@@ -238,8 +235,6 @@ authForm.addEventListener("submit", async e => {
       const result = await login(email, password);
 
       if (!result.success) {
-        // login() fails with "verify your email first" if the
-        // OTP step was never completed — send them back into it.
         if (result.error === "Please verify your email first.") {
           const otpResult = await sendOtp();
 
@@ -371,8 +366,6 @@ otpForm.addEventListener("submit", async e => {
     setTimeout(async () => {
       closeAuthModal();
 
-      // onAuthStateChanged won't re-fire (user was already signed in).
-      // Manually boot the sidebar now that emailVerified is true.
       const { auth } = await import("../auth/firebase.js");
       const freshUser = auth.currentUser;
       if (freshUser) {
@@ -476,7 +469,6 @@ googleBtn.addEventListener("click", async () => {
     closeAuthModal();
 
   } catch (err) {
-    // User closed the popup — not an error worth showing
     if (err.code !== "auth/popup-closed-by-user" && err.code !== "auth/cancelled-popup-request") {
       showAuthError("Google sign-in failed. Try again.");
     }

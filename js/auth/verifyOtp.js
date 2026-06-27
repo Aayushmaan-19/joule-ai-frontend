@@ -1,6 +1,7 @@
 import { auth, db } from "./firebase.js";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { AUTH_API_URL } from "../utils/constants.js";
+import { clearPendingCredential } from "./signup.js";
 
 export async function verifyOtp(code) {
   const user = auth.currentUser;
@@ -23,7 +24,7 @@ export async function verifyOtp(code) {
   const data = await response.json();
 
   if (data.success) {
-    // Firestore user doc is created here — only after OTP passes
+    clearPendingCredential();
     await setDoc(doc(db, "users", user.uid), {
       uid: user.uid,
       email: user.email,
