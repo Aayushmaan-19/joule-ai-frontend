@@ -368,8 +368,25 @@ otpForm.addEventListener("submit", async e => {
 
     showOtpSuccess("Email verified! You're all set ⚡");
 
-    setTimeout(() => {
+    setTimeout(async () => {
       closeAuthModal();
+
+      // onAuthStateChanged won't re-fire (user was already signed in).
+      // Manually boot the sidebar now that emailVerified is true.
+      const { auth } = await import("../auth/firebase.js");
+      const freshUser = auth.currentUser;
+      if (freshUser) {
+        await freshUser.reload();
+        if (freshUser.emailVerified) {
+          const { initSidebar, toggle: toggleSidebar } = await import("./sidebar.js");
+          const sidebarOpenBtn = document.getElementById("sidebarOpenBtn");
+          initSidebar();
+          if (sidebarOpenBtn) {
+            sidebarOpenBtn.classList.remove("hidden");
+            sidebarOpenBtn.onclick = toggleSidebar;
+          }
+        }
+      }
     }, 1200);
 
   } catch (err) {

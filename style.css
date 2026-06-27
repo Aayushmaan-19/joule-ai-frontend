@@ -3933,3 +3933,333 @@ input:focus {
   }
 
 }
+
+/* =================================
+   FOOTER
+================================= */
+
+.footer {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 28px;
+  padding: 14px 20px;
+  flex-wrap: wrap;
+}
+
+.footer a {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: rgba(37, 99, 235, 0.65);
+  text-decoration: none;
+  letter-spacing: 0.3px;
+  transition: color 0.2s ease, opacity 0.2s ease;
+  opacity: 0.8;
+}
+
+.footer a:hover {
+  color: #2563eb;
+  opacity: 1;
+}
+
+.shinigami .footer a {
+  color: rgba(255, 80, 80, 0.55);
+}
+
+.shinigami .footer a:hover {
+  color: #ff3b3b;
+}
+
+/* =================================
+   LEGAL MODAL
+================================= */
+
+.legal-overlay {
+  background: rgba(191, 219, 254, 0.12);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  z-index: 10000;
+  align-items: center;
+  padding: 20px;
+}
+
+.legal-modal {
+  position: relative;
+  width: 100%;
+  max-width: 640px;
+  max-height: 82vh;
+  border-radius: 28px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  background: linear-gradient(
+    160deg,
+    rgba(255, 255, 255, 0.78) 0%,
+    rgba(219, 234, 254, 0.52) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+
+  box-shadow:
+    0 24px 72px rgba(59, 130, 246, 0.18),
+    0 8px 24px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.75);
+
+  /* Entry animation */
+  opacity: 0;
+  transform: translateY(24px) scale(0.97);
+  transition:
+    opacity 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.legal-modal--visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Subtle top accent line */
+.legal-modal::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #60a5fa, #3b82f6, #818cf8);
+  border-radius: 28px 28px 0 0;
+  z-index: 1;
+}
+
+/* --- Header --- */
+
+.legal-modal-header {
+  position: relative;
+  padding: 32px 36px 20px;
+  border-bottom: 1px solid rgba(147, 197, 253, 0.3);
+  flex-shrink: 0;
+}
+
+.legal-modal-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 4px;
+  padding-right: 36px;
+}
+
+.legal-modal-icon {
+  font-size: 26px;
+  line-height: 1;
+  filter: drop-shadow(0 2px 6px rgba(59, 130, 246, 0.3));
+}
+
+.legal-modal-title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: #1e3a8a;
+  letter-spacing: -0.3px;
+}
+
+.legal-modal-updated {
+  margin: 0;
+  font-size: 12px;
+  color: rgba(59, 130, 246, 0.6);
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  min-height: 16px;
+}
+
+.legal-close-btn {
+  position: absolute;
+  top: 28px;
+  right: 28px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid rgba(147, 197, 253, 0.4);
+  background: rgba(255, 255, 255, 0.6);
+  color: #3b82f6;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  line-height: 1;
+  padding: 0;
+}
+
+.legal-close-btn:hover {
+  background: rgba(219, 234, 254, 0.9);
+  transform: scale(1.08);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+
+/* --- Body / Scrollable Content --- */
+
+.legal-modal-body {
+  overflow-y: auto;
+  padding: 24px 36px 32px;
+  flex: 1;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(147, 197, 253, 0.5) transparent;
+}
+
+.legal-modal-body::-webkit-scrollbar {
+  width: 5px;
+}
+
+.legal-modal-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.legal-modal-body::-webkit-scrollbar-thumb {
+  background: rgba(147, 197, 253, 0.5);
+  border-radius: 10px;
+}
+
+.legal-section {
+  margin-bottom: 24px;
+}
+
+.legal-section:last-child {
+  margin-bottom: 0;
+}
+
+.legal-section-heading {
+  font-size: 13.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #2563eb;
+  margin: 0 0 8px;
+  opacity: 0.85;
+}
+
+.legal-section-body {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.75;
+  color: #334155;
+}
+
+.legal-section-body strong {
+  color: #1e3a8a;
+  font-weight: 600;
+}
+
+/* Subtle dividers between sections */
+.legal-section + .legal-section {
+  padding-top: 20px;
+  border-top: 1px solid rgba(147, 197, 253, 0.2);
+}
+
+/* =================================
+   LEGAL MODAL — SHINIGAMI MODE
+================================= */
+
+.shinigami .legal-overlay {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.shinigami .legal-modal {
+  background: linear-gradient(
+    160deg,
+    rgba(12, 0, 0, 0.92) 0%,
+    rgba(30, 4, 4, 0.85) 100%
+  );
+  border: 1px solid rgba(255, 30, 30, 0.18);
+  box-shadow:
+    0 0 40px rgba(255, 0, 0, 0.12),
+    0 24px 72px rgba(0, 0, 0, 0.7),
+    inset 0 1px 0 rgba(255, 60, 60, 0.12);
+}
+
+.shinigami .legal-modal::before {
+  background: linear-gradient(90deg, #ff2e2e, #b30000, #ff2e2e);
+}
+
+.shinigami .legal-modal-header {
+  border-bottom-color: rgba(255, 30, 30, 0.15);
+}
+
+.shinigami .legal-modal-title {
+  color: #ff4444;
+  text-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
+}
+
+.shinigami .legal-modal-updated {
+  color: rgba(255, 80, 80, 0.5);
+}
+
+.shinigami .legal-modal-icon {
+  filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.6));
+}
+
+.shinigami .legal-close-btn {
+  border-color: rgba(255, 30, 30, 0.25);
+  background: rgba(20, 0, 0, 0.6);
+  color: #ff4444;
+}
+
+.shinigami .legal-close-btn:hover {
+  background: rgba(60, 0, 0, 0.7);
+  box-shadow: 0 0 16px rgba(255, 0, 0, 0.25);
+}
+
+.shinigami .legal-modal-body {
+  scrollbar-color: rgba(255, 50, 50, 0.35) transparent;
+}
+
+.shinigami .legal-modal-body::-webkit-scrollbar-thumb {
+  background: rgba(255, 50, 50, 0.35);
+}
+
+.shinigami .legal-section-heading {
+  color: #ff3b3b;
+  opacity: 0.9;
+}
+
+.shinigami .legal-section-body {
+  color: rgba(220, 200, 200, 0.82);
+}
+
+.shinigami .legal-section-body strong {
+  color: #ff6b6b;
+}
+
+.shinigami .legal-section + .legal-section {
+  border-top-color: rgba(255, 30, 30, 0.1);
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .legal-modal {
+    max-height: 88vh;
+    border-radius: 20px;
+  }
+
+  .legal-modal-header {
+    padding: 24px 20px 16px;
+  }
+
+  .legal-modal-body {
+    padding: 20px 20px 28px;
+  }
+
+  .legal-modal-title {
+    font-size: 18px;
+  }
+
+  .footer {
+    gap: 18px;
+  }
+}

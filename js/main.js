@@ -40,6 +40,7 @@ import { toggleMusic } from "./ui/musicPlayer.js";
 import "./ui/modalManager.js";
 import "./ui/profileManager.js";
 import "./ui/animationManager.js";
+import "./ui/legalModal.js";
 import { initLoadingScreen } from "./ui/loadingScreen.js";
 
 import { initializeAuthState } from "./auth/authState.js";
