@@ -29,13 +29,6 @@
     />
 
     <meta name="google-site-verification" content="nQcfpyCJHSj4HTOt65jLCxHhZ356HddPQqUf6c6xeZI" />
-
-    <!-- Google AdSense -->
-    <script
-      async
-      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5133102045688175"
-      crossorigin="anonymous"
-    ></script>
   </head>
 
   <body>
@@ -50,12 +43,9 @@
         alt="Joule AI"
       />
 
-      <div class="loading-text" id="loadingText">JOULE AI</div>
-
-      <div class="loading-bar-track">
+      <div class="loading-bar-wrap">
         <div class="loading-bar-fill" id="loadingBarFill"></div>
       </div>
-
       <div class="loading-percent" id="loadingPercent">0%</div>
     </div>
 
@@ -122,6 +112,8 @@
               </button>
             </div>
 
+            <!-- Password requirements (injected by modalManager.js) -->
+
             <p id="authError" class="auth-error hidden"></p>
             <button type="submit" class="continue-btn" id="authSubmitBtn">
               Continue
@@ -153,42 +145,12 @@
 
           <form id="otpForm" class="otp-form">
             <div class="otp-inputs" id="otpInputs">
-              <input
-                type="text"
-                inputmode="numeric"
-                maxlength="1"
-                class="otp-box"
-              />
-              <input
-                type="text"
-                inputmode="numeric"
-                maxlength="1"
-                class="otp-box"
-              />
-              <input
-                type="text"
-                inputmode="numeric"
-                maxlength="1"
-                class="otp-box"
-              />
-              <input
-                type="text"
-                inputmode="numeric"
-                maxlength="1"
-                class="otp-box"
-              />
-              <input
-                type="text"
-                inputmode="numeric"
-                maxlength="1"
-                class="otp-box"
-              />
-              <input
-                type="text"
-                inputmode="numeric"
-                maxlength="1"
-                class="otp-box"
-              />
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-box" />
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-box" />
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-box" />
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-box" />
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-box" />
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-box" />
             </div>
 
             <p id="otpError" class="auth-error hidden"></p>
@@ -223,40 +185,22 @@
         </div>
 
         <div class="avatar-grid" id="avatarGrid">
-          <button
-            class="avatar-option"
-            data-avatar="Assets/Avatars/avatar1.png"
-          >
+          <button class="avatar-option" data-avatar="Assets/Avatars/avatar1.png">
             <img src="Assets/Avatars/avatar1.png" alt="" />
           </button>
-          <button
-            class="avatar-option"
-            data-avatar="Assets/Avatars/avatar2.png"
-          >
+          <button class="avatar-option" data-avatar="Assets/Avatars/avatar2.png">
             <img src="Assets/Avatars/avatar2.png" alt="" />
           </button>
-          <button
-            class="avatar-option"
-            data-avatar="Assets/Avatars/avatar3.png"
-          >
+          <button class="avatar-option" data-avatar="Assets/Avatars/avatar3.png">
             <img src="Assets/Avatars/avatar3.png" alt="" />
           </button>
-          <button
-            class="avatar-option"
-            data-avatar="Assets/Avatars/avatar4.png"
-          >
+          <button class="avatar-option" data-avatar="Assets/Avatars/avatar4.png">
             <img src="Assets/Avatars/avatar4.png" alt="" />
           </button>
-          <button
-            class="avatar-option"
-            data-avatar="Assets/Avatars/avatar5.png"
-          >
+          <button class="avatar-option" data-avatar="Assets/Avatars/avatar5.png">
             <img src="Assets/Avatars/avatar5.png" alt="" />
           </button>
-          <button
-            class="avatar-option"
-            data-avatar="Assets/Avatars/avatar6.png"
-          >
+          <button class="avatar-option" data-avatar="Assets/Avatars/avatar6.png">
             <img src="Assets/Avatars/avatar6.png" alt="" />
           </button>
         </div>
@@ -372,19 +316,6 @@
 
         <div class="chat-container" id="chat"></div>
 
-        <!-- AdSense: in-feed ad above input bar -->
-        <div class="ad-slot ad-slot--infeed" aria-label="Advertisement">
-          <ins
-            class="adsbygoogle"
-            style="display:block"
-            data-ad-client="ca-pub-5133102045688175"
-            data-ad-slot="1082613967"
-            data-ad-format="auto"
-            data-full-width-responsive="true"
-          ></ins>
-          <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-        </div>
-
         <div class="input-area">
           <input id="input" placeholder="Type message..." autocomplete="off" />
           <button class="icon-btn" id="micBtn" aria-label="Voice Input">
@@ -405,19 +336,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script type="module" src="./js/main.js"></script>
-
-    <!-- AdSense: leaderboard banner above footer -->
-    <div class="ad-slot ad-slot--leaderboard" aria-label="Advertisement">
-      <ins
-        class="adsbygoogle"
-        style="display:block"
-        data-ad-client="ca-pub-5133102045688175"
-        data-ad-slot="2395695632"
-        data-ad-format="horizontal"
-        data-full-width-responsive="true"
-      ></ins>
-      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-    </div>
 
     <footer class="footer">
       <a href="/privacy-policy.html" data-legal="privacy">Privacy Policy</a>

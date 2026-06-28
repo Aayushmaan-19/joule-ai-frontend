@@ -39,7 +39,7 @@ import { initializeTheme } from "./ui/themeManager.js";
 import { toggleMusic } from "./ui/musicPlayer.js";
 import "./ui/modalManager.js";
 import "./ui/profileManager.js";
-import { initAnimationManager } from "./ui/animationManager.js";
+import { initAnimationManager, recordActivity } from "./ui/animationManager.js";
 import "./ui/legalModal.js";
 import { initLoadingScreen } from "./ui/loadingScreen.js";
 
@@ -89,6 +89,8 @@ function setupChatEvents() {
 function setupVoiceEvents() {
   micBtn.addEventListener("click", () => {
     voiceController.toggle();
+    // Record activity when user interacts via voice
+    recordActivity();
   });
 }
 
@@ -98,6 +100,17 @@ function setupVoiceEvents() {
 
 function setupMusicEvents() {
   musicBtn.addEventListener("click", toggleMusic);
+}
+
+/* =========================
+   SIDEBAR AUTO-RENAME LISTENER
+   chatHistory.js dispatches this event after auto-naming completes
+========================= */
+
+function setupSidebarEvents() {
+  window.addEventListener("joule:session-renamed", () => {
+    renderSidebar();
+  });
 }
 
 /* =========================
@@ -116,6 +129,8 @@ function initializeApp() {
   setupVoiceEvents();
 
   setupMusicEvents();
+
+  setupSidebarEvents();
 
   initAnimationManager();
 
@@ -146,7 +161,4 @@ function cleanupApp() {
 
 window.addEventListener("load", initializeApp);
 
-window.addEventListener(
-  "beforeunload",
-  cleanupApp
-);
+window.addEventListener("beforeunload", cleanupApp);

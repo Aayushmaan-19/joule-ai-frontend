@@ -28,19 +28,10 @@ function saveRaw(sessions) {
   localStorage.setItem(key, JSON.stringify(sessions));
 }
 
-/**
- * Returns all saved sessions for the current user,
- * sorted newest-first.
- */
 export function getAllSessions() {
   return loadRaw().sort((a, b) => b.updatedAt - a.updatedAt);
 }
 
-/**
- * Saves the current in-progress conversation to localStorage.
- * Creates a new session or overwrites an existing one by ID.
- * Skips if there are no messages.
- */
 export function saveCurrentSession() {
   const messages = state.chat.messages;
 
@@ -70,7 +61,6 @@ export function saveCurrentSession() {
     }
   }
 
-  // New session
   const session = {
     id: `chat_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
     name: "New Chat",
@@ -80,7 +70,6 @@ export function saveCurrentSession() {
     updatedAt: Date.now()
   };
 
-  // Keep MAX_SESSIONS limit, removing oldest first
   const trimmed = [session, ...sessions]
     .sort((a, b) => b.updatedAt - a.updatedAt)
     .slice(0, MAX_SESSIONS);
@@ -91,18 +80,55 @@ export function saveCurrentSession() {
   return session;
 }
 
-/**
- * Loads a saved session by ID.
- * Returns the session object, or null if not found.
- */
+export async function autoNameSession(sessionId, firstUserMessage) {
+  if (!sessionId) return;
+
+  const sessions = loadRaw();
+  const idx = sessions.findIndex(s => s.id === sessionId);
+
+  if (idx === -1) return;
+
+  if (sessions[idx].name !== "New Chat") return;
+
+  try {
+    const response = await fetch("https://joule-ai-backend.onrender.com/api/ai/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: `Give this conversation a title in 4 words or less. No quotes, no punctuation, no explanation. Just the title. The conversation started with: "${firstUserMessage.slice(0, 120)}"`,
+        history: []
+      })
+    });
+
+    if (!response.ok) return;
+
+    const data = await response.json();
+    const rawName = data.reply?.trim();
+
+    if (!rawName) return;
+
+    const cleanName = rawName
+      .replace(/[*_`#"']/g, "")
+      .replace(/[.!?]$/, "")
+      .trim()
+      .slice(0, 40);
+
+    if (cleanName.length < 2) return;
+
+    sessions[idx].name = cleanName;
+    saveRaw(sessions);
+
+    window.dispatchEvent(new CustomEvent("joule:session-renamed"));
+
+  } catch {
+  }
+}
+
 export function loadSession(id) {
   const sessions = loadRaw();
   return sessions.find(s => s.id === id) || null;
 }
 
-/**
- * Renames a session.
- */
 export function renameSession(id, newName) {
   const sessions = loadRaw();
   const idx = sessions.findIndex(s => s.id === id);
@@ -115,22 +141,15 @@ export function renameSession(id, newName) {
   return true;
 }
 
-/**
- * Deletes a session by ID.
- */
 export function deleteSession(id) {
   const sessions = loadRaw().filter(s => s.id !== id);
   saveRaw(sessions);
 
-  // If the deleted session was active, reset the active ID
   if (state.chat.currentConversationId === id) {
     setConversation(null);
   }
 }
 
-/**
- * Deletes ALL sessions for this user.
- */
 export function deleteAllSessions() {
   const key = getUserKey();
   if (!key) return;
@@ -138,10 +157,6 @@ export function deleteAllSessions() {
   setConversation(null);
 }
 
-/**
- * Starts a brand-new blank session (resets state ID).
- * Call this after the UI has already cleared the chat DOM.
- */
 export function startNewSession() {
   setConversation(null);
   clearMessages();

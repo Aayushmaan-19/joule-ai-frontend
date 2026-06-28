@@ -39,7 +39,6 @@ export function destroySidebar() {
   sidebarEl = null;
   isOpen = false;
 
-  // Collapse #app back to no sidebar
   document.getElementById("app")?.classList.remove("sidebar-visible");
 }
 
@@ -75,42 +74,24 @@ function buildDOM() {
         <button class="sidebar-action-btn sidebar-danger-btn" id="sidebarClearAllBtn" title="Delete all history">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+            <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+            <path d="M10 11v6"/><path d="M14 11v6"/>
+            <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
           </svg>
         </button>
       </div>
     </div>
 
     <div class="sidebar-list" id="sidebarList"></div>
-
-    <!-- AdSense: sidebar square ad -->
-    <div class="ad-slot ad-slot--sidebar" aria-label="Advertisement">
-      <ins
-        class="adsbygoogle"
-        style="display:block"
-        data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-        data-ad-slot="WWWWWWWWWW"
-        data-ad-format="auto"
-        data-full-width-responsive="true"
-      ></ins>
-    </div>
   `;
 
-  // Inject as first child of #app (before #main)
   const appEl = document.getElementById("app");
   appEl.insertBefore(sidebarEl, appEl.firstChild);
 
-  // Activate sidebar AdSense unit after it's in the DOM
-  try {
-    (window.adsbygoogle = window.adsbygoogle || []).push({});
-  } catch (e) { /* AdSense not yet active */ }
-
-  // Wire events
   sidebarEl.querySelector("#sidebarNewBtn").addEventListener("click", handleNew);
   sidebarEl.querySelector("#sidebarCollapseBtn").addEventListener("click", close);
   sidebarEl.querySelector("#sidebarClearAllBtn").addEventListener("click", handleClearAll);
 
-  // Open the sidebar by default when initialized
   open();
 }
 
@@ -285,7 +266,6 @@ export function toggle() {
   isOpen ? close() : open();
 }
 
-/* expose toggle for the navbar button */
 export { toggle as toggleSidebar };
 
 /* =========================================================

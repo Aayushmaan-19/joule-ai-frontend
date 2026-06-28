@@ -42,9 +42,86 @@ let mode = "signup";
 let resendCooldownUntil = 0;
 
 /* =========================
+   PASSWORD REQUIREMENTS UI
+========================= */
+
+// Rules: [id, label, test function]
+const PW_RULES = [
+  ["pw-req-upper",   "Uppercase letter",   v => /[A-Z]/.test(v)],
+  ["pw-req-lower",   "Lowercase letter",   v => /[a-z]/.test(v)],
+  ["pw-req-number",  "Number",             v => /[0-9]/.test(v)],
+  ["pw-req-special", "Special character",  v => /[^A-Za-z0-9]/.test(v)],
+  ["pw-req-length",  "At least 6 characters", v => v.length >= 6]
+];
+
+// Inject requirements block right after password-field in the DOM
+function buildPasswordRequirements() {
+  let container = document.getElementById("pw-requirements");
+  if (container) return container;
+
+  container = document.createElement("div");
+  container.id = "pw-requirements";
+  container.className = "pw-requirements hidden";
+  container.innerHTML = PW_RULES.map(([id, label]) => `
+    <div class="pw-req-item" id="${id}">
+      <span class="pw-req-icon">
+        <svg class="pw-icon pw-icon-cross" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="15" y1="9" x2="9" y2="15"/>
+          <line x1="9" y1="9" x2="15" y2="15"/>
+        </svg>
+        <svg class="pw-icon pw-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="9 12 11 14 15 10"/>
+        </svg>
+      </span>
+      <span class="pw-req-label">${label}</span>
+    </div>
+  `).join("");
+
+  const passwordField = authPassword.closest(".password-field");
+  passwordField.insertAdjacentElement("afterend", container);
+
+  return container;
+}
+
+function updatePasswordRequirements(value) {
+  for (const [id, , test] of PW_RULES) {
+    const el = document.getElementById(id);
+    if (!el) continue;
+    el.classList.toggle("pw-req-met", test(value));
+  }
+}
+
+function showPasswordRequirements() {
+  const container = document.getElementById("pw-requirements");
+  if (container) container.classList.remove("hidden");
+}
+
+function hidePasswordRequirements() {
+  const container = document.getElementById("pw-requirements");
+  if (container) container.classList.add("hidden");
+}
+
+// Wire password field events
+authPassword.addEventListener("input", () => {
+  updatePasswordRequirements(authPassword.value);
+});
+
+authPassword.addEventListener("focus", () => {
+  if (mode === "signup") showPasswordRequirements();
+});
+
+authPassword.addEventListener("blur", () => {
+  // Keep visible if there are unmet rules and field has content
+  const allMet = PW_RULES.every(([, , test]) => test(authPassword.value));
+  if (allMet || authPassword.value.length === 0) {
+    hidePasswordRequirements();
+  }
+});
+
+/* =========================
    SMOOTH HEIGHT TRANSITION
-   (height: auto can't be animated directly, so we measure
-   pixel heights before/after and transition between them)
 ========================= */
 
 function animateModalHeightTo(targetEl) {
@@ -77,6 +154,7 @@ function animateModalHeightTo(targetEl) {
 function openModal() {
   modalOverlay.classList.remove("hidden");
   showAuthView();
+  buildPasswordRequirements();
 }
 
 function closeAuthModal() {
@@ -148,16 +226,18 @@ function showOtpView(email) {
   focusFirstOtpBox();
 }
 
+/* =========================
+   SIGNUP / LOGIN TOGGLE
+========================= */
+
 function resetAuthForm() {
   authForm.reset();
   hideAuthError();
   setMode("signup");
   setPasswordVisible(false);
+  hidePasswordRequirements();
+  updatePasswordRequirements("");
 }
-
-/* =========================
-   SIGNUP / LOGIN TOGGLE
-========================= */
 
 function setMode(newMode) {
   mode = newMode;
@@ -174,6 +254,8 @@ function setMode(newMode) {
     authSubmitBtn.textContent = "Log in";
     authToggleText.textContent = "Don't have an account?";
     authToggleBtn.textContent = "Sign up";
+    // Hide requirements in login mode
+    hidePasswordRequirements();
   }
 
   hideAuthError();
@@ -208,6 +290,16 @@ authForm.addEventListener("submit", async e => {
   if (!email || !password) {
     showAuthError("Please fill in both fields");
     return;
+  }
+
+  // On signup, validate all requirements are met before submitting
+  if (mode === "signup") {
+    const unmet = PW_RULES.filter(([, , test]) => !test(password));
+    if (unmet.length > 0) {
+      showPasswordRequirements();
+      showAuthError("Please meet all password requirements");
+      return;
+    }
   }
 
   authSubmitBtn.disabled = true;
@@ -264,8 +356,6 @@ const otpBoxes = Array.from(otpInputs.querySelectorAll(".otp-box"));
 
 function clearOtpInputs() {
   otpBoxes.forEach(box => (box.value = ""));
-  hideOtpError();
-  hideOtpSuccess();
 }
 
 function focusFirstOtpBox() {
@@ -514,5 +604,6 @@ togglePassword.addEventListener("click", () => {
 
 export function openVerificationFlow(email) {
   modalOverlay.classList.remove("hidden");
+  buildPasswordRequirements();
   showOtpView(email);
 }
