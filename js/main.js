@@ -39,7 +39,7 @@ import { initializeTheme } from "./ui/themeManager.js";
 import { toggleMusic } from "./ui/musicPlayer.js";
 import "./ui/modalManager.js";
 import "./ui/profileManager.js";
-import "./ui/animationManager.js";
+import { initAnimationManager } from "./ui/animationManager.js";
 import "./ui/legalModal.js";
 import { initLoadingScreen } from "./ui/loadingScreen.js";
 
@@ -116,6 +116,8 @@ function initializeApp() {
   setupVoiceEvents();
 
   setupMusicEvents();
+
+  initAnimationManager();
 
   initLoadingScreen();
 
