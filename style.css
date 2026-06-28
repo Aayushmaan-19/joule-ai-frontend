@@ -4,6 +4,16 @@ body {
   height: 100%;
 }
 
+/* Hide scrollbar everywhere but keep scroll functionality */
+html {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar {
+  display: none;
+}
+
 *{
   box-sizing:border-box;
 }
@@ -1653,7 +1663,8 @@ body.voice-active .navbar {
 
   --accent2: #6e8fff;
 
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .aurora {
