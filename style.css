@@ -4263,3 +4263,69 @@ input:focus {
     gap: 18px;
   }
 }
+
+/* =================================
+   AD SLOTS
+================================= */
+
+/* Base: hidden until AdSense activates */
+.ad-slot {
+  overflow: hidden;
+  text-align: center;
+  position: relative;
+  z-index: 10;
+}
+
+/* In-feed: sits between chat and input area */
+.ad-slot--infeed {
+  width: 100%;
+  max-width: 728px;
+  margin: 0 auto 6px;
+  min-height: 0;       /* collapses to 0 if no ad fills */
+  opacity: 0.92;
+  transition: opacity 0.3s ease;
+}
+
+.ad-slot--infeed:hover {
+  opacity: 1;
+}
+
+/* Leaderboard: above the footer */
+.ad-slot--leaderboard {
+  width: 100%;
+  max-width: 728px;
+  margin: 8px auto 0;
+  min-height: 0;
+  opacity: 0.88;
+}
+
+/* Sidebar: pinned to the bottom of the sidebar panel */
+.ad-slot--sidebar {
+  flex-shrink: 0;
+  width: 100%;
+  padding: 8px 6px 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.4);
+  min-height: 0;
+  opacity: 0.9;
+}
+
+/* Shinigami theme overrides */
+.shinigami .ad-slot--sidebar {
+  border-top-color: rgba(255, 80, 80, 0.2);
+}
+
+.dark .ad-slot--infeed,
+.dark .ad-slot--leaderboard {
+  opacity: 0.85;
+}
+
+/* Mobile: hide leaderboard on narrow screens, keep infeed */
+@media (max-width: 640px) {
+  .ad-slot--leaderboard {
+    display: none;
+  }
+
+  .ad-slot--infeed {
+    max-width: 100%;
+  }
+}

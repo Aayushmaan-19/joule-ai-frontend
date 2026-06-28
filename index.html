@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
   <head>
@@ -27,6 +28,13 @@
       href="https://fonts.googleapis.com/css2?family=Allura&display=swap"
       rel="stylesheet"
     />
+
+    <!-- Google AdSense -->
+    <script
+      async
+      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"
+      crossorigin="anonymous"
+    ></script>
   </head>
 
   <body>
@@ -363,6 +371,19 @@
 
         <div class="chat-container" id="chat"></div>
 
+        <!-- AdSense: in-feed ad above input bar -->
+        <div class="ad-slot ad-slot--infeed" aria-label="Advertisement">
+          <ins
+            class="adsbygoogle"
+            style="display:block"
+            data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+            data-ad-slot="YYYYYYYYYY"
+            data-ad-format="auto"
+            data-full-width-responsive="true"
+          ></ins>
+          <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+
         <div class="input-area">
           <input id="input" placeholder="Type message..." autocomplete="off" />
           <button class="icon-btn" id="micBtn" aria-label="Voice Input">
@@ -383,6 +404,19 @@
 
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script type="module" src="./js/main.js"></script>
+
+    <!-- AdSense: leaderboard banner above footer -->
+    <div class="ad-slot ad-slot--leaderboard" aria-label="Advertisement">
+      <ins
+        class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+        data-ad-slot="ZZZZZZZZZZ"
+        data-ad-format="horizontal"
+        data-full-width-responsive="true"
+      ></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
 
     <footer class="footer">
       <a href="/privacy-policy.html" data-legal="privacy">Privacy Policy</a>

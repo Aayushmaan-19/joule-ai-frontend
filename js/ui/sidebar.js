@@ -82,11 +82,28 @@ function buildDOM() {
     </div>
 
     <div class="sidebar-list" id="sidebarList"></div>
+
+    <!-- AdSense: sidebar square ad -->
+    <div class="ad-slot ad-slot--sidebar" aria-label="Advertisement">
+      <ins
+        class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+        data-ad-slot="WWWWWWWWWW"
+        data-ad-format="auto"
+        data-full-width-responsive="true"
+      ></ins>
+    </div>
   `;
 
   // Inject as first child of #app (before #main)
   const appEl = document.getElementById("app");
   appEl.insertBefore(sidebarEl, appEl.firstChild);
+
+  // Activate sidebar AdSense unit after it's in the DOM
+  try {
+    (window.adsbygoogle = window.adsbygoogle || []).push({});
+  } catch (e) { /* AdSense not yet active */ }
 
   // Wire events
   sidebarEl.querySelector("#sidebarNewBtn").addEventListener("click", handleNew);
