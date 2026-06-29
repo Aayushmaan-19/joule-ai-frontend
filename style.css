@@ -1409,7 +1409,7 @@ body.voice-active .navbar {
 .shinigami {
   background:
     linear-gradient(rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.28)),
-    url("https://w.wallhaven.cc/full/l3/wallhaven-l3my9p.png");
+    url("/Frontend/public/Assets/Images/Shinigami.png");
 
   background-size: cover;
 
