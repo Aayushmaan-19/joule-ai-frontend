@@ -43,10 +43,14 @@
         alt="Joule AI"
       />
 
-      <div class="loading-bar-wrap">
-        <div class="loading-bar-fill" id="loadingBarFill"></div>
+      <div class="loading-text" id="loadingText">JOULE AI</div>
+
+      <div class="loading-bar-wrapper">
+        <div class="loading-bar-track">
+          <div class="loading-bar-fill" id="loadingBarFill"></div>
+        </div>
+        <div class="loading-percent" id="loadingPercent">0%</div>
       </div>
-      <div class="loading-percent" id="loadingPercent">0%</div>
     </div>
 
     <!-- Background layers (fixed, behind everything) -->
@@ -112,8 +116,6 @@
               </button>
             </div>
 
-            <!-- Password requirements (injected by modalManager.js) -->
-
             <p id="authError" class="auth-error hidden"></p>
             <button type="submit" class="continue-btn" id="authSubmitBtn">
               Continue
@@ -145,12 +147,42 @@
 
           <form id="otpForm" class="otp-form">
             <div class="otp-inputs" id="otpInputs">
-              <input type="text" inputmode="numeric" maxlength="1" class="otp-box" />
-              <input type="text" inputmode="numeric" maxlength="1" class="otp-box" />
-              <input type="text" inputmode="numeric" maxlength="1" class="otp-box" />
-              <input type="text" inputmode="numeric" maxlength="1" class="otp-box" />
-              <input type="text" inputmode="numeric" maxlength="1" class="otp-box" />
-              <input type="text" inputmode="numeric" maxlength="1" class="otp-box" />
+              <input
+                type="text"
+                inputmode="numeric"
+                maxlength="1"
+                class="otp-box"
+              />
+              <input
+                type="text"
+                inputmode="numeric"
+                maxlength="1"
+                class="otp-box"
+              />
+              <input
+                type="text"
+                inputmode="numeric"
+                maxlength="1"
+                class="otp-box"
+              />
+              <input
+                type="text"
+                inputmode="numeric"
+                maxlength="1"
+                class="otp-box"
+              />
+              <input
+                type="text"
+                inputmode="numeric"
+                maxlength="1"
+                class="otp-box"
+              />
+              <input
+                type="text"
+                inputmode="numeric"
+                maxlength="1"
+                class="otp-box"
+              />
             </div>
 
             <p id="otpError" class="auth-error hidden"></p>
@@ -185,22 +217,40 @@
         </div>
 
         <div class="avatar-grid" id="avatarGrid">
-          <button class="avatar-option" data-avatar="Assets/Avatars/avatar1.png">
+          <button
+            class="avatar-option"
+            data-avatar="Assets/Avatars/avatar1.png"
+          >
             <img src="Assets/Avatars/avatar1.png" alt="" />
           </button>
-          <button class="avatar-option" data-avatar="Assets/Avatars/avatar2.png">
+          <button
+            class="avatar-option"
+            data-avatar="Assets/Avatars/avatar2.png"
+          >
             <img src="Assets/Avatars/avatar2.png" alt="" />
           </button>
-          <button class="avatar-option" data-avatar="Assets/Avatars/avatar3.png">
+          <button
+            class="avatar-option"
+            data-avatar="Assets/Avatars/avatar3.png"
+          >
             <img src="Assets/Avatars/avatar3.png" alt="" />
           </button>
-          <button class="avatar-option" data-avatar="Assets/Avatars/avatar4.png">
+          <button
+            class="avatar-option"
+            data-avatar="Assets/Avatars/avatar4.png"
+          >
             <img src="Assets/Avatars/avatar4.png" alt="" />
           </button>
-          <button class="avatar-option" data-avatar="Assets/Avatars/avatar5.png">
+          <button
+            class="avatar-option"
+            data-avatar="Assets/Avatars/avatar5.png"
+          >
             <img src="Assets/Avatars/avatar5.png" alt="" />
           </button>
-          <button class="avatar-option" data-avatar="Assets/Avatars/avatar6.png">
+          <button
+            class="avatar-option"
+            data-avatar="Assets/Avatars/avatar6.png"
+          >
             <img src="Assets/Avatars/avatar6.png" alt="" />
           </button>
         </div>

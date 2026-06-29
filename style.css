@@ -73,19 +73,45 @@ body {
 
 /*=====================Header===================*/
 
+/* Chat container is the ONLY scrollable element — everything else
+   sticks to the top of the column. Using sticky inside the flex
+   column so the header group floats over chat naturally. */
+
 .header-wrapper,
 .signature,
-.controls,
+.controls {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  /* Each element stacks cleanly — no overflow clipping needed */
+  flex-shrink: 0;
+}
+
 .chat-container,
 .input-area {
   position: relative;
   z-index: 10;
 }
 
+/* Frosted layer behind the entire header group so chat text
+   scrolling underneath is masked rather than bleeding through */
+.header-wrapper::before,
+.signature::before,
+.controls::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
 .header-wrapper {
   display: flex;
   justify-content: center;
   margin-top: 25px;
+  /* Fade curtain below header-wrapper so chat scrolling
+     under it looks natural, not like a hard cut */
+  padding-bottom: 8px;
 }
 
 .header {
@@ -214,6 +240,11 @@ body {
   justify-content: center;
   gap: 14px;
   padding: 12px;
+  /* Bottom fade: chat text dissolves as it scrolls up under
+     the header group — no hard cut, no bleed-through */
+  padding-bottom: 18px;
+  -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
 }
 
 .icon-btn {
@@ -1591,14 +1622,19 @@ body.voice-active .navbar {
   );
 }
 
-.shinigami .header,
+.shinigami .header-wrapper,
+.shinigami .signature,
+.shinigami .controls {
+  position: sticky;
+  z-index: 20;
+}
+
 .shinigami .chat-container,
-.shinigami .controls,
-.shinigami .input-area,
-.shinigami .signature {
+.shinigami .input-area {
   position: relative;
   z-index: 10;
 }
+
 
 .shinigami .input-area {
   background: rgba(15, 15, 15, 0.72);
@@ -3207,75 +3243,123 @@ input:focus {
 
 /* ---- Loading bar ---- */
 
+/* ---- Loading bar: cinematic aurora theme ---- */
+
+/* Outer container: percentage above bar */
+.loading-bar-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
 .loading-bar-track {
   position: relative;
-
-  width: 260px;
-  height: 6px;
-
+  width: 320px;
+  height: 8px;
   border-radius: 999px;
 
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  /* Dark recessed track with subtle inner shadow */
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow:
+    inset 0 1px 4px rgba(0, 0, 0, 0.4);
 
   overflow: hidden;
-
-  /* Always visible — bar is the real loading indicator */
   opacity: 1;
 }
 
+/* Outer ambient glow around the track */
+.loading-bar-track::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 999px;
+  background: transparent;
+  box-shadow: 0 0 18px 2px rgba(99, 102, 241, 0.25);
+  pointer-events: none;
+  z-index: 0;
+}
+
 .loading-bar-fill {
+  position: relative;
   width: 0%;
   height: 100%;
-
   border-radius: 999px;
+  z-index: 1;
 
-  background: linear-gradient(90deg, #38bdf8, #818cf8, #c084fc);
+  /* Aurora gradient: cyan → indigo → violet — matches ribbon colors */
+  background: linear-gradient(
+    90deg,
+    #38bdf8 0%,
+    #818cf8 45%,
+    #c084fc 80%,
+    #38bdf8 100%
+  );
+  background-size: 200% 100%;
+
+  /* Pulse the gradient horizontally for living-aurora feel */
+  animation: barAuroraFlow 2.5s linear infinite;
 
   box-shadow:
-    0 0 10px rgba(129, 140, 248, 0.7),
-    0 0 20px rgba(99, 102, 241, 0.35);
+    0 0 8px rgba(129, 140, 248, 0.9),
+    0 0 20px rgba(99, 102, 241, 0.5),
+    0 0 36px rgba(192, 132, 252, 0.25);
 
-  /* Smooth but responsive — not so slow it feels fake */
   transition: width 0.15s ease-out;
-
-  /* Shimmer sweep */
-  position: relative;
   overflow: hidden;
 }
 
+@keyframes barAuroraFlow {
+  0%   { background-position: 0% 0%; }
+  100% { background-position: 200% 0%; }
+}
+
+/* Bright white shimmer sweep over the fill */
 .loading-bar-fill::after {
   content: "";
   position: absolute;
   top: 0;
-  left: -100%;
-  width: 60%;
+  left: -80%;
+  width: 50%;
   height: 100%;
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(255, 255, 255, 0.4) 50%,
+    rgba(255, 255, 255, 0.55) 50%,
     transparent 100%
   );
-  animation: barShimmer 1.4s ease-in-out infinite;
+  animation: barShimmer 1.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 @keyframes barShimmer {
-  0%   { left: -60%; }
-  100% { left: 130%; }
+  0%   { left: -80%; }
+  100% { left: 140%; }
 }
 
+/* Percentage — styled as a glowing number, not just plain text */
 .loading-percent {
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 2px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-transform: uppercase;
 
-  color: rgba(199, 210, 254, 0.75);
+  /* Aurora-matched tint */
+  color: rgba(192, 132, 252, 0.9);
+  text-shadow:
+    0 0 12px rgba(129, 140, 248, 0.8),
+    0 0 24px rgba(99, 102, 241, 0.4);
 
-  /* Always visible from the start */
   opacity: 1;
-
   font-variant-numeric: tabular-nums;
+
+  /* Subtle pulse so it feels alive */
+  animation: percentPulse 2s ease-in-out infinite;
+}
+
+@keyframes percentPulse {
+  0%, 100% { opacity: 0.85; }
+  50%       { opacity: 1; }
 }
 
 /* =========================================================
@@ -3301,7 +3385,9 @@ input:focus {
   flex-direction: column;
   min-width: 0;
   height: 100vh;
-  overflow: hidden;
+  /* overflow: hidden kills sticky — use clip instead which
+     prevents scroll bars but preserves sticky positioning */
+  overflow: clip;
 }
 
 .sidebar-open-btn {
@@ -4227,6 +4313,38 @@ input:focus {
     0 0 40px rgba(255, 0, 0, 0.12),
     0 24px 72px rgba(0, 0, 0, 0.7),
     inset 0 1px 0 rgba(255, 60, 60, 0.12);
+  /* Explicit height so body flex:1 actually works */
+  max-height: 82vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.shinigami .legal-modal-body {
+  flex: 1;
+  overflow-y: scroll;
+  overscroll-behavior: contain;
+  /* Force visible scrollbar in Shinigami so user knows they can scroll */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 60, 60, 0.5) rgba(40, 0, 0, 0.4);
+}
+
+.shinigami .legal-modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.shinigami .legal-modal-body::-webkit-scrollbar-track {
+  background: rgba(40, 0, 0, 0.4);
+  border-radius: 10px;
+}
+
+.shinigami .legal-modal-body::-webkit-scrollbar-thumb {
+  background: rgba(255, 60, 60, 0.5);
+  border-radius: 10px;
+}
+
+.shinigami .legal-modal-body::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 80, 80, 0.75);
 }
 
 .shinigami .legal-modal::before {
