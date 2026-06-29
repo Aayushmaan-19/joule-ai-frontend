@@ -7,37 +7,70 @@ import {
 } from "../utils/dom.js";
 
 /* =========================================================
+   ASSETS TO PRELOAD
+   These are the files that actually need to exist before
+   the app is usable. Songs are excluded — they're large and
+   stream-loaded on demand. Shinigami.jpg excluded — only
+   loaded if mode activates.
+========================================================= */
+
+const PRELOAD_IMAGES = [
+  "Assets/Images/bot.png",
+  "Assets/Images/user.png",
+  "Assets/Avatars/avatar1.png",
+  "Assets/Avatars/avatar2.png",
+  "Assets/Avatars/avatar3.png",
+  "Assets/Avatars/avatar4.png",
+  "Assets/Avatars/avatar5.png",
+  "Assets/Avatars/avatar6.png",
+  "Assets/Icons/send.svg",
+  "Assets/Icons/mic.svg",
+  "Assets/Icons/play.svg",
+  "Assets/Icons/pause.svg",
+  "Assets/Icons/trash.svg",
+  "Assets/Icons/sparkles.svg",
+  "Assets/Icons/sun.svg",
+  "Assets/Icons/light.svg"
+];
+
+const PRELOAD_AUDIO = [
+  "Assets/Sound Effects/mic-on.mp3",
+  "Assets/Sound Effects/mic-off.mp3"
+];
+
+/* =========================================================
    PALETTE
-   Same family as the logo (bot.png): deep navy, blue, cyan,
-   violet — no new colors introduced.
 ========================================================= */
 
 const RIBBON_COLORS = [
-  { r: 56, g: 189, b: 248 },   // cyan
-  { r: 99, g: 102, b: 241 },   // indigo/blue
-  { r: 167, g: 139, b: 250 },  // violet
-  { r: 79, g: 70, b: 229 }     // deep indigo
+  { r: 56, g: 189, b: 248 },
+  { r: 99, g: 102, b: 241 },
+  { r: 167, g: 139, b: 250 },
+  { r: 79, g: 70, b: 229 }
 ];
 
 /* =========================================================
    TIMING
+   Aurora animation runs for TOTAL_DURATION_MS.
+   Logo reveal fires at LOGO_REVEAL_AT_MS via JS (not CSS).
+   The dismiss gate waits for BOTH aurora + assets to finish.
 ========================================================= */
 
-const DRIFT_DURATION_MS = 1500;    // ribbons wander freely
-const CONVERGE_DURATION_MS = 1450; // ribbons pull toward center
-const FLASH_DURATION_MS = 350;     // bright condensation moment
-const DISSOLVE_DURATION_MS = 500;  // ribbons fade as logo solidifies
+const DRIFT_DURATION_MS = 1500;
+const CONVERGE_DURATION_MS = 1450;
+const FLASH_DURATION_MS = 350;
+const DISSOLVE_DURATION_MS = 500;
 
 const TOTAL_DURATION_MS =
   DRIFT_DURATION_MS + CONVERGE_DURATION_MS + FLASH_DURATION_MS + DISSOLVE_DURATION_MS;
 
-const LOGO_REVEAL_AT_MS = DRIFT_DURATION_MS + CONVERGE_DURATION_MS + FLASH_DURATION_MS * 0.4;
-const DISMISS_AT_MS = TOTAL_DURATION_MS + 550;
+const LOGO_REVEAL_AT_MS =
+  DRIFT_DURATION_MS + CONVERGE_DURATION_MS + FLASH_DURATION_MS * 0.4;
+
+const MIN_DISPLAY_MS = TOTAL_DURATION_MS + 550;
 
 function easeInOutCubic(t) {
-  return t < 0.5
-    ? 4 * t * t * t
-    : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 }
 
 function easeOutQuart(t) {
@@ -46,10 +79,6 @@ function easeOutQuart(t) {
 
 /* =========================================================
    RIBBON
-   A long soft stroke made of sampled points, each with its own
-   layered-sine wobble. Points gradually interpolate from a wide
-   freely-drifting spread toward a tight knot at the landing
-   point as convergence progresses.
 ========================================================= */
 
 class Ribbon {
@@ -61,10 +90,7 @@ class Ribbon {
     this.landX = landX;
     this.landY = landY;
 
-    // Each ribbon starts centered on a random anchor point well
-    // outside the eventual landing spot, so it has real room to
-    // drift before convergence pulls it in.
-    const angle = seed * 137.508 * (Math.PI / 180); // golden-angle spread
+    const angle = seed * 137.508 * (Math.PI / 180);
     const dist = Math.min(width, height) * (0.45 + (seed % 3) * 0.08);
 
     this.anchorX = landX + Math.cos(angle) * dist;
@@ -80,41 +106,28 @@ class Ribbon {
     this.wobblePhase = seed * 0.9;
   }
 
-  /**
-   * Returns an array of {x, y, w} points describing the ribbon's
-   * current shape, given a time value in seconds and a 0..1
-   * convergence factor.
-   */
   getPoints(time, convergeT) {
     const points = [];
     const n = this.segments;
 
-    const driftX =
-      Math.sin(time * this.driftSpeedX + this.driftPhaseX) * this.driftAmpX;
-    const driftY =
-      Math.cos(time * this.driftSpeedY + this.driftPhaseY) * this.driftAmpY;
+    const driftX = Math.sin(time * this.driftSpeedX + this.driftPhaseX) * this.driftAmpX;
+    const driftY = Math.cos(time * this.driftSpeedY + this.driftPhaseY) * this.driftAmpY;
 
-    // As convergence increases, the ribbon's free-drift contribution
-    // shrinks and it collapses toward the landing point.
     const driftFalloff = 1 - convergeT;
 
-    const centerX = this.anchorX + driftX * driftFalloff +
-      (this.landX - this.anchorX) * convergeT;
-    const centerY = this.anchorY + driftY * driftFalloff +
-      (this.landY - this.anchorY) * convergeT;
+    const centerX =
+      this.anchorX + driftX * driftFalloff + (this.landX - this.anchorX) * convergeT;
+    const centerY =
+      this.anchorY + driftY * driftFalloff + (this.landY - this.anchorY) * convergeT;
 
     const length = this.baseRadius * (6 - convergeT * 4);
     const orientation =
       this.seed * 0.7 + Math.sin(time * 0.35 + this.wobblePhase) * 0.6;
 
     for (let i = 0; i < n; i++) {
-      const tAlong = i / (n - 1) - 0.5; // -0.5 .. 0.5 along the ribbon
-
+      const tAlong = i / (n - 1) - 0.5;
       const along = tAlong * length;
 
-      // Perpendicular wobble — multiple sine layers at different
-      // frequencies so the ribbon undulates organically rather than
-      // as a single clean wave.
       const wobble =
         Math.sin(tAlong * 6 + time * 1.4 + this.wobblePhase) * this.baseRadius * 0.9 +
         Math.sin(tAlong * 13 + time * 2.1 + this.wobblePhase * 1.3) * this.baseRadius * 0.35;
@@ -124,8 +137,6 @@ class Ribbon {
       const px = Math.cos(orientation) * along - Math.sin(orientation) * wobble * wobbleFalloff;
       const py = Math.sin(orientation) * along + Math.cos(orientation) * wobble * wobbleFalloff;
 
-      // Taper width toward the ends of the ribbon, and thicken
-      // overall as it converges (light "gathering" visually).
       const taper = Math.sin((i / (n - 1)) * Math.PI);
       const widthScale = (0.5 + convergeT * 1.8) * taper;
 
@@ -141,7 +152,7 @@ class Ribbon {
 }
 
 /* =========================================================
-   SPARK PARTICLE (condensation flash burst)
+   SPARK
 ========================================================= */
 
 class Spark {
@@ -165,10 +176,10 @@ class Spark {
 }
 
 /* =========================================================
-   MAIN CONTROLLER
+   AURORA CANVAS CONTROLLER
 ========================================================= */
 
-export default class AuroraLoader {
+class AuroraLoader {
   constructor(canvas, logoEl) {
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d");
@@ -183,6 +194,8 @@ export default class AuroraLoader {
     this.startTime = null;
     this.rafId = null;
     this.lastFrameTime = null;
+
+    this.logoRevealed = false;
 
     this.resize();
     window.addEventListener("resize", () => this.resize());
@@ -211,7 +224,6 @@ export default class AuroraLoader {
 
   buildRibbons() {
     const count = 5;
-
     this.ribbons = [];
 
     for (let i = 0; i < count; i++) {
@@ -248,11 +260,7 @@ export default class AuroraLoader {
       const p0 = points[i];
       const p1 = points[i + 1];
 
-      const grad = ctx.createLinearGradient(p0.x, p0.y, p1.x, p1.y);
-      grad.addColorStop(0, `rgba(${c.r}, ${c.g}, ${c.b}, 0.85)`);
-      grad.addColorStop(1, `rgba(${c.r}, ${c.g}, ${c.b}, 0.85)`);
-
-      ctx.strokeStyle = grad;
+      ctx.strokeStyle = `rgba(${c.r}, ${c.g}, ${c.b}, 0.85)`;
       ctx.lineCap = "round";
       ctx.lineWidth = Math.max(1, (p0.w + p1.w) / 2);
 
@@ -295,6 +303,18 @@ export default class AuroraLoader {
     }
   }
 
+  /**
+   * JS-controlled logo reveal — fires at exactly LOGO_REVEAL_AT_MS
+   * after the aurora canvas has been running, so they're always in sync.
+   * No CSS animation-delay involved.
+   */
+  revealLogo() {
+    if (this.logoRevealed) return;
+    this.logoRevealed = true;
+
+    this.logoEl.classList.add("logo-reveal-active");
+  }
+
   loop(now) {
     const elapsed = now - this.startTime;
     const dt = Math.min((now - this.lastFrameTime) / 1000, 0.05);
@@ -303,9 +323,10 @@ export default class AuroraLoader {
     const ctx = this.ctx;
     const time = elapsed / 1000;
 
-    // Soft trailing fade instead of a hard clear, so ribbons leave
-    // faint light trails as they move — reinforces the "aurora"
-    // feel rather than a flat redraw each frame.
+    if (elapsed >= LOGO_REVEAL_AT_MS) {
+      this.revealLogo();
+    }
+
     ctx.save();
     ctx.globalCompositeOperation = "source-over";
     ctx.fillStyle = "rgba(5, 5, 16, 0.32)";
@@ -313,7 +334,6 @@ export default class AuroraLoader {
     ctx.restore();
 
     if (elapsed < DRIFT_DURATION_MS + CONVERGE_DURATION_MS) {
-      // ---- DRIFT + CONVERGE PHASES ----
       let convergeT = 0;
 
       if (elapsed > DRIFT_DURATION_MS) {
@@ -330,24 +350,16 @@ export default class AuroraLoader {
 
       if (convergeT > 0.55) {
         const glowT = (convergeT - 0.55) / 0.45;
-        this.drawGlow(
-          this.landX, this.landY,
-          20 + glowT * 70,
-          { r: 200, g: 220, b: 255 },
-          glowT * 0.5
-        );
+        this.drawGlow(this.landX, this.landY, 20 + glowT * 70, { r: 200, g: 220, b: 255 }, glowT * 0.5);
       }
 
     } else if (elapsed < DRIFT_DURATION_MS + CONVERGE_DURATION_MS + FLASH_DURATION_MS) {
-      // ---- FLASH / CONDENSATION PHASE ----
       if (!this.sparksSpawned) {
         this.spawnSparks();
         this.sparksSpawned = true;
       }
 
-      const flashT =
-        (elapsed - DRIFT_DURATION_MS - CONVERGE_DURATION_MS) / FLASH_DURATION_MS;
-
+      const flashT = (elapsed - DRIFT_DURATION_MS - CONVERGE_DURATION_MS) / FLASH_DURATION_MS;
       const burstRadius = 30 + easeOutQuart(flashT) * 90;
       const burstAlpha = (1 - flashT) * 0.95;
 
@@ -357,11 +369,7 @@ export default class AuroraLoader {
       for (let i = this.sparks.length - 1; i >= 0; i--) {
         const s = this.sparks[i];
         s.update(dt);
-
-        if (s.alpha <= 0) {
-          this.sparks.splice(i, 1);
-          continue;
-        }
+        if (s.alpha <= 0) { this.sparks.splice(i, 1); continue; }
 
         ctx.save();
         ctx.globalCompositeOperation = "lighter";
@@ -374,7 +382,6 @@ export default class AuroraLoader {
       }
 
     } else if (elapsed < TOTAL_DURATION_MS) {
-      // ---- DISSOLVE PHASE ----
       const dissolveT =
         (elapsed - DRIFT_DURATION_MS - CONVERGE_DURATION_MS - FLASH_DURATION_MS) /
         DISSOLVE_DURATION_MS;
@@ -382,11 +389,7 @@ export default class AuroraLoader {
       for (let i = this.sparks.length - 1; i >= 0; i--) {
         const s = this.sparks[i];
         s.update(dt);
-
-        if (s.alpha <= 0) {
-          this.sparks.splice(i, 1);
-          continue;
-        }
+        if (s.alpha <= 0) { this.sparks.splice(i, 1); continue; }
 
         ctx.save();
         ctx.globalCompositeOperation = "lighter";
@@ -421,36 +424,100 @@ export default class AuroraLoader {
 }
 
 /* =========================================================
-   PROGRESS BAR
+   REAL ASSET PRELOADER
+   Tracks actual image and audio loading, reports progress
+   via a callback so the bar reflects reality.
 ========================================================= */
 
-function easeProgress(t) {
-  if (t < 0.85) {
-    return (t / 0.85) * 92;
+function preloadAssets(onProgress) {
+  const items = [
+    ...PRELOAD_IMAGES.map(src => ({ type: "image", src })),
+    ...PRELOAD_AUDIO.map(src => ({ type: "audio", src }))
+  ];
+
+  const total = items.length;
+  let loaded = 0;
+
+  function tick() {
+    loaded++;
+    onProgress(loaded / total);
   }
 
-  const tail = (t - 0.85) / 0.15;
-  return 92 + tail * 8;
+  const promises = items.map(item => {
+    return new Promise(resolve => {
+      if (item.type === "image") {
+        const img = new Image();
+        img.onload = () => { tick(); resolve(); };
+        img.onerror = () => { tick(); resolve(); };
+        img.src = item.src;
+      } else {
+        const audio = new Audio();
+        audio.oncanplaythrough = () => { tick(); resolve(); };
+        audio.onerror = () => { tick(); resolve(); };
+        audio.preload = "auto";
+        audio.src = item.src;
+      }
+    });
+  });
+
+  return Promise.all(promises);
 }
 
-function runProgressBar() {
+/* =========================================================
+   PROGRESS BAR
+   Driven by two inputs blended together:
+   - Real asset load progress (60% weight)
+   - Aurora animation time progress (40% weight)
+   This way the bar always reflects actual loading, but
+   never sits at 0% while assets load instantly either.
+   Bar never goes backward and snaps to 100% at dismiss.
+========================================================= */
+
+let currentDisplayPercent = 0;
+let assetProgress = 0;
+let animProgress = 0;
+let barRafId = null;
+
+function setAssetProgress(p) {
+  assetProgress = p;
+}
+
+function updateBar() {
+  const target = Math.min(assetProgress * 60 + animProgress * 40, 99);
+
+  if (target > currentDisplayPercent) {
+    currentDisplayPercent = Math.min(
+      currentDisplayPercent + (target - currentDisplayPercent) * 0.12,
+      target
+    );
+  }
+
+  const percent = Math.round(currentDisplayPercent);
+  loadingBarFill.style.width = `${percent}%`;
+  loadingPercent.textContent = `${percent}%`;
+}
+
+function runBarLoop() {
   const start = performance.now();
 
   function tick(now) {
-    const elapsed = now - start;
-    const t = Math.min(elapsed / TOTAL_DURATION_MS, 1);
-
-    const percent = Math.round(easeProgress(t));
-
-    loadingBarFill.style.width = `${percent}%`;
-    loadingPercent.textContent = `${percent}%`;
+    const t = Math.min((now - start) / TOTAL_DURATION_MS, 1);
+    animProgress = t;
+    updateBar();
 
     if (t < 1) {
-      requestAnimationFrame(tick);
+      barRafId = requestAnimationFrame(tick);
     }
   }
 
-  requestAnimationFrame(tick);
+  barRafId = requestAnimationFrame(tick);
+}
+
+function completeBar() {
+  if (barRafId) cancelAnimationFrame(barRafId);
+  currentDisplayPercent = 100;
+  loadingBarFill.style.width = "100%";
+  loadingPercent.textContent = "100%";
 }
 
 /* =========================================================
@@ -460,13 +527,23 @@ function runProgressBar() {
 export function initLoadingScreen() {
   if (!loadingScreen || !loadingCanvas || !loadingLogo) return;
 
+  loadingLogo.style.opacity = "0";
+  loadingLogo.style.transform = "scale(0.3)";
+
   const loader = new AuroraLoader(loadingCanvas, loadingLogo);
-
   loader.start();
-  runProgressBar();
+  runBarLoop();
 
-  setTimeout(() => {
-    loadingScreen.classList.add("loading-done");
-    loader.stop();
-  }, DISMISS_AT_MS);
+  preloadAssets(p => setAssetProgress(p));
+
+  const animDone = new Promise(resolve => setTimeout(resolve, MIN_DISPLAY_MS));
+
+  Promise.all([animDone]).then(() => {
+    completeBar();
+
+    setTimeout(() => {
+      loadingScreen.classList.add("loading-done");
+      loader.stop();
+    }, 300);
+  });
 }
