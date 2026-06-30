@@ -92,7 +92,8 @@ function buildDOM() {
   sidebarEl.querySelector("#sidebarCollapseBtn").addEventListener("click", close);
   sidebarEl.querySelector("#sidebarClearAllBtn").addEventListener("click", handleClearAll);
 
-  open();
+  // Sidebar is built but stays CLOSED until the user explicitly
+  // toggles it via the open button — no auto-open on init.
 }
 
 /* =========================================================

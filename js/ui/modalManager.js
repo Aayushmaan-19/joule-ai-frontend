@@ -29,17 +29,23 @@ import {
 
 } from "../utils/dom.js";
 
-import { signup } from "../auth/signup.js";
+import { requestSignupOtp, verifySignupOtp } from "../auth/signup.js";
 import { login } from "../auth/login.js";
 import { sendOtp } from "../auth/sendOtp.js";
 import { verifyOtp } from "../auth/verifyOtp.js";
 import { signInWithGoogle } from "../auth/googleAuth.js";
-import { deleteUnverifiedAccount } from "../auth/signup.js";
 
 const authModal = modalOverlay.querySelector(".auth-modal");
 
 let mode = "signup";
 let resendCooldownUntil = 0;
+
+// Tracks which OTP flow is currently open in otpView:
+// "signup" = no Firebase account exists yet, verifying creates one
+// "existing" = an unverified Firebase account already exists (e.g. Google sign-in)
+let otpFlow = "signup";
+let pendingSignupEmail = "";
+let pendingSignupPassword = "";
 
 /* =========================
    PASSWORD REQUIREMENTS UI
@@ -158,9 +164,11 @@ function openModal() {
 }
 
 function closeAuthModal() {
-  if (!otpView.classList.contains("hidden")) {
-    deleteUnverifiedAccount();
-  }
+  // No account exists until OTP verification succeeds, so there's
+  // nothing to clean up here — closing mid-OTP simply abandons the
+  // pending signup (the OTP record expires server-side on its own).
+  pendingSignupEmail = "";
+  pendingSignupPassword = "";
 
   modalOverlay.classList.add("hidden");
   authModal.style.height = "";
@@ -303,24 +311,20 @@ authForm.addEventListener("submit", async e => {
   }
 
   authSubmitBtn.disabled = true;
-  authSubmitBtn.textContent = mode === "signup" ? "Creating account..." : "Logging in...";
+  authSubmitBtn.textContent = mode === "signup" ? "Sending code..." : "Logging in...";
 
   try {
     if (mode === "signup") {
-      const result = await signup(email, password);
-
-      if (!result.success) {
-        showAuthError(result.error);
-        return;
-      }
-
-      const otpResult = await sendOtp();
+      const otpResult = await requestSignupOtp(email, password);
 
       if (!otpResult.success) {
-        showAuthError(otpResult.message || "Couldn't send verification code");
+        showAuthError(otpResult.error);
         return;
       }
 
+      pendingSignupEmail = email;
+      pendingSignupPassword = password;
+      otpFlow = "signup";
       showOtpView(email);
 
     } else {
@@ -331,6 +335,7 @@ authForm.addEventListener("submit", async e => {
           const otpResult = await sendOtp();
 
           if (otpResult.success) {
+            otpFlow = "existing";
             showOtpView(email);
             return;
           }
@@ -444,7 +449,10 @@ otpForm.addEventListener("submit", async e => {
   otpSubmitBtn.textContent = "Verifying...";
 
   try {
-    const result = await verifyOtp(code);
+    const result =
+      otpFlow === "signup"
+        ? await verifySignupOtp(pendingSignupEmail, code)
+        : await verifyOtp(code);
 
     if (!result.success) {
       showOtpError(result.message || "Incorrect code");
@@ -452,24 +460,16 @@ otpForm.addEventListener("submit", async e => {
     }
 
     showOtpSuccess("Email verified! You're all set ⚡");
+    pendingSignupEmail = "";
+    pendingSignupPassword = "";
 
-    setTimeout(async () => {
+    // signInWithCustomToken (signup flow) or the existing emailVerified
+    // flip (existing flow) both fire Firebase's onAuthStateChanged,
+    // which authState.js already listens to — it sets up the profile
+    // button and builds the sidebar (closed, not auto-opened) on its own.
+    // No manual sidebar wiring needed here.
+    setTimeout(() => {
       closeAuthModal();
-
-      const { auth } = await import("../auth/firebase.js");
-      const freshUser = auth.currentUser;
-      if (freshUser) {
-        await freshUser.reload();
-        if (freshUser.emailVerified) {
-          const { initSidebar, toggle: toggleSidebar } = await import("./sidebar.js");
-          const sidebarOpenBtn = document.getElementById("sidebarOpenBtn");
-          initSidebar();
-          if (sidebarOpenBtn) {
-            sidebarOpenBtn.classList.remove("hidden");
-            sidebarOpenBtn.onclick = toggleSidebar;
-          }
-        }
-      }
     }, 1200);
 
   } catch (err) {
@@ -495,14 +495,17 @@ otpResendBtn.addEventListener("click", async () => {
   otpResendBtn.disabled = true;
 
   try {
-    const result = await sendOtp();
+    const result =
+      otpFlow === "signup"
+        ? await requestSignupOtp(pendingSignupEmail, pendingSignupPassword)
+        : await sendOtp();
 
     if (!result.success) {
       if (result.retryAfterMs) {
         resendCooldownUntil = Date.now() + result.retryAfterMs;
         startResendCooldown(Math.ceil(result.retryAfterMs / 1000));
       } else {
-        showOtpError(result.message || "Couldn't resend code");
+        showOtpError(result.error || result.message || "Couldn't resend code");
       }
       return;
     }
@@ -605,5 +608,6 @@ togglePassword.addEventListener("click", () => {
 export function openVerificationFlow(email) {
   modalOverlay.classList.remove("hidden");
   buildPasswordRequirements();
+  otpFlow = "existing";
   showOtpView(email);
 }

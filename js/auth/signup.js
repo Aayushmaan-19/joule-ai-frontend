@@ -1,32 +1,63 @@
-import { createUserWithEmailAndPassword, deleteUser } from "firebase/auth";
+import { signInWithCustomToken } from "firebase/auth";
 import { auth } from "./firebase.js";
+import { AUTH_API_URL } from "../utils/constants.js";
 
-let pendingCredential = null;
-
-export const signup = async (email, password) => {
+/**
+ * No Firebase Auth account is created here. We only ask the backend
+ * to send an OTP to this email/password pair. The pair is held by
+ * the backend (Firestore, server-side only) and the account is
+ * created ONLY if/when the correct OTP is verified.
+ */
+export async function requestSignupOtp(email, password) {
   try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    pendingCredential = userCredential.user;
-    return { success: true, user: userCredential.user };
-  } catch (error) {
-    return { success: false, error: error.message };
-  }
-};
+    const response = await fetch(`${AUTH_API_URL}/signup/send-otp`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
 
-export async function deleteUnverifiedAccount() {
-  if (!pendingCredential) return;
+    const data = await response.json();
 
-  const user = pendingCredential;
-  pendingCredential = null;
-
-  if (!user.emailVerified) {
-    try {
-      await deleteUser(user);
-    } catch {
+    if (!response.ok || !data.success) {
+      return {
+        success: false,
+        error: data.message || "Couldn't send verification code",
+        retryAfterMs: data.retryAfterMs
+      };
     }
+
+    return { success: true };
+
+  } catch {
+    return { success: false, error: "Network error. Please try again." };
   }
 }
 
-export function clearPendingCredential() {
-  pendingCredential = null;
+/**
+ * Verifies the OTP for a pending signup. On success, the backend
+ * has just created the Firebase Auth account (already verified)
+ * and returns a custom token — we use it to sign the user in on
+ * the client, completing the flow without a second password entry.
+ */
+export async function verifySignupOtp(email, code) {
+  try {
+    const response = await fetch(`${AUTH_API_URL}/signup/verify-otp`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, code })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      return { success: false, message: data.message || "Incorrect code" };
+    }
+
+    await signInWithCustomToken(auth, data.customToken);
+
+    return { success: true };
+
+  } catch {
+    return { success: false, message: "Network error. Please try again." };
+  }
 }
