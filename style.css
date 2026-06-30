@@ -852,8 +852,14 @@ body.voice-active .navbar {
 }
 
 .bot .chat {
-  width: 100%;
-  max-width: 100%;
+  /* Match the base .chat width cap — previously this forced
+     bot bubbles to 100% width, which is why the translucent
+     background never showed any visible edge against the page.
+     Mobile breakpoint and final word on this rule are handled
+     by the later .bot .chat block further down (last in cascade
+     order, since flex:1 there was the actual stretching culprit). */
+  width: auto;
+  max-width: min(88%, 650px);
 }
 
 .icon-btn:hover,
@@ -2415,8 +2421,17 @@ input:focus {
 }
 
 .bot .chat {
-  flex: 1;
-  max-width: 100%;
+  /* flex: 1 previously forced this to grow and fill all
+     remaining flex space in .message, which is the actual
+     mechanism that made bot bubbles span full width */
+  flex: 0 1 auto;
+  max-width: min(88%, 650px);
+}
+
+@media (max-width: 768px) {
+  .bot .chat {
+    max-width: 85%;
+  }
 }
 
 .message.bot {
