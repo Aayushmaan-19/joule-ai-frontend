@@ -1,8 +1,16 @@
-import { auth, db } from "./firebase.js";
-import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { auth } from "./firebase.js";
 import { AUTH_API_URL } from "../utils/constants.js";
-import { clearPendingCredential } from "./signup.js";
 
+/**
+ * Verifies an OTP for an ALREADY-AUTHENTICATED Firebase user whose
+ * email isn't verified yet (e.g. a stale unverified session, or an
+ * edge case outside the normal signup flow). For brand-new signups,
+ * see verifySignupOtp() in signup.js instead — that path creates
+ * the account itself and doesn't go through here.
+ *
+ * Since this user's account (and Firestore user doc) already exists,
+ * we only need to flip emailVerified — no doc write needed here.
+ */
 export async function verifyOtp(code) {
   const user = auth.currentUser;
 
@@ -24,17 +32,6 @@ export async function verifyOtp(code) {
   const data = await response.json();
 
   if (data.success) {
-    clearPendingCredential();
-    await setDoc(doc(db, "users", user.uid), {
-      uid: user.uid,
-      email: user.email,
-      createdAt: serverTimestamp(),
-      plan: "free",
-      messagesUsed: 0,
-      voiceUsed: 0,
-      emailVerified: true
-    });
-
     // Force token refresh so emailVerified flips on the local user object
     await user.getIdToken(true);
     await user.reload();
