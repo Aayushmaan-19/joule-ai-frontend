@@ -3909,14 +3909,8 @@ input:focus {
 
 .bot-bubble-wrapper {
   display: flex;
-  flex-direction: column;
-  /* Previously flex:1 + max-width:100% made this wrapper fill
-     the entire message row — the bubble's own max-width was
-     then calculated as a percentage of that full-width wrapper,
-     so it never actually appeared narrower. Cap the wrapper
-     itself to the same width budget as the bubble should have. */
   flex: 0 1 auto;
-  max-width: min(88%, 650px);
+  max-width: min(100%, 650px);
   gap: 4px;
 }
 
