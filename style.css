@@ -852,14 +852,11 @@ body.voice-active .navbar {
 }
 
 .bot .chat {
-  /* Match the base .chat width cap — previously this forced
-     bot bubbles to 100% width, which is why the translucent
-     background never showed any visible edge against the page.
-     Mobile breakpoint and final word on this rule are handled
-     by the later .bot .chat block further down (last in cascade
-     order, since flex:1 there was the actual stretching culprit). */
-  width: auto;
-  max-width: min(88%, 650px);
+  /* Width budget now lives on .bot-bubble-wrapper (the actual
+     parent) — the bubble just fills it. Single source of truth
+     instead of two elements independently guessing the same cap. */
+  width: 100%;
+  max-width: 100%;
 }
 
 .icon-btn:hover,
@@ -2421,17 +2418,10 @@ input:focus {
 }
 
 .bot .chat {
-  /* flex: 1 previously forced this to grow and fill all
-     remaining flex space in .message, which is the actual
-     mechanism that made bot bubbles span full width */
+  /* Width is owned by .bot-bubble-wrapper now — this just fills it */
   flex: 0 1 auto;
-  max-width: min(88%, 650px);
-}
-
-@media (max-width: 768px) {
-  .bot .chat {
-    max-width: 85%;
-  }
+  width: 100%;
+  max-width: 100%;
 }
 
 .message.bot {
@@ -3920,9 +3910,20 @@ input:focus {
 .bot-bubble-wrapper {
   display: flex;
   flex-direction: column;
-  flex: 1;
-  max-width: 100%;
+  /* Previously flex:1 + max-width:100% made this wrapper fill
+     the entire message row — the bubble's own max-width was
+     then calculated as a percentage of that full-width wrapper,
+     so it never actually appeared narrower. Cap the wrapper
+     itself to the same width budget as the bubble should have. */
+  flex: 0 1 auto;
+  max-width: min(88%, 650px);
   gap: 4px;
+}
+
+@media (max-width: 768px) {
+  .bot-bubble-wrapper {
+    max-width: 85%;
+  }
 }
 
 .bubble-actions {
