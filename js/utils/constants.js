@@ -23,7 +23,7 @@ export const SONGS = [
 
 export const API_URL = "https://joule-ai-backend.onrender.com/api/ai/chat";
 
-export const AUTH_API_URL = "https://joule-ai-backend.onrender.com/api/auth";
+export const AUTH_API_URL = "https://joule-ai-backend.onrender.com/api/ai/auth";
 
 export const TTS_URL =
   import.meta.env.VITE_TTS_URL;
