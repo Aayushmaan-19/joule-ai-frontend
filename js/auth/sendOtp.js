@@ -13,7 +13,10 @@ export async function sendOtp() {
 
   const token = await user.getIdToken();
 
-  const response = await fetch(`${AUTH_API_URL}/send-otp`, {
+  const url = `${AUTH_API_URL}/send-otp`;
+  console.log("[sendOtp] request:", url);
+
+  const response = await fetch(url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -22,6 +25,7 @@ export async function sendOtp() {
   });
 
   const data = await response.json();
+  console.log("[sendOtp] response:", response.status, data);
 
   return data;
 }
