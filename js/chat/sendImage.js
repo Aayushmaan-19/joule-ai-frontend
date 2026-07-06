@@ -13,11 +13,19 @@ import { auth } from "../auth/firebase.js";
 import { openModal, openVerificationFlow } from "../ui/modalManager.js";
 
 export async function sendImage() {
+  console.log("sendImage called");
+
   const prompt = input.value.trim();
+  console.log("2. Prompt:", prompt);
+
+  console.log("3. disabled", imageBtn.disabled);
 
   if (!prompt || imageBtn.disabled) return;
 
   const user = auth.currentUser;
+  console.log("4. user:", user);
+
+  alert("sendImage started.");
 
   if (!user) {
     openModal();
