@@ -9,7 +9,8 @@ import {
   sendBtn,
   clearBtn,
   musicBtn,
-  micBtn
+  micBtn,
+  imageBtn
 } from "./utils/dom.js";
 
 /* =========================
@@ -17,6 +18,7 @@ import {
 ========================= */
 
 import { sendMessage } from "./chat/sendMessage.js";
+import { sendImage } from "./chat/sendImage.js";
 import { clearChat } from "./chat/clearChat.js";
 import { render as renderSidebar } from "./ui/sidebar.js";
 
@@ -75,6 +77,8 @@ function setupChatEvents() {
   });
 
   sendBtn.addEventListener("click", sendMessage);
+
+  imageBtn.addEventListener("click", sendImage);
 
   clearBtn.addEventListener("click", () => {
     clearChat();

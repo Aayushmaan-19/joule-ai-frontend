@@ -25,6 +25,9 @@ export const audio =
 export const micBtn =
   document.getElementById("micBtn");
 
+export const imageBtn =
+  document.getElementById("imageBtn");
+
 export const musicBtn =
   document.getElementById("musicBtn");
 

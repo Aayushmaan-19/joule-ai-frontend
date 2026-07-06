@@ -253,6 +253,11 @@ body {
   mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
 }
 
+.icon-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .icon-btn {
   width: 42px;
   height: 42px;
@@ -857,6 +862,26 @@ body.voice-active .navbar {
      instead of two elements independently guessing the same cap. */
   width: 100%;
   max-width: 100%;
+}
+
+/* Generated images ride inside the same .chat bubble as text replies,
+   so they'd otherwise inherit the round 38px avatar rules from
+   ".message img" above. Reset everything explicitly here. */
+.chat img.generated-image {
+  width: 100%;
+  max-width: 420px;
+  height: auto;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  display: block;
+  object-fit: initial;
+  flex-shrink: initial;
+  transform: none;
+}
+
+.message:hover img.generated-image {
+  transform: none;
 }
 
 .icon-btn:hover,
