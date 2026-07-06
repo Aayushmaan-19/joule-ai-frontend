@@ -157,7 +157,7 @@ function animateModalHeightTo(targetEl) {
    MODAL OPEN / CLOSE
 ========================= */
 
-function openModal() {
+export function openModal() {
   modalOverlay.classList.remove("hidden");
   showAuthView();
   buildPasswordRequirements();

@@ -9,11 +9,25 @@ import {
 } from "./chatHistory.js";
 import { render as renderSidebar } from "../ui/sidebar.js";
 import state from "../config/state.js";
+import { auth } from "../auth/firebase.js";
+import { openModal, openVerificationFlow } from "../ui/modalManager.js";
 
 export async function sendImage() {
   const prompt = input.value.trim();
 
   if (!prompt || imageBtn.disabled) return;
+
+  const user = auth.currentUser;
+
+  if (!user) {
+    openModal();
+    return;
+  }
+
+  if (!user.emailVerified) {
+    openVerificationFlow(user.email);
+    return;
+  }
 
   addMessage(prompt, "user");
   storeMessage({ role: "user", content: prompt });
