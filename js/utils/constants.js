@@ -21,7 +21,7 @@ export const SONGS = [
   "Assets/Songs/Pal Pal.mp3",
 ];
 
-export const API_URL = "https://joule-ai-backend.onrender.com/api/chat";
+export const API_URL = "https://joule-ai-backend.onrender.com/api/ai/chat";
 
 export const AUTH_API_URL = "https://joule-ai-backend.onrender.com/api/auth";
 
