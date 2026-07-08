@@ -15,10 +15,11 @@ export const BOT_PIC =
   "Assets/Images/bot.png";
 
 export const SONGS = [
-  "Assets/Songs/Sahiba.mp3",
-  "Assets/Songs/Tu Hai Kaha.mp3",
-  "Assets/Songs/Samjho Na.mp3",
-  "Assets/Songs/Pal Pal.mp3",
+  "public/Assets/Songs/Sahiba.mp3",
+  "public/Assets/Songs/Tu Hai Kaha.mp3",
+  "public/Assets/Songs/Samjho Na.mp3",
+  "public/Assets/Songs/Pal Pal.mp3",
+  "public/Assets/Songs/Aarzu.mp3",
 ];
 
 export const API_URL = "https://joule-ai-backend.onrender.com/api/ai/chat";
