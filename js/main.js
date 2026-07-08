@@ -9,8 +9,7 @@ import {
   sendBtn,
   clearBtn,
   musicBtn,
-  micBtn,
-  imageBtn
+  micBtn
 } from "./utils/dom.js";
 
 /* =========================
@@ -21,6 +20,7 @@ import { sendMessage } from "./chat/sendMessage.js";
 import { sendImage } from "./chat/sendImage.js";
 import { clearChat } from "./chat/clearChat.js";
 import { render as renderSidebar } from "./ui/sidebar.js";
+import { isImageGenerationEnabled } from "./config/selectors.js";
 
 /* =========================
    VOICE
@@ -41,6 +41,7 @@ import { initializeTheme } from "./ui/themeManager.js";
 import { toggleMusic } from "./ui/musicPlayer.js";
 import "./ui/modalManager.js";
 import "./ui/profileManager.js";
+import "./ui/toolsMenu.js";
 import { initAnimationManager, recordActivity } from "./ui/animationManager.js";
 import "./ui/legalModal.js";
 import { initLoadingScreen } from "./ui/loadingScreen.js";
@@ -72,18 +73,30 @@ function setupChatEvents() {
   input.addEventListener("keydown", async (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      await sendMessage();
+      await dispatchSend();
     }
   });
 
-  sendBtn.addEventListener("click", sendMessage);
-
-  imageBtn.addEventListener("click", sendImage);
+  sendBtn.addEventListener("click", dispatchSend);
 
   clearBtn.addEventListener("click", () => {
     clearChat();
     renderSidebar();
   });
+}
+
+/* =========================
+   SEND DISPATCH
+   Image Generation is a persistent mode toggled from the + menu —
+   while it's on, Send/Enter route to image generation instead of chat.
+========================= */
+
+async function dispatchSend() {
+  if (isImageGenerationEnabled()) {
+    await sendImage();
+  } else {
+    await sendMessage();
+  }
 }
 
 /* =========================

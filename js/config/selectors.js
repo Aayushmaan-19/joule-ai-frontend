@@ -15,6 +15,9 @@ export const lastSong =
 export const isListening =
   () => state.voice.isListening;
 
+export const isImageGenerationEnabled =
+  () => state.tools.imageGenerationEnabled;
+
 export const currentUser =
   () => state.auth.user;
 

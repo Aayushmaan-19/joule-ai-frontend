@@ -292,6 +292,7 @@
 
     <!-- ======================== APP LAYOUT ======================== -->
     <div id="app">
+      <!-- SIDEBAR (injected here by sidebar.js) -->
 
       <!-- MAIN COLUMN -->
       <div id="main">
@@ -366,10 +367,24 @@
         <div class="chat-container" id="chat"></div>
 
         <div class="input-area">
+          <div class="tools-wrapper">
+            <button class="icon-btn" id="toolsBtn" aria-label="More tools" aria-haspopup="true" aria-expanded="false">
+              <img src="Assets/Icons/plus.svg" class="icon" id="toolsIcon" alt="" />
+            </button>
+
+            <div class="tools-menu hidden" id="toolsMenu" role="menu">
+              <button type="button" class="tools-menu-item" id="imageGenToggle" role="menuitemcheckbox" aria-checked="false">
+                <span class="tools-menu-item-icon">
+                  <img src="Assets/Icons/image.svg" alt="" />
+                </span>
+                <span class="tools-menu-item-label">Image Generation</span>
+              </button>
+
+              <div class="tools-menu-hint">More features coming soon!</div>
+            </div>
+          </div>
+
           <input id="input" placeholder="Type message..." autocomplete="off" />
-          <button class="icon-btn" id="imageBtn" aria-label="Generate Image">
-            <img src="Assets/Icons/image.svg" class="icon" id="imageIcon" alt="" />
-          </button>
           <button class="icon-btn" id="micBtn" aria-label="Voice Input">
             <span class="mic-ring"></span>
             <img src="Assets/Icons/mic.svg" class="icon" id="micIcon" alt="" />

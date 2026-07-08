@@ -30,6 +30,11 @@ export function setListening(value) {
   state.voice.isListening = value;
 }
 
+export function setImageGenerationEnabled(value) {
+
+  state.tools.imageGenerationEnabled = value;
+}
+
 export function setUser(user) {
 
   state.auth.user = user;

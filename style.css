@@ -258,6 +258,179 @@ body {
   cursor: not-allowed;
 }
 
+/* =========================
+   TOOLS MENU (+ popover)
+   Expands upward from the + button, next to the input.
+   Currently holds the Image Generation toggle.
+========================= */
+
+.tools-wrapper {
+  position: relative;
+}
+
+#toolsBtn.open .icon {
+  transform: translateZ(0) rotate(45deg);
+}
+
+#toolsBtn.has-active-tool {
+  background: linear-gradient(135deg, rgba(96, 165, 250, 0.4), rgba(37, 99, 235, 0.4));
+}
+
+.tools-menu {
+  position: absolute;
+  bottom: calc(100% + 14px);
+  left: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  min-width: 230px;
+  padding: 8px;
+
+  border-radius: 18px;
+
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+
+  border: 1px solid rgba(255, 255, 255, 0.55);
+
+  box-shadow:
+    0 20px 45px rgba(0, 0, 0, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+
+  transform-origin: bottom left;
+
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+
+  transition:
+    opacity 0.25s ease,
+    transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+    visibility 0.25s;
+
+  z-index: 30;
+}
+
+/* Overrides the global .hidden (display:none !important) so the
+   menu can animate closed instead of vanishing instantly. */
+.tools-menu.hidden {
+  display: flex !important;
+
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px) scale(0.96);
+  pointer-events: none;
+}
+
+.tools-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  width: 100%;
+  padding: 10px 12px;
+
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #1e293b;
+  font-family: inherit;
+
+  cursor: pointer;
+  text-align: left;
+
+  transition: background 0.2s ease;
+}
+
+.tools-menu-item:hover {
+  background: rgba(15, 23, 42, 0.05);
+}
+
+.tools-menu-item.active {
+  background: rgba(96, 165, 250, 0.18);
+  color: #1d4ed8;
+}
+
+.tools-menu-item.active:hover {
+  background: rgba(96, 165, 250, 0.26);
+}
+
+.tools-menu-item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  width: 28px;
+  height: 28px;
+
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.06);
+
+  transition: background 0.2s ease;
+}
+
+.tools-menu-item.active .tools-menu-item-icon {
+  background: rgba(37, 99, 235, 0.18);
+}
+
+.tools-menu-item-icon img {
+  width: 15px;
+  height: 15px;
+}
+
+.tools-menu-item.active .tools-menu-item-icon img {
+  filter: invert(29%) sepia(94%) saturate(1795%) hue-rotate(212deg) brightness(97%) contrast(96%);
+}
+
+.tools-menu-hint {
+  padding: 10px 12px 6px;
+
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(30, 41, 59, 0.4);
+
+  pointer-events: none;
+}
+
+.dark .tools-menu {
+  background: linear-gradient(
+    180deg,
+    rgba(85, 53, 173, 0.9),
+    rgba(45, 2, 146, 0.82)
+  );
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dark .tools-menu-item {
+  color: #f8fafc;
+}
+
+.dark .tools-menu-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.dark .tools-menu-item.active {
+  background: rgba(96, 165, 250, 0.28);
+  color: #bfdbfe;
+}
+
+.dark .tools-menu-item-icon {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.dark .tools-menu-hint {
+  color: rgba(255, 255, 255, 0.4);
+}
+
 .icon-btn {
   width: 42px;
   height: 42px;

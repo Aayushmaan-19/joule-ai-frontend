@@ -24,6 +24,12 @@ const state = {
 
   },
 
+  tools: {
+
+    imageGenerationEnabled: false
+
+  },
+
   auth: {
 
     user: null,

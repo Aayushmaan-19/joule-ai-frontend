@@ -1,4 +1,4 @@
-import { input, imageBtn } from "../utils/dom.js";
+import { input, sendBtn } from "../utils/dom.js";
 import { addMessage } from "./renderMessage.js";
 import { getGeneratedImage } from "../api/imageService.js";
 import { smoothScrollToBottom } from "./scrollManager.js";
@@ -13,19 +13,11 @@ import { auth } from "../auth/firebase.js";
 import { openModal, openVerificationFlow } from "../ui/modalManager.js";
 
 export async function sendImage() {
-  console.log("sendImage called");
-
   const prompt = input.value.trim();
-  console.log("2. Prompt:", prompt);
 
-  console.log("3. disabled", imageBtn.disabled);
-
-  if (!prompt || imageBtn.disabled) return;
+  if (!prompt || sendBtn.disabled) return;
 
   const user = auth.currentUser;
-  console.log("4. user:", user);
-
-  alert("sendImage started.");
 
   if (!user) {
     openModal();
@@ -41,7 +33,7 @@ export async function sendImage() {
   storeMessage({ role: "user", content: prompt });
 
   input.value = "";
-  imageBtn.disabled = true;
+  sendBtn.disabled = true;
 
   const botBubble = addMessage("🎨 Generating your image…", "bot");
 
@@ -84,6 +76,6 @@ export async function sendImage() {
 
     botBubble.innerHTML = displayMessage;
   } finally {
-    imageBtn.disabled = false;
+    sendBtn.disabled = false;
   }
 }
