@@ -24,6 +24,12 @@ import {
 }
 from "../config/persistence.js";
 
+import {
+  isShinigamiActive,
+  disableShinigami
+}
+from "./animationManager.js";
+
 function updateThemeUI() {
 
   document.body.classList.toggle(
@@ -38,6 +44,10 @@ function updateThemeUI() {
 }
 
 export function toggleTheme() {
+
+  if (isShinigamiActive()) {
+    disableShinigami();
+  }
 
   setDarkMode(
     !isDarkMode()
@@ -65,6 +75,17 @@ export function toggleTheme() {
 export function initializeTheme() {
 
   updateThemeUI();
+}
+
+export function forceLightMode() {
+
+  if (!isDarkMode()) return;
+
+  setDarkMode(false);
+
+  updateThemeUI();
+
+  saveTheme(false);
 }
 
 themeBtn.addEventListener(

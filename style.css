@@ -1639,7 +1639,7 @@ body.voice-active .navbar {
 
   position: relative;
 
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 .shinigami .clouds,

@@ -1,4 +1,5 @@
 import { speakText } from "../api/ttsService.js";
+import { forceLightMode } from "./themeManager.js";
 
 let currentMode = "normal";
 
@@ -6,6 +7,8 @@ export function activateShinigamiProtocol() {
   if (currentMode === "shinigami") return;
   currentMode = "shinigami";
   document.body.classList.add("shinigami");
+
+  forceLightMode();
 
   showShinigamiToast("Shinigami Protocol — Activated 💀");
 }

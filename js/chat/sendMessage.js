@@ -2,7 +2,6 @@ import { input } from "../utils/dom.js";
 import { addMessage } from "./renderMessage.js";
 import { getAIReply } from "../api/aiService.js";
 import { renderMarkdown } from "../utils/markdown.js";
-import { sleep } from "../utils/helpers.js";
 import { smoothScrollToBottom } from "./scrollManager.js";
 import { addMessage as storeMessage } from "../config/actions.js";
 import {
@@ -11,6 +10,14 @@ import {
 } from "./chatHistory.js";
 import { render as renderSidebar } from "../ui/sidebar.js";
 import state from "../config/state.js";
+
+const THINKING_HTML = `
+  <div class="typing">
+    <span class="dot"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+  </div>
+`;
 
 export async function sendMessage() {
   const value = input.value.trim();
@@ -22,22 +29,15 @@ export async function sendMessage() {
 
   input.value = "";
 
-  const botBubble = addMessage("", "bot");
+  const botBubble = addMessage(THINKING_HTML, "bot");
 
   try {
-    const data = await getAIReply(value);
-
-    const words = data.reply.split(" ");
-    let current = "";
-
-    for (const word of words) {
-      current += word + " ";
-      botBubble.innerHTML = renderMarkdown(current.trim());
+    const data = await getAIReply(value, (partial) => {
+      botBubble.innerHTML = renderMarkdown(partial);
       smoothScrollToBottom();
-      await sleep(35);
-    }
+    });
 
-    const finalReply = current.trim();
+    const finalReply = data.reply.trim();
 
     storeMessage({ role: "bot", content: finalReply });
 
