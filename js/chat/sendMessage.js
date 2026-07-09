@@ -30,14 +30,31 @@ export async function sendMessage() {
   input.value = "";
 
   const botBubble = addMessage(THINKING_HTML, "bot");
+  let isFirstChunk = true;
 
   try {
-    const data = await getAIReply(value, (partial) => {
-      botBubble.innerHTML = renderMarkdown(partial);
+    const data = await getAIReply(value, (delta) => {
+      if (isFirstChunk) {
+        botBubble.innerHTML = "";
+        botBubble.classList.add("streaming");
+        isFirstChunk = false;
+      }
+
+      const span = document.createElement("span");
+      span.className = "stream-chunk";
+      span.textContent = delta;
+      botBubble.appendChild(span);
+
       smoothScrollToBottom();
     });
 
     const finalReply = data.reply.trim();
+
+    // Raw streamed text has no markdown formatting applied (bold,
+    // headings, lists) — one clean pass now that the full reply is
+    // stable replaces it with properly rendered HTML.
+    botBubble.classList.remove("streaming");
+    botBubble.innerHTML = renderMarkdown(finalReply);
 
     storeMessage({ role: "bot", content: finalReply });
 

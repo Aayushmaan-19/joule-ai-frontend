@@ -3,12 +3,12 @@ import { getTokenOptional } from "../auth/getToken.js";
 import state from "../config/state.js";
 
 /**
- * Streams the AI's reply, calling onChunk(accumulatedTextSoFar) as each
- * piece arrives from the backend, instead of waiting for the full
- * reply before showing anything.
+ * Streams the AI's reply, calling onChunk(delta) with each new piece of
+ * text as it arrives from the backend — not the accumulated text so far —
+ * so the caller can append-and-animate rather than re-render everything.
  *
  * @param {string} message
- * @param {(partialText: string) => void} onChunk
+ * @param {(delta: string) => void} onChunk
  * @returns {Promise<{ reply: string, remaining: number|null, limit: number|null }>}
  */
 export async function getAIReply(message, onChunk) {
@@ -54,8 +54,9 @@ export async function getAIReply(message, onChunk) {
     const { done, value } = await reader.read();
     if (done) break;
 
-    reply += decoder.decode(value, { stream: true });
-    onChunk(reply);
+    const delta = decoder.decode(value, { stream: true });
+    reply += delta;
+    onChunk(delta);
   }
 
   return {

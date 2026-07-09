@@ -964,6 +964,35 @@ body.voice-active .navbar {
   color: white;
 }
 
+/* =========================
+   LIVE STREAMING TEXT
+   Each chunk lands as its own span and fades/sharpens in, instead
+   of the whole bubble re-rendering on every token.
+========================= */
+
+.chat.streaming {
+  white-space: pre-wrap;
+}
+
+.stream-chunk {
+  display: inline;
+  animation: streamChunkIn 0.4s ease-out;
+}
+
+@keyframes streamChunkIn {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+    filter: blur(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+
 .message {
   display: flex;
   align-items: flex-end;
