@@ -12,10 +12,7 @@ import state from "../config/state.js";
  * @returns {Promise<{ reply: string, remaining: number|null, limit: number|null }>}
  */
 export async function getAIReply(message, onChunk) {
-  const t0 = Date.now();
-
   const token = await getTokenOptional();
-  console.log(`[TIMING] token ready: +${Date.now() - t0}ms`);
 
   const headers = { "Content-Type": "application/json" };
   if (token) {
@@ -33,8 +30,6 @@ export async function getAIReply(message, onChunk) {
       history: historyToSend
     })
   });
-
-  console.log(`[TIMING] response headers received: +${Date.now() - t0}ms`);
 
   if (!response.ok) {
     let errorMessage = "Request failed";
@@ -54,23 +49,15 @@ export async function getAIReply(message, onChunk) {
   const reader = response.body.getReader();
   const decoder = new TextDecoder();
   let reply = "";
-  let firstChunk = true;
 
   while (true) {
     const { done, value } = await reader.read();
     if (done) break;
 
-    if (firstChunk) {
-      console.log(`[TIMING] first chunk read: +${Date.now() - t0}ms`);
-      firstChunk = false;
-    }
-
     const delta = decoder.decode(value, { stream: true });
     reply += delta;
     onChunk(delta);
   }
-
-  console.log(`[TIMING] stream done: +${Date.now() - t0}ms`);
 
   return {
     reply,
