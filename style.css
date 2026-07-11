@@ -3715,7 +3715,7 @@ input:focus {
   height: 38px;
   border: none;
   border-radius: 10px;
-  background: transparent;
+  background: #3b82f6;
   color: white;
   cursor: pointer;
   display: flex;
@@ -3726,12 +3726,25 @@ input:focus {
 }
 
 .sidebar-open-btn:hover {
+  background: #2563eb;
   transform: translateY(-1px);
 }
 
-.sidebar-open-btn img {
+.sidebar-open-icon {
+  display: block;
   width: 17px;
   height: 17px;
+
+  background-color: currentColor;
+
+  -webkit-mask-image: url("Assets/Icons/sidebar-open.svg");
+  mask-image: url("Assets/Icons/sidebar-open.svg");
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
 }
 
 #app.sidebar-visible .sidebar-open-btn {
@@ -3916,7 +3929,7 @@ input:focus {
 .sidebar-item-name {
   font-size: 13px;
   font-weight: 600;
-  color: transparent;
+  color: #1e3a8a;
 
   overflow: hidden;
   text-overflow: ellipsis;
@@ -4008,12 +4021,13 @@ input:focus {
 ========================================================= */
 
 .dark .sidebar-open-btn {
-  background: transparent;
-  color: #0f172a;
+  background: #60a5fa;
+  color: #a78bfa;
 }
 
 .dark .sidebar-open-btn:hover {
-  color: white;
+  background: #3b82f6;
+  color: #8b5cf6;
 }
 
 .dark .chat-sidebar {
@@ -4106,8 +4120,13 @@ input:focus {
 ========================================================= */
 
 .shinigami .sidebar-open-btn {
-  background: transparent;
-  color: white;
+  background: #3b82f6;
+  color: #ff6b6b;
+}
+
+.shinigami .sidebar-open-btn:hover {
+  background: #2563eb;
+  color: #ff5252;
 }
 
 .shinigami .chat-sidebar {
