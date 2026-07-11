@@ -10,6 +10,7 @@ import {
 } from "./chatHistory.js";
 import { render as renderSidebar } from "../ui/sidebar.js";
 import state from "../config/state.js";
+import { isBackendAwake } from "../config/selectors.js";
 
 const THINKING_HTML = `
   <div class="typing">
@@ -28,6 +29,13 @@ export async function sendMessage() {
   storeMessage({ role: "user", content: value });
 
   input.value = "";
+
+  if (!isBackendAwake()) {
+    const nudge = "😴 I'm still asleep — tap \"Wake Me Up\" below to get started!";
+    addMessage(nudge, "bot");
+    storeMessage({ role: "bot", content: nudge });
+    return;
+  }
 
   const botBubble = addMessage(THINKING_HTML, "bot");
   let isFirstChunk = true;
@@ -51,10 +59,19 @@ export async function sendMessage() {
     const finalReply = data.reply.trim();
 
     // Raw streamed text has no markdown formatting applied (bold,
-    // headings, lists) — one clean pass now that the full reply is
-    // stable replaces it with properly rendered HTML.
+    // headings, lists). The previous hard innerHTML swap here was the
+    // actual source of the "pop" — it replaced the animating chunks
+    // instantly with zero transition, often within milliseconds of
+    // streaming starting on a fast reply. Wrapping the final render in
+    // the same fade used for chunks keeps the settle-into-markdown
+    // moment smooth instead of an abrupt cut.
     botBubble.classList.remove("streaming");
-    botBubble.innerHTML = renderMarkdown(finalReply);
+
+    const finalWrap = document.createElement("div");
+    finalWrap.className = "final-reply";
+    finalWrap.innerHTML = renderMarkdown(finalReply);
+    botBubble.innerHTML = "";
+    botBubble.appendChild(finalWrap);
 
     storeMessage({ role: "bot", content: finalReply });
 

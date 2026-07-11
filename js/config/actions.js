@@ -35,6 +35,11 @@ export function setImageGenerationEnabled(value) {
   state.tools.imageGenerationEnabled = value;
 }
 
+export function setBackendAwake(value) {
+
+  state.backend.isAwake = value;
+}
+
 export function setUser(user) {
 
   state.auth.user = user;

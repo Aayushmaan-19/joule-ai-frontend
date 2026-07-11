@@ -251,16 +251,27 @@ function handleRename(id, itemEl) {
    OPEN / CLOSE / TOGGLE
 ========================================================= */
 
+const SIDEBAR_ICON_OPEN = "Assets/Icons/sidebar-open.svg";
+const SIDEBAR_ICON_CLOSED = "Assets/Icons/sidebar-close.svg";
+
+function syncToggleIcon() {
+  const icon = document.getElementById("sidebarToggleIcon");
+  if (!icon) return;
+  icon.src = isOpen ? SIDEBAR_ICON_CLOSED : SIDEBAR_ICON_OPEN;
+}
+
 export function open() {
   if (!sidebarEl) return;
   isOpen = true;
   document.getElementById("app")?.classList.add("sidebar-visible");
+  syncToggleIcon();
 }
 
 export function close() {
   if (!sidebarEl) return;
   isOpen = false;
   document.getElementById("app")?.classList.remove("sidebar-visible");
+  syncToggleIcon();
 }
 
 export function toggle() {

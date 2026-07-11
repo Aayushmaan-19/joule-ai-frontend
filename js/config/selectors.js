@@ -18,6 +18,9 @@ export const isListening =
 export const isImageGenerationEnabled =
   () => state.tools.imageGenerationEnabled;
 
+export const isBackendAwake =
+  () => state.backend.isAwake;
+
 export const currentUser =
   () => state.auth.user;
 

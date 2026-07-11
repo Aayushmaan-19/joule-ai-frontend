@@ -30,6 +30,12 @@ const state = {
 
   },
 
+  backend: {
+
+    isAwake: false
+
+  },
+
   auth: {
 
     user: null,

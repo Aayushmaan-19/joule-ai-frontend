@@ -8,7 +8,7 @@ const LEGAL_CONTENT = {
   privacy: {
     title: "Privacy Policy",
     icon: "🔒",
-    lastUpdated: "June 2025",
+    lastUpdated: "July 2026",
     sections: [
       {
         heading: "Overview",
@@ -57,7 +57,7 @@ const LEGAL_CONTENT = {
   terms: {
     title: "Terms of Service",
     icon: "📋",
-    lastUpdated: "June 2025",
+    lastUpdated: "July 2026",
     sections: [
       {
         heading: "Agreement",
@@ -140,7 +140,7 @@ const LEGAL_CONTENT = {
       },
       {
         heading: "Version",
-        body: `Joule AI v1.0 — June 2025<br>Actively maintained and improved.`
+        body: `Joule AI v1.0 — July 2026<br>Actively maintained and improved.`
       }
     ]
   },
