@@ -3715,7 +3715,7 @@ input:focus {
   height: 38px;
   border: none;
   border-radius: 10px;
-  background: #3b82f6;
+  background: transparent;
   color: white;
   cursor: pointer;
   display: flex;
@@ -3726,7 +3726,6 @@ input:focus {
 }
 
 .sidebar-open-btn:hover {
-  background: #2563eb;
   transform: translateY(-1px);
 }
 
@@ -4009,12 +4008,11 @@ input:focus {
 ========================================================= */
 
 .dark .sidebar-open-btn {
-  background: #60a5fa;
+  background: transparent;
   color: #0f172a;
 }
 
 .dark .sidebar-open-btn:hover {
-  background: #3b82f6;
   color: white;
 }
 
@@ -4108,12 +4106,8 @@ input:focus {
 ========================================================= */
 
 .shinigami .sidebar-open-btn {
-  background: #3b82f6;
+  background: transparent;
   color: white;
-}
-
-.shinigami .sidebar-open-btn:hover {
-  background: #2563eb;
 }
 
 .shinigami .chat-sidebar {
