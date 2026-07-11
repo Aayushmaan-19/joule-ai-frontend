@@ -3735,6 +3735,10 @@ input:focus {
   height: 17px;
 }
 
+#app.sidebar-visible .sidebar-open-btn {
+  display: none;
+}
+
 /* ---------- PANEL ---------- */
 
 .chat-sidebar {

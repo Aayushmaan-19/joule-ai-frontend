@@ -65,10 +65,7 @@ function buildDOM() {
         </button>
 
         <button class="sidebar-action-btn" id="sidebarCollapseBtn" title="Close sidebar">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="15 18 9 12 15 6"/>
-          </svg>
+          <img src="Assets/Icons/sidebar-close.svg" alt="" width="16" height="16" />
         </button>
 
         <button class="sidebar-action-btn sidebar-danger-btn" id="sidebarClearAllBtn" title="Delete all history">
@@ -251,27 +248,16 @@ function handleRename(id, itemEl) {
    OPEN / CLOSE / TOGGLE
 ========================================================= */
 
-const SIDEBAR_ICON_OPEN = "Assets/Icons/sidebar-open.svg";
-const SIDEBAR_ICON_CLOSED = "Assets/Icons/sidebar-close.svg";
-
-function syncToggleIcon() {
-  const icon = document.getElementById("sidebarToggleIcon");
-  if (!icon) return;
-  icon.src = isOpen ? SIDEBAR_ICON_CLOSED : SIDEBAR_ICON_OPEN;
-}
-
 export function open() {
   if (!sidebarEl) return;
   isOpen = true;
   document.getElementById("app")?.classList.add("sidebar-visible");
-  syncToggleIcon();
 }
 
 export function close() {
   if (!sidebarEl) return;
   isOpen = false;
   document.getElementById("app")?.classList.remove("sidebar-visible");
-  syncToggleIcon();
 }
 
 export function toggle() {
