@@ -3917,7 +3917,7 @@ input:focus {
 .sidebar-item-name {
   font-size: 13px;
   font-weight: 600;
-  color: #1e3a8a;
+  color: transparent;
 
   overflow: hidden;
   text-overflow: ellipsis;
