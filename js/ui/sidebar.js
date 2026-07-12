@@ -65,7 +65,7 @@ function buildDOM() {
         </button>
 
         <button class="sidebar-action-btn" id="sidebarCollapseBtn" title="Close sidebar">
-          <img src="Assets/Icons/sidebar-close.svg" alt="" width="16" height="16" />
+          <span class="sidebar-close-icon"></span>
         </button>
 
         <button class="sidebar-action-btn sidebar-danger-btn" id="sidebarClearAllBtn" title="Delete all history">
