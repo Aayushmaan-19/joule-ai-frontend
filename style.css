@@ -71,6 +71,17 @@ body {
   opacity: 0.5;
 }
 
+/*=====================Theme Sidebar Icon Colors===================*/
+:root {
+  --sidebar-icon-stroke: #1976d2; /* blue for light */
+}
+.dark {
+  --sidebar-icon-stroke: #a259f7; /* purple for dark */
+}
+.shinigami {
+  --sidebar-icon-stroke: #e53935; /* red for shinigami */
+}
+
 /*=====================Header===================*/
 
 /* Chat container is the ONLY scrollable element — everything else
@@ -3716,12 +3727,11 @@ input:focus {
   border: none;
   border-radius: 10px;
   background: transparent;
-  color: white;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.18s ease, transform 0.18s ease;
+  transition: transform 0.18s ease;
   z-index: 200;
 }
 
@@ -3729,9 +3739,23 @@ input:focus {
   transform: translateY(-1px);
 }
 
-.sidebar-open-btn img {
+.sidebar-open-icon {
+  display: block;
   width: 17px;
   height: 17px;
+
+  background-color: var(--sidebar-icon-stroke);
+
+  -webkit-mask-image: url("Assets/Icons/sidebar-open.svg");
+  mask-image: url("Assets/Icons/sidebar-open.svg");
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+
+  transition: background-color 0.3s ease;
 }
 
 #app.sidebar-visible .sidebar-open-btn {
@@ -4009,11 +4033,6 @@ input:focus {
 
 .dark .sidebar-open-btn {
   background: transparent;
-  color: #0f172a;
-}
-
-.dark .sidebar-open-btn:hover {
-  color: white;
 }
 
 .dark .chat-sidebar {
@@ -4107,7 +4126,6 @@ input:focus {
 
 .shinigami .sidebar-open-btn {
   background: transparent;
-  color: white;
 }
 
 .shinigami .chat-sidebar {
