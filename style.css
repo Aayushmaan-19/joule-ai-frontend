@@ -3746,8 +3746,8 @@ input:focus {
 
   background-color: var(--sidebar-icon-stroke);
 
-  -webkit-mask-image: url("Assets/Icons/sidebar-open.svg");
-  mask-image: url("Assets/Icons/sidebar-open.svg");
+  -webkit-mask-image: url("/Assets/Icons/sidebar-open.svg");
+  mask-image: url("/Assets/Icons/sidebar-open.svg");
   -webkit-mask-size: contain;
   mask-size: contain;
   -webkit-mask-repeat: no-repeat;
