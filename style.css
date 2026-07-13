@@ -71,6 +71,26 @@ body {
   opacity: 0.5;
 }
 
+/*=====================================================
+  RESPONSIVE SCALE
+  Single source of truth for mobile sizing. Desktop is
+  untouched — --ui-scale stays 1 above 768px, so every
+  calc(BASE * var(--ui-scale)) below resolves back to
+  the exact desktop pixel value. Below 768px it shrinks
+  fluidly (no breakpoint jumps) down to a 0.78 floor at
+  320px, since (100vw - 320px)/(768px - 320px) is a
+  unitless px/px ratio.
+=====================================================*/
+:root {
+  --ui-scale: 1;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --ui-scale: clamp(0.78, 0.78 + 0.22 * ((100vw - 320px) / (768px - 320px)), 1);
+  }
+}
+
 /*=====================Theme Sidebar Icon Colors===================*/
 :root {
   --sidebar-icon-stroke: #1976d2; /* blue for light */
@@ -1133,12 +1153,6 @@ body.voice-active .navbar {
 
 .chat{
   max-width: min(88%, 650px);
-}
-
-@media (max-width:768px){
-  .chat{
-    max-width:85%;
-  }
 }
 
 .bot .chat {
@@ -4322,95 +4336,124 @@ input:focus {
 
 /* =================================
    MOBILE RESPONSIVE FIXES
+   Every size below is BASE * var(--ui-scale) — the base
+   is the real desktop value, so at 768px this resolves
+   to the desktop look, then shrinks fluidly down to the
+   smallest phones. No separate breakpoint tiers, no
+   transform:scale() hacks (those shrink the *paint* but
+   not the *layout box*, which is what caused header/logo
+   spacing to look off instead of actually resizing).
 ================================= */
 
 @media (max-width: 768px) {
 
-  .navbar{
+  #main {
+    height: 100dvh;
+  }
+
+  .navbar {
     top: 10px;
     right: 10px;
   }
 
-  .signup-btn{
-    padding: 8px 14px;
-    font-size: 13px;
+  .signup-btn {
+    padding: calc(12px * var(--ui-scale)) calc(24px * var(--ui-scale));
+    font-size: calc(15px * var(--ui-scale));
   }
 
-  .header-wrapper{
+  .header-wrapper {
     margin-top: 25px;
   }
 
-  .header{
-    padding: 12px 20px;
-    transform: scale(.9);
+  .header {
+    padding: calc(16px * var(--ui-scale)) calc(34px * var(--ui-scale));
   }
 
-  .logo-svg{
-    width: 60px;
-    height: 60px;
+  .logo-svg {
+    width: calc(60px * var(--ui-scale));
+    height: calc(60px * var(--ui-scale));
   }
 
-  .logo-text{
-    font-size: 32px;
+  .logo-text {
+    font-size: calc(32px * var(--ui-scale));
   }
 
-  .signature{
+  .signature {
     font-size: 14px;
     text-align: center;
     padding: 0 12px;
   }
 
-  .controls{
-    gap: 8px;
+  .controls {
+    gap: calc(14px * var(--ui-scale));
   }
 
-  .icon-btn{
-    width: 40px;
-    height: 40px;
+  .icon-btn {
+    width: calc(42px * var(--ui-scale));
+    height: calc(42px * var(--ui-scale));
   }
 
-  .chat-container{
-    padding: 12px;
+  .icon-btn svg {
+    width: calc(18px * var(--ui-scale));
+    height: calc(18px * var(--ui-scale));
   }
 
-  .chat{
-    max-width: 85%;
-    font-size: 14px;
+  .chat-container {
+    padding: calc(20px * var(--ui-scale));
   }
 
-  .message img{
-    width: 32px;
-    height: 32px;
-  }
-
-  .input-area{
-    padding: 10px;
-  }
-}
-
-@media (max-width:768px){
-
-  #main{
-    height: 100dvh;
-  }
-
-}
-
-@media (max-width: 400px){
-
-  .header{
-    transform: scale(.82);
-  }
-
-  .chat{
+  .chat {
     max-width: 90%;
+    font-size: calc(14.5px * var(--ui-scale));
   }
 
-  .signup-btn{
-    padding: 8px 14px;
-    font-size: 13px;
+  .message img {
+    width: calc(38px * var(--ui-scale));
+    height: calc(38px * var(--ui-scale));
   }
 
+  .input-area {
+    padding: calc(12px * var(--ui-scale)) calc(14px * var(--ui-scale));
+  }
+
+  /* Auth modal was a flat 430px with no viewport clamp — its
+     sibling .profile-panel already uses this exact pattern,
+     this was just never carried over. */
+  .auth-modal {
+    width: min(430px, 92vw);
+  }
+
+  /* Sidebar: on desktop it's a flex sibling that pushes #main
+     over by 270px. On a ~360px phone that squeezes the entire
+     app (header/buttons/input) into a ~90px sliver, which is
+     the real source of things looking "shrunk" or "huge" once
+     the sidebar is opened. Below 768px it becomes a fixed
+     overlay instead, so #main always keeps its full width. */
+  .chat-sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: min(280px, 82vw);
+    min-width: 0;
+    z-index: 500;
+    transform: translateX(-100%);
+    transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  #app.sidebar-visible .chat-sidebar {
+    width: min(280px, 82vw);
+    min-width: 0;
+    transform: translateX(0);
+  }
+
+  /* Dims the app behind the open sidebar and doubles as a
+     tap-outside-to-close target (wired in sidebar.js). */
+  #app.sidebar-visible::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 400;
+    background: rgba(15, 23, 42, 0.35);
+  }
 }
 
 /* =================================

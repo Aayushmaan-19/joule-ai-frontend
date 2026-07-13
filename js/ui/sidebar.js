@@ -89,6 +89,13 @@ function buildDOM() {
   sidebarEl.querySelector("#sidebarCollapseBtn").addEventListener("click", close);
   sidebarEl.querySelector("#sidebarClearAllBtn").addEventListener("click", handleClearAll);
 
+  // Mobile only: sidebar becomes a fixed overlay with a dimmed
+  // backdrop (see style.css). A click that hits the backdrop
+  // (not any real child element) reports its target as #app.
+  appEl.addEventListener("click", e => {
+    if (isOpen && e.target === appEl) close();
+  });
+
   // Sidebar is built but stays CLOSED until the user explicitly
   // toggles it via the open button — no auto-open on init.
 }
