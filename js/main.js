@@ -42,6 +42,7 @@ import { toggleMusic } from "./ui/musicPlayer.js";
 import "./ui/modalManager.js";
 import "./ui/profileManager.js";
 import "./ui/toolsMenu.js";
+import "./ui/mobileMoreMenu.js";
 import "./ui/wakeButton.js";
 import { initAnimationManager, recordActivity } from "./ui/animationManager.js";
 import "./ui/legalModal.js";

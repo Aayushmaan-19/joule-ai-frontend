@@ -284,6 +284,17 @@ body {
   mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
 }
 
+/* Text labels only ever appear inside the mobile controls popover
+   (see MOBILE RESPONSIVE FIXES) — desktop's icon-only row is untouched. */
+.icon-btn-label {
+  display: none;
+}
+
+/* #moreBtn is the mobile-only entry point into that popover. */
+.more-btn {
+  display: none;
+}
+
 /* =========================
    WAKE ME UP
    Soft, secondary — sits below the main controls, doesn't compete
@@ -4336,13 +4347,16 @@ input:focus {
 
 /* =================================
    MOBILE RESPONSIVE FIXES
-   Every size below is BASE * var(--ui-scale) — the base
-   is the real desktop value, so at 768px this resolves
-   to the desktop look, then shrinks fluidly down to the
-   smallest phones. No separate breakpoint tiers, no
-   transform:scale() hacks (those shrink the *paint* but
-   not the *layout box*, which is what caused header/logo
-   spacing to look off instead of actually resizing).
+   Two strategies, used deliberately:
+   1) Proportional sizing — BASE * var(--ui-scale). Base is the
+      real desktop value, so at 768px this resolves to the desktop
+      look, then shrinks fluidly down to the smallest phones. No
+      transform:scale() hacks (those shrink the *paint* but not
+      the *layout box*).
+   2) Structural changes — some things aren't a smaller-desktop
+      problem, they're an information-density problem. The controls
+      row and the sidebar get an actually different mobile layout
+      (popover, overlay) rather than a shrunk copy of the desktop one.
 ================================= */
 
 @media (max-width: 768px) {
@@ -4362,7 +4376,7 @@ input:focus {
   }
 
   .header-wrapper {
-    margin-top: 25px;
+    margin-top: 14px;
   }
 
   .header {
@@ -4384,18 +4398,87 @@ input:focus {
     padding: 0 12px;
   }
 
-  .controls {
-    gap: calc(14px * var(--ui-scale));
-  }
-
   .icon-btn {
     width: calc(42px * var(--ui-scale));
     height: calc(42px * var(--ui-scale));
   }
 
+  /* Actual icons are <img>, not <svg> — this rule matched nothing
+     last pass, so icons stayed 20px regardless of how much the
+     button around them shrank. */
+  .icon-btn img,
   .icon-btn svg {
-    width: calc(18px * var(--ui-scale));
-    height: calc(18px * var(--ui-scale));
+    width: calc(20px * var(--ui-scale));
+    height: calc(20px * var(--ui-scale));
+  }
+
+  .more-btn {
+    display: flex;
+  }
+
+  /* Controls: on desktop this is a persistent icon row. On mobile
+     it's one of four full-width bands stacked above the very first
+     chat bubble — the real reason things felt cramped/scaled rather
+     than native. It now lives behind #moreBtn as a proper popover,
+     styled like the app's other floating chrome (frosted white card,
+     same treatment as .header regardless of theme). */
+  .controls {
+    position: fixed;
+    top: 58px;
+    right: 10px;
+    z-index: 900;
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+    width: min(210px, 58vw);
+    padding: 8px;
+    mask-image: none;
+    -webkit-mask-image: none;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow:
+      0 20px 45px rgba(15, 23, 42, 0.18),
+      0 2px 8px rgba(15, 23, 42, 0.08);
+  }
+
+  .controls.menu-open {
+    display: flex;
+  }
+
+  /* Scoped to .controls specifically — leaves the round mic/send/
+     tools buttons in the input row untouched. */
+  .controls .icon-btn {
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .controls .icon-btn:hover {
+    background: rgba(37, 99, 235, 0.08);
+  }
+
+  .controls .icon-btn-label {
+    display: inline;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e293b;
+  }
+
+  /* .dark/.shinigami invert these icons to white for their dark
+     button backgrounds — but .controls is always the light frosted
+     card, so that inversion would go white-on-white here. */
+  .dark .controls .icon-btn img,
+  .shinigami .controls .icon-btn img {
+    filter: none;
   }
 
   .chat-container {

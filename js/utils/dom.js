@@ -64,6 +64,12 @@ export const sendBtn =
 export const clearBtn =
   document.getElementById("clearBtn");
 
+export const moreBtn =
+  document.getElementById("moreBtn");
+
+export const controls =
+  document.getElementById("controls");
+
 export const openAuth =
   document.getElementById("openAuth");
 

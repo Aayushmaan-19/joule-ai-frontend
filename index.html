@@ -320,6 +320,18 @@
           </button>
           <button id="openAuth" class="signup-btn">Sign Up</button>
           <button
+            id="moreBtn"
+            class="icon-btn more-btn"
+            aria-label="More options"
+            aria-expanded="false"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="5" r="1" />
+              <circle cx="12" cy="12" r="1" />
+              <circle cx="12" cy="19" r="1" />
+            </svg>
+          </button>
+          <button
             id="profileBtn"
             class="profile-btn hidden"
             aria-label="Open profile"
@@ -332,7 +344,7 @@
           </button>
         </nav>
 
-        <div class="controls">
+        <div class="controls" id="controls">
           <button class="icon-btn" id="musicBtn" aria-label="Toggle Music">
             <img
               src="Assets/Icons/play.svg"
@@ -340,9 +352,11 @@
               id="musicIcon"
               alt=""
             />
+            <span class="icon-btn-label">Music</span>
           </button>
           <button class="icon-btn" id="clearBtn" aria-label="Clear Chat">
             <img src="Assets/Icons/trash.svg" class="icon" alt="" />
+            <span class="icon-btn-label">Clear Chat</span>
           </button>
           <button class="icon-btn" id="themeBtn" aria-label="Toggle Theme">
             <img
@@ -351,6 +365,7 @@
               id="themeIcon"
               alt=""
             />
+            <span class="icon-btn-label">Theme</span>
           </button>
         </div>
 
