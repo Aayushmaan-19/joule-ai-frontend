@@ -290,11 +290,6 @@ body {
   display: none;
 }
 
-/* #moreBtn is the mobile-only entry point into that popover. */
-.more-btn {
-  display: none;
-}
-
 /* =========================
    WAKE ME UP
    Soft, secondary — sits below the main controls, doesn't compete
@@ -566,6 +561,14 @@ body {
     0 2px 6px rgba(0, 0, 0, 0.08);
 
   transition: all 0.25s ease;
+}
+
+/* #moreBtn is the mobile-only entry point into the .controls
+   popover. Placed after .icon-btn (which also sets display) so
+   this correctly wins on desktop — the previous spot lost that
+   cascade fight, which is why it was showing up everywhere. */
+.more-btn {
+  display: none;
 }
 
 .icon-btn.listening {
