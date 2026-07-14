@@ -4373,6 +4373,30 @@ input:focus {
     right: 10px;
   }
 
+  /* Was independently pinned at top:24px/left:24px — unrelated to
+     .navbar's own position, so tightening .navbar above left this
+     one sitting lower, off the row. Match it, and scale it the
+     same way .icon-btn scales so both clusters read as one row. */
+  .sidebar-open-btn {
+    top: 10px;
+    left: 10px;
+    width: calc(38px * var(--ui-scale));
+    height: calc(38px * var(--ui-scale));
+  }
+
+  .sidebar-open-icon {
+    width: calc(17px * var(--ui-scale));
+    height: calc(17px * var(--ui-scale));
+  }
+
+  /* Stayed a flat 46px while .icon-btn (and moreBtn, which uses it)
+     started scaling down — the mismatched diameter next to moreBtn
+     is the "icons look weird" effect. */
+  .profile-btn {
+    width: calc(46px * var(--ui-scale));
+    height: calc(46px * var(--ui-scale));
+  }
+
   .signup-btn {
     padding: calc(12px * var(--ui-scale)) calc(24px * var(--ui-scale));
     font-size: calc(15px * var(--ui-scale));
@@ -4382,23 +4406,18 @@ input:focus {
     margin-top: 14px;
   }
 
-  .header {
-    padding: calc(16px * var(--ui-scale)) calc(34px * var(--ui-scale));
-  }
-
-  .logo-svg {
-    width: calc(60px * var(--ui-scale));
-    height: calc(60px * var(--ui-scale));
-  }
-
-  .logo-text {
-    font-size: calc(32px * var(--ui-scale));
-  }
-
   .signature {
     font-size: 14px;
     text-align: center;
     padding: 0 12px;
+  }
+
+  /* -6px on desktop tucks this under .controls, which sits directly
+     above it in flow there. On mobile .controls is fixed/out of flow
+     (it's the popover now), so this was pulling Wake Me Up tight
+     against the signature instead. Give it real breathing room. */
+  .wake-wrapper {
+    margin-top: 20px;
   }
 
   .icon-btn {
