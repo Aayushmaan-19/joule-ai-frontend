@@ -71,26 +71,6 @@ body {
   opacity: 0.5;
 }
 
-/*=====================================================
-  RESPONSIVE SCALE
-  Single source of truth for mobile sizing. Desktop is
-  untouched — --ui-scale stays 1 above 768px, so every
-  calc(BASE * var(--ui-scale)) below resolves back to
-  the exact desktop pixel value. Below 768px it shrinks
-  fluidly (no breakpoint jumps) down to a 0.78 floor at
-  320px, since (100vw - 320px)/(768px - 320px) is a
-  unitless px/px ratio.
-=====================================================*/
-:root {
-  --ui-scale: 1;
-}
-
-@media (max-width: 768px) {
-  :root {
-    --ui-scale: clamp(0.78, 0.78 + 0.22 * ((100vw - 320px) / (768px - 320px)), 1);
-  }
-}
-
 /*=====================Theme Sidebar Icon Colors===================*/
 :root {
   --sidebar-icon-stroke: #1976d2; /* blue for light */
@@ -4350,16 +4330,21 @@ input:focus {
 
 /* =================================
    MOBILE RESPONSIVE FIXES
-   Two strategies, used deliberately:
-   1) Proportional sizing — BASE * var(--ui-scale). Base is the
-      real desktop value, so at 768px this resolves to the desktop
-      look, then shrinks fluidly down to the smallest phones. No
-      transform:scale() hacks (those shrink the *paint* but not
-      the *layout box*).
-   2) Structural changes — some things aren't a smaller-desktop
-      problem, they're an information-density problem. The controls
-      row and the sidebar get an actually different mobile layout
-      (popover, overlay) rather than a shrunk copy of the desktop one.
+
+   Sizing technique: clamp(MIN, calc(INTERCEPT + COEFFICIENTvw), BASE).
+   This is NOT the same as calc(BASE * var(--ui-scale)) from earlier —
+   that relied on dividing one length by another inside calc()
+   ( (100vw - 320px) / (768px - 320px) ), which silently produces an
+   invalid value in this browser (verified directly: even the trivial
+   calc(10px / 2px) falls back to invalid here, while calc(10px / 2)
+   — dividing by a plain number — works fine). That's what caused the
+   giant/flattened elements. The fix avoids dividing lengths entirely:
+   INTERCEPT and COEFFICIENT are precomputed constants (not computed
+   by the browser), so the browser only ever does length + (number*vw),
+   both always-valid operations. At 768px this resolves to exactly
+   the desktop BASE value; it shrinks fluidly down to a 0.78 floor
+   at 320px. Structural changes (popover, overlay sidebar) are kept
+   separate below — those are an information-density fix, not sizing.
 ================================= */
 
 @media (max-width: 768px) {
@@ -4380,26 +4365,27 @@ input:focus {
   .sidebar-open-btn {
     top: 10px;
     left: 10px;
-    width: calc(38px * var(--ui-scale));
-    height: calc(38px * var(--ui-scale));
+    width: clamp(29.64px, calc(23.6686px + 1.8661vw), 38px);
+    height: clamp(29.64px, calc(23.6686px + 1.8661vw), 38px);
   }
 
   .sidebar-open-icon {
-    width: calc(17px * var(--ui-scale));
-    height: calc(17px * var(--ui-scale));
+    width: clamp(13.26px, calc(10.5886px + 0.8348vw), 17px);
+    height: clamp(13.26px, calc(10.5886px + 0.8348vw), 17px);
   }
 
   /* Stayed a flat 46px while .icon-btn (and moreBtn, which uses it)
      started scaling down — the mismatched diameter next to moreBtn
      is the "icons look weird" effect. */
   .profile-btn {
-    width: calc(46px * var(--ui-scale));
-    height: calc(46px * var(--ui-scale));
+    width: clamp(35.88px, calc(28.6514px + 2.2589vw), 46px);
+    height: clamp(35.88px, calc(28.6514px + 2.2589vw), 46px);
   }
 
   .signup-btn {
-    padding: calc(12px * var(--ui-scale)) calc(24px * var(--ui-scale));
-    font-size: calc(15px * var(--ui-scale));
+    padding: clamp(9.36px, calc(7.4743px + 0.5893vw), 12px)
+             clamp(18.72px, calc(14.9486px + 1.1786vw), 24px);
+    font-size: clamp(11.7px, calc(9.3429px + 0.7366vw), 15px);
   }
 
   .header-wrapper {
@@ -4421,8 +4407,8 @@ input:focus {
   }
 
   .icon-btn {
-    width: calc(42px * var(--ui-scale));
-    height: calc(42px * var(--ui-scale));
+    width: clamp(32.76px, calc(26.16px + 2.0625vw), 42px);
+    height: clamp(32.76px, calc(26.16px + 2.0625vw), 42px);
   }
 
   /* Actual icons are <img>, not <svg> — this rule matched nothing
@@ -4430,8 +4416,8 @@ input:focus {
      button around them shrank. */
   .icon-btn img,
   .icon-btn svg {
-    width: calc(20px * var(--ui-scale));
-    height: calc(20px * var(--ui-scale));
+    width: clamp(15.6px, calc(12.4571px + 0.9821vw), 20px);
+    height: clamp(15.6px, calc(12.4571px + 0.9821vw), 20px);
   }
 
   .more-btn {
@@ -4504,21 +4490,22 @@ input:focus {
   }
 
   .chat-container {
-    padding: calc(20px * var(--ui-scale));
+    padding: clamp(15.6px, calc(12.4571px + 0.9821vw), 20px);
   }
 
   .chat {
     max-width: 90%;
-    font-size: calc(14.5px * var(--ui-scale));
+    font-size: clamp(11.31px, calc(9.0314px + 0.7121vw), 14.5px);
   }
 
   .message img {
-    width: calc(38px * var(--ui-scale));
-    height: calc(38px * var(--ui-scale));
+    width: clamp(29.64px, calc(23.6686px + 1.8661vw), 38px);
+    height: clamp(29.64px, calc(23.6686px + 1.8661vw), 38px);
   }
 
   .input-area {
-    padding: calc(12px * var(--ui-scale)) calc(14px * var(--ui-scale));
+    padding: clamp(9.36px, calc(7.4743px + 0.5893vw), 12px)
+             clamp(10.92px, calc(8.72px + 0.6875vw), 14px);
   }
 
   /* Auth modal was a flat 430px with no viewport clamp — its
