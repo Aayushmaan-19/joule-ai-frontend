@@ -84,36 +84,26 @@ body {
 
 /*=====================Header===================*/
 
-/* Chat container is the ONLY scrollable element — everything else
-   sticks to the top of the column. Using sticky inside the flex
-   column so the header group floats over chat naturally. */
+/* Chat is the base layer: it fills #main edge-to-edge and sits
+   lowest in the stack. The header group (logo, signature, icon
+   controls, wake button) stays in normal flow on top of it —
+   not a separate block pushing chat down, but floating chrome
+   sharing the same space, above the chat. Padding on
+   .chat-container (below) keeps messages clear of that chrome. */
 
 .header-wrapper,
 .signature,
-.controls {
-  position: sticky;
-  top: 0;
+.controls,
+.wake-wrapper {
+  position: relative;
   z-index: 20;
-  /* Each element stacks cleanly — no overflow clipping needed */
   flex-shrink: 0;
 }
 
-.chat-container,
-.input-area {
-  position: relative;
-  z-index: 10;
-}
-
-/* Frosted layer behind the entire header group so chat text
-   scrolling underneath is masked rather than bleeding through */
-.header-wrapper::before,
-.signature::before,
-.controls::before {
-  content: "";
+.chat-container {
   position: absolute;
   inset: 0;
-  z-index: -1;
-  pointer-events: none;
+  z-index: 1;
 }
 
 .header-wrapper {
@@ -932,9 +922,14 @@ body.voice-active .navbar {
 }
 
 .chat-container {
-  flex: 1;
   overflow-y: auto;
   padding: 20px;
+  /* Clears the floating header group on top and the floating
+     input bar on the bottom, so messages don't start out hidden
+     behind them. Approximate — nudge if you change header/input
+     sizing and see a gap or overlap. */
+  padding-top: 300px;
+  padding-bottom: 100px;
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -1956,20 +1951,6 @@ body.voice-active .navbar {
   );
 }
 
-.shinigami .header-wrapper,
-.shinigami .signature,
-.shinigami .controls {
-  position: sticky;
-  z-index: 20;
-}
-
-.shinigami .chat-container,
-.shinigami .input-area {
-  position: relative;
-  z-index: 10;
-}
-
-
 .shinigami .input-area {
   background: rgba(15, 15, 15, 0.72);
 
@@ -2652,8 +2633,11 @@ body.switching::before {
 }
 
 .input-area {
-  position: sticky;
+  position: absolute;
+  left: 0;
+  right: 0;
   bottom: 12px;
+  z-index: 15;
 
   display: flex;
   align-items: center;
@@ -3732,8 +3716,10 @@ input:focus {
   flex-direction: column;
   min-width: 0;
   height: 100vh;
-  /* overflow: hidden kills sticky — use clip instead which
-     prevents scroll bars but preserves sticky positioning */
+  position: relative;
+  /* clip, not hidden — keeps the absolutely-positioned
+     chat-container/input-area from spilling past #main's edges
+     without introducing a scrollbar of its own */
   overflow: clip;
 }
 
@@ -4502,6 +4488,10 @@ input:focus {
 
   .chat-container {
     padding: clamp(15.6px, calc(12.4571px + 0.9821vw), 20px);
+    /* Shorter than desktop's 300px — .controls is a fixed popover
+       here, not part of the in-flow header group, so there's less
+       floating chrome to clear at the top. */
+    padding-top: 210px;
   }
 
   .chat {
