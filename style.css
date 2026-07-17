@@ -2682,6 +2682,7 @@ body.switching::before {
 
 #input {
   flex: 1;
+  min-width: 0;
 
   background: transparent;
 
@@ -2696,6 +2697,16 @@ body.switching::before {
   color: #1e293b;
 
   font-weight: 500;
+}
+
+/* .icon-btn has overflow:hidden, which per the flexbox spec makes
+   its automatic (min-width:auto) shrink floor effectively 0 — so
+   on a narrow row it was squeezed to make room for #input instead
+   of #input shrinking (that needed min-width:0 above). Icons should
+   never shrink; only the input field should absorb width changes. */
+.input-area .tools-wrapper,
+.input-area .icon-btn {
+  flex-shrink: 0;
 }
 
 .input-area:focus-within {
