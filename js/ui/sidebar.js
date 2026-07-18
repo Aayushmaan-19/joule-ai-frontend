@@ -1,5 +1,5 @@
 import { auth } from "../auth/firebase.js";
-import { chat as chatEl } from "../utils/dom.js";
+import { chat as chatEl, input as inputEl } from "../utils/dom.js";
 import {
   getAllSessions,
   saveCurrentSession,
@@ -10,9 +10,10 @@ import {
   startNewSession
 } from "../chat/chatHistory.js";
 import { addMessage } from "../chat/renderMessage.js";
-import { addMessage as storeMessage, setConversation, clearMessages } from "../config/actions.js";
+import { addMessage as storeMessage, setConversation, clearMessages, setPrivateMode } from "../config/actions.js";
 import { renderMarkdown } from "../utils/markdown.js";
 import state from "../config/state.js";
+import { isPrivateMode } from "../config/selectors.js";
 
 let sidebarEl = null;
 let isOpen = false;
@@ -64,6 +65,15 @@ function buildDOM() {
           </svg>
         </button>
 
+        <button class="sidebar-action-btn sidebar-ghost-btn" id="sidebarPrivateBtn" title="Start a private chat" aria-pressed="false">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 10h.01"/>
+            <path d="M15 10h.01"/>
+            <path d="M12 2a8 8 0 0 0-8 8v12l3-3 2.5 2.5L12 19l2.5 2.5L17 19l3 3V10a8 8 0 0 0-8-8z"/>
+          </svg>
+        </button>
+
         <button class="sidebar-action-btn" id="sidebarCollapseBtn" title="Close sidebar">
           <span class="sidebar-close-icon"></span>
         </button>
@@ -86,6 +96,7 @@ function buildDOM() {
   appEl.insertBefore(sidebarEl, appEl.firstChild);
 
   sidebarEl.querySelector("#sidebarNewBtn").addEventListener("click", handleNew);
+  sidebarEl.querySelector("#sidebarPrivateBtn").addEventListener("click", handleTogglePrivate);
   sidebarEl.querySelector("#sidebarCollapseBtn").addEventListener("click", close);
   sidebarEl.querySelector("#sidebarClearAllBtn").addEventListener("click", handleClearAll);
 
@@ -93,6 +104,7 @@ function buildDOM() {
     if (isOpen && e.target === appEl) close();
   });
 
+  updateGhostUI();
 }
 
 /* =========================================================
@@ -179,6 +191,8 @@ export function render() {
 function handleNew() {
   saveCurrentSession();
   chatEl.innerHTML = "";
+  setPrivateMode(false);
+  updateGhostUI();
   startNewSession();
   render();
 }
@@ -192,6 +206,8 @@ function handleLoad(id) {
   chatEl.innerHTML = "";
   clearMessages();
   setConversation(id);
+  setPrivateMode(false);
+  updateGhostUI();
 
   for (const msg of session.messages) {
     const bubble = addMessage(
@@ -217,6 +233,47 @@ function handleClearAll() {
   chatEl.innerHTML = "";
   startNewSession();
   render();
+}
+
+/* =========================================================
+   PRIVATE CHAT (GHOST MODE)
+   Toggling starts a fresh session in the opposite mode. Whichever
+   chat is being left behind is saved only if it was a normal one —
+   saveCurrentSession() itself refuses to persist while isPrivate is
+   still true, so calling it before flipping the flag is what makes
+   both directions (enter/exit) correct with one code path.
+========================================================= */
+
+function handleTogglePrivate() {
+  const enteringPrivate = !isPrivateMode();
+
+  saveCurrentSession();
+  setPrivateMode(enteringPrivate);
+
+  chatEl.innerHTML = "";
+  clearMessages();
+  setConversation(null);
+
+  updateGhostUI();
+  render();
+}
+
+function updateGhostUI() {
+  if (!sidebarEl) return;
+
+  const active = isPrivateMode();
+  const ghostBtn = sidebarEl.querySelector("#sidebarPrivateBtn");
+
+  ghostBtn.classList.toggle("is-active", active);
+  ghostBtn.setAttribute("aria-pressed", String(active));
+  ghostBtn.title = active
+    ? "Private chat is on — click to end it"
+    : "Start a private chat";
+
+  document.body.classList.toggle("private-mode", active);
+  inputEl.placeholder = active
+    ? "Private chat — nothing is saved…"
+    : "Type message...";
 }
 
 function handleRename(id, itemEl) {

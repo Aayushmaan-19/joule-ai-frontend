@@ -33,6 +33,11 @@ export function getAllSessions() {
 }
 
 export function saveCurrentSession() {
+  // Single guard point: private chats are never written to storage,
+  // no matter which of the app's several call sites triggered this
+  // (send, image gen, new chat, load, logout, beforeunload, clear).
+  if (state.chat.isPrivate) return null;
+
   const messages = state.chat.messages;
 
   if (!messages || messages.length === 0) return null;

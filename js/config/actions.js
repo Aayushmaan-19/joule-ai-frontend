@@ -60,6 +60,11 @@ export function setConversation(id) {
   state.chat.currentConversationId = id;
 }
 
+export function setPrivateMode(value) {
+
+  state.chat.isPrivate = value;
+}
+
 export function addMessage(message) {
 
   state.chat.messages.push(message);

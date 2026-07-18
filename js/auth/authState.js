@@ -1,7 +1,7 @@
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase.js";
 import { openAuth, profileBtn, profileAvatar } from "../utils/dom.js";
-import { setUser, setProfile } from "../config/actions.js";
+import { setUser, setProfile, setPrivateMode } from "../config/actions.js";
 import { syncProfileAvatar } from "../ui/profileManager.js";
 import { initSidebar, destroySidebar, toggle as toggleSidebar } from "../ui/sidebar.js";
 import { saveCurrentSession } from "../chat/chatHistory.js";
@@ -45,6 +45,9 @@ export function initializeAuthState() {
       console.log("❌ Logged out");
 
       saveCurrentSession();
+
+      setPrivateMode(false);
+      document.body.classList.remove("private-mode");
 
       localStorage.removeItem("firebaseToken");
 

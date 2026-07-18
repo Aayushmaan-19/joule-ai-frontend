@@ -2467,6 +2467,14 @@ body {
   transform: translateZ(0);
 }
 
+/* .icon-btn svg already pops on hover (line ~575) — most of this
+   app's icon-btns use <img>, not <svg>, and had no equivalent. The
+   spring transition above was already defined and just never had
+   a hover state to trigger it. */
+.icon-btn:hover img {
+  transform: translateZ(0) scale(1.08);
+}
+
 .theme-animate {
   animation: smoothSpin 0.75s cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -3878,6 +3886,52 @@ input:focus {
 
 .sidebar-danger-btn:hover {
   background: rgba(248, 113, 113, 0.2);
+}
+
+/* Ghost button: a state indicator, not a theme — stays this same
+   spectral violet whether the app is in light, dark, or shinigami
+   mode, same reasoning as the mic's .icon-btn.listening treatment. */
+.sidebar-ghost-btn.is-active {
+  background: rgba(124, 58, 237, 0.16);
+  color: #7c3aed;
+  box-shadow: 0 0 0 1px rgba(124, 58, 237, 0.25), 0 0 12px rgba(124, 58, 237, 0.3);
+}
+
+.sidebar-ghost-btn.is-active:hover {
+  background: rgba(124, 58, 237, 0.26);
+}
+
+.sidebar-ghost-btn.is-active svg {
+  animation: ghostBob 3s ease-in-out infinite;
+}
+
+@keyframes ghostBob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-1.5px); }
+}
+
+/* =========================================================
+   PRIVATE CHAT MODE
+   Subtle, theme-agnostic violet tint so an active private chat
+   reads as visually distinct at a glance, without a loud banner.
+========================================================= */
+
+body.private-mode .chat-container {
+  background: linear-gradient(180deg, rgba(124, 58, 237, 0.05), rgba(124, 58, 237, 0.02) 40%, transparent 70%);
+}
+
+body.private-mode .input-area {
+  border-color: rgba(124, 58, 237, 0.35);
+  box-shadow:
+    0 10px 35px rgba(124, 58, 237, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+body.private-mode .input-area:focus-within {
+  border-color: rgba(124, 58, 237, 0.5);
+  box-shadow:
+    0 0 0 4px rgba(124, 58, 237, 0.12),
+    0 15px 40px rgba(124, 58, 237, 0.18);
 }
 
 /* ---------- SESSIONS LIST ---------- */

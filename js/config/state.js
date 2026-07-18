@@ -50,7 +50,9 @@ const state = {
 
     messages: [],
 
-    currentConversationId: null
+    currentConversationId: null,
+
+    isPrivate: false
 
   }
 

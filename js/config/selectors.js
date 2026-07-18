@@ -26,3 +26,6 @@ export const currentUser =
 
 export const currentProfile =
   () => state.auth.profile;
+
+export const isPrivateMode =
+  () => state.chat.isPrivate;
