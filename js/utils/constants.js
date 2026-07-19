@@ -24,6 +24,8 @@ export const SONGS = [
 
 export const API_URL = "https://joule-ai-backend.onrender.com/api/ai/chat";
 
+export const WAKE_API_URL = "https://joule-ai-backend.onrender.com/api/wake";
+
 export const AUTH_API_URL = "https://joule-ai-backend.onrender.com/api/auth";
 
 export const IMAGE_API_URL = "https://joule-ai-backend.onrender.com/api/image/generate";
