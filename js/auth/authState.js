@@ -30,7 +30,14 @@ export function initializeAuthState() {
       openAuth.classList.add("hidden");
       profileBtn.classList.remove("hidden");
 
-      await syncProfileAvatar(user.uid);
+      // Avatar sync is cosmetic; sidebar init below is not. A failure
+      // here (e.g. a Firestore rules issue) must not be allowed to
+      // block the sidebar — these are two separate responsibilities.
+      try {
+        await syncProfileAvatar(user.uid);
+      } catch (err) {
+        console.error("Profile avatar sync failed:", err.message);
+      }
 
       // Sidebar only for verified users
       if (user.emailVerified) {
