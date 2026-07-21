@@ -35,9 +35,8 @@ const LEGAL_CONTENT = {
         body: `Joule AI integrates with the following services, each with their own privacy policies:<br><br>
         • <strong>Firebase (Google)</strong> — Authentication and database<br>
         • <strong>Groq</strong> — AI inference engine (your messages are processed by Groq's servers)<br>
-        • <strong>ElevenLabs</strong> — Text-to-speech synthesis<br>
         • <strong>Brevo</strong> — Transactional email delivery for OTP codes<br><br>
-        Message content sent to Groq is governed by Groq's privacy policy. We recommend not sharing sensitive personal information in chat messages.`
+        Message content sent to Groq is governed by Groq's privacy policy. We recommend not sharing sensitive personal information in chat messages. Text-to-speech runs entirely on your own device via your browser's built-in speech synthesis — no message text is sent anywhere for this.`
       },
       {
         heading: "Data Retention & Deletion",
@@ -125,7 +124,7 @@ const LEGAL_CONTENT = {
         • <strong>Backend:</strong> Node.js + Express, deployed on Render<br>
         • <strong>AI Engine:</strong> Groq (lightning-fast inference)<br>
         • <strong>Auth:</strong> Firebase Authentication + Firestore<br>
-        • <strong>Voice:</strong> ElevenLabs TTS + Web Speech API for microphone input<br>
+        • <strong>Voice:</strong> Browser-native Speech Synthesis for TTS + Web Speech API for microphone input<br>
         • <strong>Email:</strong> Brevo for OTP verification<br>
         • <strong>Deployment:</strong> Vercel (frontend) + Render (backend)`
       },

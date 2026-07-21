@@ -51,8 +51,9 @@ function createBotActions(bubble) {
     const text = bubble.innerText.trim();
     if (!text || soundBtn.classList.contains("speaking")) return;
     soundBtn.classList.add("speaking");
-    speakText(text).then(audio => {
-      audio.addEventListener("ended", () => soundBtn.classList.remove("speaking"));
+    speakText(text).then(utterance => {
+      utterance.addEventListener("end", () => soundBtn.classList.remove("speaking"));
+      utterance.addEventListener("error", () => soundBtn.classList.remove("speaking"));
     }).catch(() => soundBtn.classList.remove("speaking"));
   });
 

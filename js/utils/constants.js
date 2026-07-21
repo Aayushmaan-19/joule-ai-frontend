@@ -30,15 +30,6 @@ export const AUTH_API_URL = "https://joule-ai-backend.onrender.com/api/auth";
 
 export const IMAGE_API_URL = "https://joule-ai-backend.onrender.com/api/image/generate";
 
-export const TTS_URL =
-  import.meta.env.VITE_TTS_URL;
-
-export const NORMAL_VOICE_ID =
-  import.meta.env.VITE_NORMAL_VOICE_ID;
-
-export const SHINIGAMI_VOICE_ID =
-  import.meta.env.VITE_SHINIGAMI_VOICE_ID;
-
 export const SILENCE_THRESHOLD = 8;
 
 export const SILENCE_DURATION = 3000;
