@@ -12,6 +12,22 @@ import state from "../config/state.js";
 import { auth } from "../auth/firebase.js";
 import { openModal, openVerificationFlow } from "../ui/modalManager.js";
 
+const DOWNLOAD_ICON_SVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg>`;
+
+// Reads the MIME type straight out of the data URL Pollinations
+// actually returned, rather than assuming a fixed format — correct
+// regardless of which image format is behind it.
+function extensionForDataUrl(dataUrl) {
+  const mimeType = dataUrl.slice(5, dataUrl.indexOf(";"));
+
+  switch (mimeType) {
+    case "image/png": return "png";
+    case "image/webp": return "webp";
+    case "image/gif": return "gif";
+    default: return "jpg";
+  }
+}
+
 export async function sendImage() {
   const prompt = input.value.trim();
 
@@ -40,7 +56,10 @@ export async function sendImage() {
   try {
     const data = await getGeneratedImage(prompt);
 
-    const imageHtml = `<img class="generated-image" src="${data.image}" alt="${prompt.replace(/"/g, "&quot;")}" />`;
+    const extension = extensionForDataUrl(data.image);
+    const filename = `joule-image-${Date.now()}.${extension}`;
+
+    const imageHtml = `<div class="generated-image-wrapper"><img class="generated-image" src="${data.image}" alt="${prompt.replace(/"/g, "&quot;")}" /><a class="image-download-btn" href="${data.image}" download="${filename}">${DOWNLOAD_ICON_SVG}Download</a></div>`;
     botBubble.innerHTML = imageHtml;
     smoothScrollToBottom();
 
