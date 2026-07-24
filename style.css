@@ -85,17 +85,15 @@ body {
 /*=====================Header===================*/
 
 /* Chat is the base layer: it fills #main edge-to-edge and sits
-   lowest in the stack. Banner, signature, and the wake button stay
-   in normal flow on top of it, forming one small pinned identity
-   strip — not a separate block pushing chat down, but floating
-   chrome sharing the same space, above the chat. .controls (the
-   icon row) is handled separately below — it floats independently,
-   the same way .navbar and .sidebar-open-btn already do, rather
-   than living in this in-flow stack. Padding on .chat-container
-   (below) keeps messages clear of that chrome. */
+   lowest in the stack. The header group (logo, signature, icon
+   controls, wake button) stays in normal flow on top of it —
+   not a separate block pushing chat down, but floating chrome
+   sharing the same space, above the chat. Padding on
+   .chat-container (below) keeps messages clear of that chrome. */
 
 .header-wrapper,
 .signature,
+.controls,
 .wake-wrapper {
   position: relative;
   z-index: 20;
@@ -244,22 +242,16 @@ body {
 
 /*=====================Voice System UI===================*/
 
-/* Fixed, not in-flow — floats over the chat the same way .navbar
-   and .sidebar-open-btn do, stacked directly below .navbar to form
-   one utility cluster on the right (account controls above,
-   session/appearance controls below), rather than sitting between
-   the signature and wake button in the pinned identity strip.
-   top:90px is an estimate (navbar's own height + a gap) — nudge if
-   you change navbar's sizing and see a gap or overlap. */
 .controls {
-  position: fixed;
-  top: 90px;
-  right: 34px;
-  z-index: 900;
-
   display: flex;
+  justify-content: center;
   gap: 14px;
-  padding: 8px;
+  padding: 12px;
+  /* Bottom fade: chat text dissolves as it scrolls up under
+     the header group — no hard cut, no bleed-through */
+  padding-bottom: 18px;
+  -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
 }
 
 /* Text labels only ever appear inside the mobile controls popover
@@ -932,14 +924,11 @@ body.voice-active .navbar {
 .chat-container {
   overflow-y: auto;
   padding: 20px;
-  /* Clears the pinned identity strip (banner + signature + wake
-     button) on top and the floating input bar on the bottom, so
-     messages don't start out hidden behind them. .controls no
-     longer contributes to this — it floats independently now, same
-     as .navbar/.sidebar-open-btn — hence the drop from 300px.
-     Approximate either way — nudge if you change header/input
+  /* Clears the floating header group on top and the floating
+     input bar on the bottom, so messages don't start out hidden
+     behind them. Approximate — nudge if you change header/input
      sizing and see a gap or overlap. */
-  padding-top: 225px;
+  padding-top: 300px;
   padding-bottom: 100px;
   display: flex;
   flex-direction: column;
