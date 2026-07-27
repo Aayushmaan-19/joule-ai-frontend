@@ -1,0 +1,30 @@
+{
+  "name": "Joule AI",
+  "short_name": "Joule",
+  "description": "Joule AI is an advanced AI platform offering intelligent tools, chat assistance, productivity features, and AI-powered solutions.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0b0b24",
+  "theme_color": "#0b0b24",
+  "icons": [
+    {
+      "src": "Assets/logo/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "Assets/logo/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "Assets/logo/maskable-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
