@@ -4,10 +4,16 @@ body {
   height: 100%;
 }
 
-/* Hide scrollbar everywhere but keep scroll functionality */
+/* Hide scrollbar everywhere but keep scroll functionality.
+   overflow-x is set here too, not just on body: html is the actual
+   root scrolling element, and position:fixed descendants (this page
+   has several) don't reliably respect a hidden-overflow ancestor
+   that isn't the root — body-only was the gap letting mobile browsers
+   rubber-band a few px sideways. */
 html {
   scrollbar-width: none;
   -ms-overflow-style: none;
+  overflow-x: hidden;
 }
 
 html::-webkit-scrollbar {
@@ -883,8 +889,12 @@ body {
 }
 
 .ambient-1 {
-  width: 350px;
-  height: 350px;
+  /* Fixed 350px + left:10% overflows the viewport on any screen
+     narrower than ~390px — the concrete source of the few px of
+     sideways scroll room on phones. min() keeps desktop identical
+     (60vw > 350px above ~583px wide) while capping it on mobile. */
+  width: min(350px, 60vw);
+  height: min(350px, 60vw);
 
   background: rgba(123,125,255,.18);
 
@@ -1316,6 +1326,15 @@ body.voice-active .navbar {
 }
 
 /*=====================Signup Button===================*/
+
+/* Groups .sidebar-open-btn / .header-wrapper / .navbar for mobile
+   (see index.html). display:contents = no box, no containing block,
+   so on desktop this is a total no-op: each child keeps positioning
+   itself exactly as it did before this wrapper existed. Only the
+   768px query below turns it into a real element. */
+.topbar-mobile {
+  display: contents;
+}
 
 .navbar {
   position: fixed;
@@ -4447,18 +4466,66 @@ body.private-mode .input-area:focus-within {
     height: 100dvh;
   }
 
-  .navbar {
-    top: 10px;
-    right: 10px;
+  /* =========================================================
+     MOBILE TOP BAR
+     Replaces three independently-floating pieces (centered logo
+     pill, fixed top-right navbar, fixed top-left sidebar toggle)
+     with one row, so they can no longer drift into each other —
+     that drift was the actual mechanism behind the signup button
+     overlapping the banner. .topbar-mobile is display:contents on
+     desktop (base rule, above) — this is the only place it becomes
+     a real, visible box.
+  ========================================================= */
+  .topbar-mobile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+
+    height: 56px;
+    padding: 0 12px;
+
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 2px 16px rgba(30, 64, 175, 0.1);
   }
 
-  /* Was independently pinned at top:24px/left:24px — unrelated to
-     .navbar's own position, so tightening .navbar above left this
-     one sitting lower, off the row. Match it, and scale it the
-     same way .icon-btn scales so both clusters read as one row. */
+  .dark .topbar-mobile {
+    background: linear-gradient(
+      180deg,
+      rgba(85, 53, 173, 0.9),
+      rgba(45, 2, 146, 0.82)
+    );
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.35);
+  }
+
+  .shinigami .topbar-mobile {
+    background: rgba(10, 10, 10, 0.85);
+    box-shadow: 0 2px 16px rgba(255, 0, 0, 0.15);
+  }
+
+  /* Everything before .navbar in the row (hamburger, logo) stays
+     left via the row's own gap; this pushes just the auth/more
+     cluster to the bar's right edge. */
+  .topbar-mobile .navbar {
+    margin-left: auto;
+  }
+
+  /* Both used to be position:fixed with their own top/left/right —
+     that independence from each other is exactly what let them
+     overlap. Now they're ordinary flex children of .topbar-mobile. */
+  .navbar,
   .sidebar-open-btn {
-    top: 10px;
-    left: 10px;
+    position: static;
+  }
+
+  .sidebar-open-btn {
     width: clamp(29.64px, calc(23.6686px + 1.8661vw), 38px);
     height: clamp(29.64px, calc(23.6686px + 1.8661vw), 38px);
   }
@@ -4482,22 +4549,57 @@ body.private-mode .input-area:focus-within {
     font-size: clamp(11.7px, calc(9.3429px + 0.7366vw), 15px);
   }
 
+  /* The logo pill loses its own floating-card look on mobile —
+     .topbar-mobile is the only bar surface now, so a pill inside a
+     bar would just stack two backgrounds/shadows on top of each other. */
   .header-wrapper {
-    margin-top: 14px;
+    margin-top: 0;
+    padding-bottom: 0;
   }
 
+  .header {
+    padding: 0;
+    background: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: none;
+    border-radius: 0;
+    transform: none;
+  }
+
+  .header:hover,
+  .header:active {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .dark .header,
+  .shinigami .header {
+    background: none;
+    box-shadow: none;
+  }
+
+  .logo-svg {
+    width: 30px;
+    height: 30px;
+  }
+
+  .logo-text {
+    font-size: 19px;
+  }
+
+  /* Dropped on mobile — matches the compact-bar references, no
+     byline inside the top bar. */
   .signature {
-    font-size: 14px;
-    text-align: center;
-    padding: 0 12px;
+    display: none;
   }
 
-  /* -6px on desktop tucks this under .controls, which sits directly
-     above it in flow there. On mobile .controls is fixed/out of flow
-     (it's the popover now), so this was pulling Wake Me Up tight
-     against the signature instead. Give it real breathing room. */
+  /* Nothing above it is in flow anymore on mobile (.topbar-mobile is
+     fixed, .signature is gone) — .wake-wrapper is now the first
+     in-flow child of #main, so it has to clear the 56px fixed bar
+     itself rather than just tuck under .controls like it did before. */
   .wake-wrapper {
-    margin-top: 20px;
+    margin-top: 72px;
   }
 
   .icon-btn {
@@ -4526,7 +4628,9 @@ body.private-mode .input-area:focus-within {
      same treatment as .header regardless of theme). */
   .controls {
     position: fixed;
-    top: 58px;
+    /* Clears the 56px .topbar-mobile bar that #moreBtn now lives
+       inside, plus a small gap. */
+    top: 64px;
     right: 10px;
     z-index: 900;
     display: none;
@@ -4585,10 +4689,13 @@ body.private-mode .input-area:focus-within {
 
   .chat-container {
     padding: clamp(15.6px, calc(12.4571px + 0.9821vw), 20px);
-    /* Shorter than desktop's 300px — .controls is a fixed popover
-       here, not part of the in-flow header group, so there's less
-       floating chrome to clear at the top. */
-    padding-top: 210px;
+    /* Shorter than the old 210px: that value cleared a taller stack
+       (pill header + signature + wake button). The pill and
+       signature are gone from flow now — this only needs to clear
+       the 56px topbar + .wake-wrapper's own ~115px block (72px
+       margin-top + ~29px button + 14px bottom padding), plus a
+       10px cushion. */
+    padding-top: 125px;
   }
 
   .chat {

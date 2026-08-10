@@ -9,10 +9,10 @@ export const ICONS = {
 };
 
 export const USER_PIC =
-  "Assets/Images/user.png";
+  "Assets/Images/user.jpeg";
 
 export const BOT_PIC =
-  "Assets/Images/bot.png";
+  "Assets/Images/bot.jpeg";
 
 export const SONGS = [
   "Assets/Songs/Sahiba.mp3",

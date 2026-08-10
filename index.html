@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
   <head>
@@ -335,19 +336,12 @@
 
       <!-- MAIN COLUMN -->
       <div id="main">
-        <div class="header-wrapper">
-          <div class="header">
-            <svg class="logo-svg" viewBox="0 0 60 60">
-              <path class="j-path" d="M38 8 L38 34 Q38 52 20 52 Q10 52 10 40" />
-              <path class="j-tail" d="M40 18 Q58 30 42 52" />
-            </svg>
-            <div class="logo-text">oule</div>
-          </div>
-        </div>
-
-        <div class="signature">Owner : Aayushmaan</div>
-
-        <nav class="navbar">
+        <!-- On desktop this wrapper is display:contents (a no-op — its
+             three children lay out exactly as before, independently).
+             On mobile it becomes the single fixed top bar: hamburger +
+             logo on the left, auth/more cluster pushed right via
+             margin-left:auto. See MOBILE RESPONSIVE FIXES in style.css. -->
+        <div class="topbar-mobile">
           <button
             id="sidebarOpenBtn"
             class="sidebar-open-btn hidden"
@@ -356,6 +350,18 @@
           >
             <span class="sidebar-open-icon"></span>
           </button>
+
+          <div class="header-wrapper">
+            <div class="header">
+              <svg class="logo-svg" viewBox="0 0 60 60">
+                <path class="j-path" d="M38 8 L38 34 Q38 52 20 52 Q10 52 10 40" />
+                <path class="j-tail" d="M40 18 Q58 30 42 52" />
+              </svg>
+              <div class="logo-text">oule</div>
+            </div>
+          </div>
+
+          <nav class="navbar">
           <button id="openAuth" class="signup-btn">Sign Up</button>
           <button
             id="moreBtn"
@@ -389,7 +395,11 @@
               alt="Profile"
             />
           </button>
-        </nav>
+          </nav>
+        </div>
+        <!-- /.topbar-mobile -->
+
+        <div class="signature">Owner : Aayushmaan</div>
 
         <div class="controls" id="controls">
           <button class="icon-btn" id="musicBtn" aria-label="Toggle Music">
