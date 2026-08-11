@@ -73,6 +73,9 @@ export const controls =
 export const openAuth =
   document.getElementById("openAuth");
 
+export const openLogin =
+  document.getElementById("openLogin");
+
 export const modalOverlay =
   document.getElementById("modalOverlay");
 

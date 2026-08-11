@@ -1,6 +1,6 @@
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase.js";
-import { openAuth, profileBtn, profileAvatar } from "../utils/dom.js";
+import { openAuth, openLogin, profileBtn, profileAvatar } from "../utils/dom.js";
 import { setUser, setProfile, setPrivateMode } from "../config/actions.js";
 import { syncProfileAvatar } from "../ui/profileManager.js";
 import { initSidebar, destroySidebar, toggle as toggleSidebar } from "../ui/sidebar.js";
@@ -28,6 +28,7 @@ export function initializeAuthState() {
       });
 
       openAuth.classList.add("hidden");
+      openLogin.classList.add("hidden");
       profileBtn.classList.remove("hidden");
 
       // Avatar sync is cosmetic; sidebar init below is not. A failure
@@ -66,6 +67,7 @@ export function initializeAuthState() {
       profileAvatar.src = DEFAULT_AVATAR;
 
       openAuth.classList.remove("hidden");
+      openLogin.classList.remove("hidden");
       profileBtn.classList.add("hidden");
 
       destroySidebar();

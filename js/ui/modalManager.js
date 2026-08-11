@@ -1,5 +1,6 @@
 import {
   openAuth,
+  openLogin,
   modalOverlay,
   closeModal,
 
@@ -178,6 +179,13 @@ function closeAuthModal() {
 }
 
 openAuth.addEventListener("click", openModal);
+
+// Mobile-only ghost button (see .login-btn) — same modal, opened
+// straight into login mode instead of the signup default.
+openLogin.addEventListener("click", () => {
+  openModal();
+  setMode("login");
+});
 
 closeModal.addEventListener("click", closeAuthModal);
 

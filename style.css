@@ -1347,6 +1347,12 @@ body.voice-active .navbar {
   gap: 12px;
 }
 
+/* Mobile-only ghost "Log in" pill next to .signup-btn — no desktop
+   equivalent, so it stays off there the same way #moreBtn does. */
+.login-btn {
+  display: none;
+}
+
 .signup-btn {
   position: relative;
 
@@ -4543,10 +4549,68 @@ body.private-mode .input-area:focus-within {
     height: clamp(35.88px, calc(28.6514px + 2.2589vw), 46px);
   }
 
+  /* Grok-style flat pill pair, replacing the frosted/gradient card
+     look those inherit from desktop — sized the same as before,
+     just restyled. Both get an :active press state since hover
+     doesn't mean much on touch. */
+  .login-btn,
   .signup-btn {
     padding: clamp(9.36px, calc(7.4743px + 0.5893vw), 12px)
              clamp(18.72px, calc(14.9486px + 1.1786vw), 24px);
     font-size: clamp(11.7px, calc(9.3429px + 0.7366vw), 15px);
+    font-weight: 600;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+  }
+
+  .login-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    background: none;
+    border: 1.5px solid rgba(10, 10, 10, 0.55);
+    color: #0a0a0a;
+    box-shadow: none;
+  }
+
+  .signup-btn {
+    position: relative;
+    background: #0a0a0a;
+    border: none;
+    color: #fff;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: none;
+  }
+
+  /* The sheen overlay belongs to the frosted-card look, not the
+     flat pill — kill it here rather than fight it with more layers. */
+  .signup-btn::before {
+    display: none;
+  }
+
+  .login-btn:active,
+  .signup-btn:active {
+    transform: scale(0.96);
+    opacity: 0.85;
+  }
+
+  /* Dark/shinigami themes normally give .signup-btn its own gradient
+     — flatten those too so the pill reads the same flat black in
+     every theme, matching the reference. .login-btn just needs a
+     lighter border/text to stay legible against a darker bar. */
+  .dark .signup-btn,
+  .shinigami .signup-btn {
+    background: #0a0a0a;
+    box-shadow: none;
+  }
+
+  .dark .login-btn,
+  .shinigami .login-btn {
+    border-color: rgba(255, 255, 255, 0.55);
+    color: #fff;
   }
 
   /* The logo pill loses its own floating-card look on mobile —
@@ -4580,12 +4644,15 @@ body.private-mode .input-area:focus-within {
   }
 
   .logo-svg {
-    width: 30px;
-    height: 30px;
+    width: 34px;
+    height: 34px;
   }
 
+  /* Icon-only in the mobile bar — Grok's corner-mark treatment,
+     not Perplexity's icon+wordmark. The svg picks up the couple
+     of px .logo-text would have used. */
   .logo-text {
-    font-size: 19px;
+    display: none;
   }
 
   /* Dropped on mobile — matches the compact-bar references, no
