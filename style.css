@@ -1336,6 +1336,14 @@ body.voice-active .navbar {
   display: contents;
 }
 
+/* The docked-in-the-corner state of .hero-logo (mobile only, see
+   below) needs .header-wrapper's old slot cleared, so that rule
+   hides .header-wrapper on mobile — no desktop counterpart needed
+   since this element doesn't exist there. */
+.hero-logo {
+  display: none;
+}
+
 .navbar {
   position: fixed;
   top: 24px;
@@ -4474,13 +4482,14 @@ body.private-mode .input-area:focus-within {
 
   /* =========================================================
      MOBILE TOP BAR
-     Replaces three independently-floating pieces (centered logo
-     pill, fixed top-right navbar, fixed top-left sidebar toggle)
-     with one row, so they can no longer drift into each other —
-     that drift was the actual mechanism behind the signup button
-     overlapping the banner. .topbar-mobile is display:contents on
-     desktop (base rule, above) — this is the only place it becomes
-     a real, visible box.
+     No visible bar anymore — this is purely a layout row now
+     (hamburger left, auth/more cluster right), fully transparent,
+     floating directly on the page like the Grok reference. It still
+     solves the original overlap bug (both clusters used to be
+     independently fixed and could drift into each other); it just
+     no longer paints a card behind itself while doing it.
+     .topbar-mobile is display:contents on desktop (base rule,
+     above) — this is the only place it becomes a real box.
   ========================================================= */
   .topbar-mobile {
     display: flex;
@@ -4495,25 +4504,9 @@ body.private-mode .input-area:focus-within {
 
     height: 56px;
     padding: 0 12px;
-
-    background: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    box-shadow: 0 2px 16px rgba(30, 64, 175, 0.1);
-  }
-
-  .dark .topbar-mobile {
-    background: linear-gradient(
-      180deg,
-      rgba(85, 53, 173, 0.9),
-      rgba(45, 2, 146, 0.82)
-    );
-    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.35);
-  }
-
-  .shinigami .topbar-mobile {
-    background: rgba(10, 10, 10, 0.85);
-    box-shadow: 0 2px 16px rgba(255, 0, 0, 0.15);
+    /* Grows to clear .hero-logo once it docks into this same
+       corner — see the #app:has() rule below. */
+    transition: padding-left 0.65s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   /* Everything before .navbar in the row (hamburger, logo) stays
@@ -4613,46 +4606,63 @@ body.private-mode .input-area:focus-within {
     color: #fff;
   }
 
-  /* The logo pill loses its own floating-card look on mobile —
-     .topbar-mobile is the only bar surface now, so a pill inside a
-     bar would just stack two backgrounds/shadows on top of each other. */
+  /* .hero-logo (below) replaces what used to live here — the small
+     logo pill inside the bar. Its job on mobile is done, so it's
+     fully out of the way rather than left as empty flex space. */
   .header-wrapper {
-    margin-top: 0;
-    padding-bottom: 0;
+    display: none;
   }
 
-  .header {
-    padding: 0;
-    background: none;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    box-shadow: none;
-    border-radius: 0;
-    transform: none;
+  /* =========================================================
+     HERO LOGO
+     The actual brand mark (Assets/logo/icon-512.png — the same
+     artwork as the favicon), not the hand-drawn SVG squiggle.
+     Starts big and centered on an empty chat, like Grok's splash
+     logo; docks down to a small icon in the top-left corner the
+     moment a first message exists, via a single CSS transition
+     driven by :has() — no JS state-tracking needed, the DOM (does
+     the chat have a message yet?) is the source of truth. Kept to
+     one graceful transform+size move, no glow pulsing or looping
+     animation — the ask was "authentic", not flashy.
+  ========================================================= */
+  .hero-logo {
+    display: block;
+
+    position: fixed;
+    z-index: 1000;
+
+    top: 44%;
+    left: 50%;
+    width: 96px;
+    height: 96px;
+    transform: translate(-50%, -50%);
+
+    filter: drop-shadow(0 10px 34px rgba(80, 70, 255, 0.32));
+
+    transition:
+      top 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+      left 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+      width 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+      height 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+      filter 0.65s ease;
   }
 
-  .header:hover,
-  .header:active {
-    transform: none;
-    box-shadow: none;
-  }
-
-  .dark .header,
-  .shinigami .header {
-    background: none;
-    box-shadow: none;
-  }
-
-  .logo-svg {
+  /* Chat has its first message — dock small, top-left. Also gives
+     .topbar-mobile matching left padding (its own transition, set
+     on the base rule above) so the hamburger button doesn't land
+     underneath it. */
+  #app:has(.chat-container .message) .hero-logo {
+    top: 12px;
+    left: 12px;
     width: 34px;
     height: 34px;
+    transform: translate(0, 0);
+    filter: drop-shadow(0 2px 10px rgba(80, 70, 255, 0.22));
   }
 
-  /* Icon-only in the mobile bar — Grok's corner-mark treatment,
-     not Perplexity's icon+wordmark. The svg picks up the couple
-     of px .logo-text would have used. */
-  .logo-text {
-    display: none;
+  #app:has(.chat-container .message) .topbar-mobile {
+    padding-left: 54px;
   }
 
   /* Dropped on mobile — matches the compact-bar references, no
