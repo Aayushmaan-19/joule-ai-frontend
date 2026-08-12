@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
   <head>
@@ -49,6 +48,13 @@
       content="Joule AI is an advanced AI platform offering intelligent tools, chat assistance, productivity features, and AI-powered solutions."
     />
     <meta name="twitter:image" content="https://joule-ai.vercel.app/Assets/logo/og-image.jpg" />
+
+    <!-- Opens the connection to Google Fonts before the CSS request
+         needs it — DNS/TLS were the slow part of that request, not
+         the file itself, so this shrinks how long .loading-text (or
+         anything else using Allura) can be waiting on it. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
     <link
       href="https://fonts.googleapis.com/css2?family=Allura&display=swap"
@@ -364,27 +370,6 @@
           <nav class="navbar">
           <button id="openLogin" class="login-btn">Log in</button>
           <button id="openAuth" class="signup-btn">Sign Up</button>
-          <button
-            id="moreBtn"
-            class="icon-btn more-btn"
-            aria-label="More options"
-            aria-expanded="false"
-          >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <circle cx="12" cy="5" r="1" />
-              <circle cx="12" cy="12" r="1" />
-              <circle cx="12" cy="19" r="1" />
-            </svg>
-          </button>
           <button
             id="profileBtn"
             class="profile-btn hidden"

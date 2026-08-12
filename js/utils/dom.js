@@ -7,6 +7,9 @@ export const loadingCanvas =
 export const loadingLogo =
   document.getElementById("loadingLogo");
 
+export const loadingText =
+  document.getElementById("loadingText");
+
 export const loadingBarFill =
   document.getElementById("loadingBarFill");
 
@@ -63,9 +66,6 @@ export const sendBtn =
 
 export const clearBtn =
   document.getElementById("clearBtn");
-
-export const moreBtn =
-  document.getElementById("moreBtn");
 
 export const controls =
   document.getElementById("controls");

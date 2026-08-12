@@ -539,14 +539,6 @@ body {
   transition: all 0.25s ease;
 }
 
-/* #moreBtn is the mobile-only entry point into the .controls
-   popover. Placed after .icon-btn (which also sets display) so
-   this correctly wins on desktop — the previous spot lost that
-   cascade fight, which is why it was showing up everywhere. */
-.more-btn {
-  display: none;
-}
-
 .icon-btn.listening {
   background: linear-gradient(135deg, #60a5fa, #2563eb);
 
@@ -1356,7 +1348,8 @@ body.voice-active .navbar {
 }
 
 /* Mobile-only ghost "Log in" pill next to .signup-btn — no desktop
-   equivalent, so it stays off there the same way #moreBtn does. */
+   equivalent, so display:none is its permanent base state, only
+   ever lifted inside the mobile query below. */
 .login-btn {
   display: none;
 }
@@ -3633,12 +3626,23 @@ input:focus {
 
   color: #e0e7ff;
 
-  opacity: 0;
-
   text-shadow: 0 0 18px rgba(129, 140, 248, 0.5);
 
+  /* Starts invisible — JS adds .text-reveal-active at the right
+     frame, same pattern as .loading-logo above. This used to run
+     on its own CSS animation-delay: a second clock, independent of
+     the one driving the aurora/logo, racing the stylesheet and the
+     Allura webfont load. On a slow first load that race could lose,
+     showing default black system-font text for a frame before
+     snapping to its real look — the "black text pops" flash. */
+  opacity: 0;
+  transform: translateY(8px);
+  animation: none;
+}
+
+/* JS adds this class shortly after LOGO_REVEAL_AT_MS */
+.loading-text.text-reveal-active {
   animation: loadingTextIn 0.6s ease forwards;
-  animation-delay: 3.2s;
 }
 
 @keyframes loadingTextIn {
@@ -4506,12 +4510,13 @@ body.private-mode .input-area:focus-within {
     padding: 0 12px;
     /* Grows to clear .hero-logo once it docks into this same
        corner — see the #app:has() rule below. */
-    transition: padding-left 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: padding-left 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+                opacity 0.32s ease;
   }
 
   /* Everything before .navbar in the row (hamburger, logo) stays
-     left via the row's own gap; this pushes just the auth/more
-     cluster to the bar's right edge. */
+     left via the row's own gap; this pushes the auth cluster
+     (Log in / Sign Up / profile) to the bar's right edge. */
   .topbar-mobile .navbar {
     margin-left: auto;
   }
@@ -4645,7 +4650,8 @@ body.private-mode .input-area:focus-within {
       width 0.65s cubic-bezier(0.22, 1, 0.36, 1),
       height 0.65s cubic-bezier(0.22, 1, 0.36, 1),
       transform 0.65s cubic-bezier(0.22, 1, 0.36, 1),
-      filter 0.65s ease;
+      filter 0.65s ease,
+      opacity 0.32s ease;
   }
 
   /* Chat has its first message — dock small, top-left. Also gives
@@ -4671,14 +4677,6 @@ body.private-mode .input-area:focus-within {
     display: none;
   }
 
-  /* Nothing above it is in flow anymore on mobile (.topbar-mobile is
-     fixed, .signature is gone) — .wake-wrapper is now the first
-     in-flow child of #main, so it has to clear the 56px fixed bar
-     itself rather than just tuck under .controls like it did before. */
-  .wake-wrapper {
-    margin-top: 72px;
-  }
-
   .icon-btn {
     width: clamp(32.76px, calc(26.16px + 2.0625vw), 42px);
     height: clamp(32.76px, calc(26.16px + 2.0625vw), 42px);
@@ -4693,86 +4691,30 @@ body.private-mode .input-area:focus-within {
     height: clamp(15.6px, calc(12.4571px + 0.9821vw), 20px);
   }
 
-  .more-btn {
-    display: flex;
-  }
-
-  /* Controls: on desktop this is a persistent icon row. On mobile
-     it's one of four full-width bands stacked above the very first
-     chat bubble — the real reason things felt cramped/scaled rather
-     than native. It now lives behind #moreBtn as a proper popover,
-     styled like the app's other floating chrome (frosted white card,
-     same treatment as .header regardless of theme). */
+  /* Controls: same persistent icon row as desktop now, not hidden
+     behind a "more" menu — #moreBtn and its popover are gone for
+     good (js/ui/mobileMoreMenu.js is fully dead code now and should
+     be deleted, along with its import in main.js). Just needs room
+     to clear the fixed .topbar-mobile sitting above it. */
   .controls {
-    position: fixed;
-    /* Clears the 56px .topbar-mobile bar that #moreBtn now lives
-       inside, plus a small gap. */
-    top: 64px;
-    right: 10px;
-    z-index: 900;
-    display: none;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 2px;
-    width: min(210px, 58vw);
-    padding: 8px;
-    mask-image: none;
-    -webkit-mask-image: none;
-    border-radius: 18px;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    box-shadow:
-      0 20px 45px rgba(15, 23, 42, 0.18),
-      0 2px 8px rgba(15, 23, 42, 0.08);
+    margin-top: 72px;
   }
 
-  .controls.menu-open {
-    display: flex;
-  }
-
-  /* Scoped to .controls specifically — leaves the round mic/send/
-     tools buttons in the input row untouched. */
-  .controls .icon-btn {
-    width: 100%;
-    height: auto;
-    flex-direction: row;
-    justify-content: flex-start;
-    gap: 10px;
-    padding: 10px 12px;
-    border-radius: 12px;
-    background: transparent;
-    box-shadow: none;
-  }
-
-  .controls .icon-btn:hover {
-    background: rgba(37, 99, 235, 0.08);
-  }
-
-  .controls .icon-btn-label {
-    display: inline;
-    font-size: 14px;
-    font-weight: 600;
-    color: #1e293b;
-  }
-
-  /* .dark/.shinigami invert these icons to white for their dark
-     button backgrounds — but .controls is always the light frosted
-     card, so that inversion would go white-on-white here. */
-  .dark .controls .icon-btn img,
-  .shinigami .controls .icon-btn img {
-    filter: none;
+  /* Tactile press feedback for touch, matching .login-btn/.signup-btn. */
+  .icon-btn:active,
+  .sidebar-open-btn:active {
+    transform: scale(0.92);
   }
 
   .chat-container {
     padding: clamp(15.6px, calc(12.4571px + 0.9821vw), 20px);
-    /* Shorter than the old 210px: that value cleared a taller stack
-       (pill header + signature + wake button). The pill and
-       signature are gone from flow now — this only needs to clear
-       the 56px topbar + .wake-wrapper's own ~115px block (72px
-       margin-top + ~29px button + 14px bottom padding), plus a
-       10px cushion. */
-    padding-top: 125px;
+    /* .controls is back in normal flow (it's a real icon row again,
+       not a hidden popover) — needs to clear: 56px fixed topbar +
+       .controls' own ~72px box (72px margin-top that clears the
+       topbar, + up to 42px icon + 18px bottom padding) + .wake-wrapper
+       tucked -6px under it with its own ~43px (29px button + 14px
+       bottom padding), plus a small cushion. */
+    padding-top: 190px;
   }
 
   .chat {
@@ -4827,6 +4769,17 @@ body.private-mode .input-area:focus-within {
     inset: 0;
     z-index: 400;
     background: rgba(15, 23, 42, 0.35);
+  }
+
+  /* .topbar-mobile and .hero-logo are both z-index:1000 — well
+     above the sidebar (500) and its scrim (400) above, so without
+     this they render on top of an open sidebar instead of receding
+     behind it like everything else does. Fades out in step with
+     the sidebar's own 0.32s slide, not a hard cut. */
+  #app.sidebar-visible .topbar-mobile,
+  #app.sidebar-visible .hero-logo {
+    opacity: 0;
+    pointer-events: none;
   }
 }
 

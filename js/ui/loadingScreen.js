@@ -2,6 +2,7 @@ import {
   loadingScreen,
   loadingCanvas,
   loadingLogo,
+  loadingText,
   loadingBarFill,
   loadingPercent
 } from "../utils/dom.js";
@@ -66,6 +67,12 @@ const TOTAL_DURATION_MS =
 
 const LOGO_REVEAL_AT_MS =
   DRIFT_DURATION_MS + CONVERGE_DURATION_MS + FLASH_DURATION_MS * 0.4;
+
+/* "JOULE AI" follows the logo in, same as the original CSS
+   animation-delay intended (3.2s sat ~110ms after LOGO_REVEAL_AT_MS)
+   — just driven from the same clock as the logo now instead of a
+   second, independent one. */
+const TEXT_REVEAL_AT_MS = LOGO_REVEAL_AT_MS + 200;
 
 const MIN_DISPLAY_MS = TOTAL_DURATION_MS + 550;
 
@@ -180,10 +187,11 @@ class Spark {
 ========================================================= */
 
 class AuroraLoader {
-  constructor(canvas, logoEl) {
+  constructor(canvas, logoEl, textEl) {
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d");
     this.logoEl = logoEl;
+    this.textEl = textEl;
 
     this.dpr = Math.min(window.devicePixelRatio || 1, 2);
 
@@ -196,6 +204,7 @@ class AuroraLoader {
     this.lastFrameTime = null;
 
     this.logoRevealed = false;
+    this.textRevealed = false;
 
     this.resize();
     window.addEventListener("resize", () => this.resize());
@@ -315,6 +324,20 @@ class AuroraLoader {
     this.logoEl.classList.add("logo-reveal-active");
   }
 
+  /**
+   * Same reasoning as revealLogo(), same clock — "JOULE AI" used to
+   * reveal on its own CSS animation-delay, a second clock racing
+   * the stylesheet/webfont load with nothing keeping it in sync.
+   * That's what let it flash in unstyled before snapping to its
+   * real look.
+   */
+  revealText() {
+    if (this.textRevealed) return;
+    this.textRevealed = true;
+
+    this.textEl.classList.add("text-reveal-active");
+  }
+
   loop(now) {
     const elapsed = now - this.startTime;
     const dt = Math.min((now - this.lastFrameTime) / 1000, 0.05);
@@ -325,6 +348,10 @@ class AuroraLoader {
 
     if (elapsed >= LOGO_REVEAL_AT_MS) {
       this.revealLogo();
+    }
+
+    if (elapsed >= TEXT_REVEAL_AT_MS) {
+      this.revealText();
     }
 
     ctx.save();
@@ -525,12 +552,12 @@ function completeBar() {
 ========================================================= */
 
 export function initLoadingScreen() {
-  if (!loadingScreen || !loadingCanvas || !loadingLogo) return;
+  if (!loadingScreen || !loadingCanvas || !loadingLogo || !loadingText) return;
 
   loadingLogo.style.opacity = "0";
   loadingLogo.style.transform = "scale(0.3)";
 
-  const loader = new AuroraLoader(loadingCanvas, loadingLogo);
+  const loader = new AuroraLoader(loadingCanvas, loadingLogo, loadingText);
   loader.start();
   runBarLoop();
 
