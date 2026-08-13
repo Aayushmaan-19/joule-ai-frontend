@@ -68,11 +68,19 @@ const TOTAL_DURATION_MS =
 const LOGO_REVEAL_AT_MS =
   DRIFT_DURATION_MS + CONVERGE_DURATION_MS + FLASH_DURATION_MS * 0.4;
 
-/* "JOULE AI" follows the logo in, same as the original CSS
-   animation-delay intended (3.2s sat ~110ms after LOGO_REVEAL_AT_MS)
-   — just driven from the same clock as the logo now instead of a
-   second, independent one. */
-const TEXT_REVEAL_AT_MS = LOGO_REVEAL_AT_MS + 200;
+/* Reveals once the dissolve has calmed things down, not during the
+   flash — the old value (+200ms after the logo) landed at 3290ms,
+   before the 350ms flash phase even finished (it ends at 3300ms),
+   so the text was fading in directly on top of the bright burst.
+   Confirmed from a screenshot: "oule AI" sitting right on the glow,
+   hard to read. This waits until the flash is fully over and the
+   dissolve is mostly done, so it appears against the calmer,
+   dimmed background instead. */
+const TEXT_REVEAL_AT_MS =
+  DRIFT_DURATION_MS +
+  CONVERGE_DURATION_MS +
+  FLASH_DURATION_MS +
+  DISSOLVE_DURATION_MS * 0.7;
 
 const MIN_DISPLAY_MS = TOTAL_DURATION_MS + 550;
 
