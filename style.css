@@ -24,6 +24,16 @@ html::-webkit-scrollbar {
   box-sizing:border-box;
 }
 
+/* Buttons already carry their own custom :active press animations
+   (scale transforms) — without this, the browser's default tap
+   highlight/flash renders on top of those on mobile, and manipulation
+   removes any residual double-tap-zoom delay on touch. */
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
 body {
   margin: 0;
   font-family: system-ui;
@@ -53,7 +63,13 @@ body {
   position: fixed;
   width: 200%;
   height: 200px;
-  background: url("https://www.transparenttextures.com/patterns/clouds.png");
+  background-image:
+    radial-gradient(ellipse 120px 40px at 10% 45%, rgba(255, 255, 255, 0.55), transparent 70%),
+    radial-gradient(ellipse 160px 50px at 32% 25%, rgba(255, 255, 255, 0.45), transparent 70%),
+    radial-gradient(ellipse 140px 45px at 58% 55%, rgba(255, 255, 255, 0.5), transparent 70%),
+    radial-gradient(ellipse 180px 55px at 82% 30%, rgba(255, 255, 255, 0.4), transparent 70%);
+  background-repeat: repeat-x;
+  background-size: 400px 200px;
   opacity: 0.25;
   animation: cloudMove 60s linear infinite;
 }
@@ -878,6 +894,11 @@ body {
   filter: blur(120px);
 
   pointer-events: none;
+
+  /* These blobs animate continuously — promote to their own layer so
+     the (expensive) 120px blur is composited once and reused across
+     frames, instead of being recomputed every frame. */
+  will-change: transform;
 }
 
 .ambient-1 {
@@ -897,8 +918,12 @@ body {
 }
 
 .ambient-2 {
-  width: 300px;
-  height: 300px;
+  /* Same overflow risk as ambient-1 above, just off the opposite
+     edge: right:10% + a fixed 300px anchors its right edge at 90%
+     of viewport width and extends 300px further left, which clips
+     past x:0 on anything narrower than ~410px. Capped the same way. */
+  width: min(300px, 55vw);
+  height: min(300px, 55vw);
 
   background: rgba(255,120,200,.14);
 
@@ -906,6 +931,48 @@ body {
   bottom: 20%;
 
   animation: float2 16s ease-in-out infinite;
+}
+
+.ambient-3 {
+  /* Present in index.html but had no rule at all until now, so it
+     rendered as a zero-size, invisible element — one of three
+     intended floating blobs, doing nothing. */
+  width: min(260px, 45vw);
+  height: min(260px, 45vw);
+
+  background: rgba(94, 234, 212, .14);
+
+  left: 55%;
+  top: 55%;
+
+  animation: float3 18s ease-in-out infinite;
+}
+
+@keyframes float1 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(30px, -40px) scale(1.08);
+  }
+}
+
+@keyframes float2 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-35px, 30px) scale(0.95);
+  }
+}
+
+@keyframes float3 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-25px, -35px) scale(1.05);
+  }
 }
 
 body.voice-active .chat-container,
@@ -1077,12 +1144,10 @@ body.voice-active .navbar {
   from {
     opacity: 0;
     transform: translateY(3px);
-    filter: blur(3px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
-    filter: blur(0);
   }
 }
 
@@ -2094,6 +2159,39 @@ body.voice-active .navbar {
   z-index: 0;
 
   overflow: hidden;
+}
+
+/* These two blobs were the missing piece: .aurora had no background
+   of its own, and auroraMove1/auroraMove2 below were defined but
+   never referenced anywhere, so this whole layer rendered as nothing.
+   Colors match the app's own aurora palette (loadingScreen.js
+   RIBBON_COLORS). Sits behind .clouds/.mountains in the stack, as a
+   soft, slow-drifting wash rather than the tighter ambient blobs. */
+.aurora::before,
+.aurora::after {
+  content: "";
+  position: absolute;
+  top: -15%;
+  width: 70vw;
+  height: 70vw;
+  max-width: 640px;
+  max-height: 640px;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.35;
+  will-change: transform;
+}
+
+.aurora::before {
+  left: -15%;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.55), transparent 70%);
+  animation: auroraMove1 22s ease-in-out infinite;
+}
+
+.aurora::after {
+  right: -15%;
+  background: radial-gradient(circle, rgba(167, 139, 250, 0.5), transparent 70%);
+  animation: auroraMove2 26s ease-in-out infinite;
 }
 
 @keyframes auroraMove1 {
@@ -4484,6 +4582,28 @@ body.private-mode .input-area:focus-within {
     height: 100dvh;
   }
 
+  /* .input-area floats over the scrolling chat for the entire
+     session — on mobile Safari a backdrop-filter layer that sits
+     above continuously-scrolling content is a well-known jank
+     source. Same frosted look at a smaller, cheaper radius. */
+  .input-area {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  /* .ambient/.aurora blobs now actually animate (see base rules) —
+     their blur radii were tuned for desktop GPUs. Trimmed here so
+     three animating 120px/90px blurs don't cost as much on weaker
+     mobile hardware; still clearly the same soft glow. */
+  .ambient {
+    filter: blur(70px);
+  }
+
+  .aurora::before,
+  .aurora::after {
+    filter: blur(55px);
+  }
+
   /* =========================================================
      MOBILE TOP BAR
      No visible bar anymore — this is purely a layout row now
@@ -5524,5 +5644,31 @@ body.private-mode .input-area:focus-within {
   .gallery-grid {
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     gap: 10px;
+  }
+}
+
+/* =================================
+   REDUCED MOTION
+   Scoped only to purely-decorative, continuously-looping background
+   animations. Deliberately NOT touching entrance/reveal animations
+   (signature drop, logo draw-in, loading-screen reveals, streaming
+   text) — those use forwards-fill from an opacity:0 starting state,
+   so switching them off with animation:none would leave that content
+   permanently invisible instead of respecting reduced motion. The
+   animations below have no hidden starting state — each element is
+   already fully visible in its base (non-animated) CSS position, so
+   turning them off is a pure no-risk win for anyone who's opted into
+   this at the OS level (very commonly a mobile/battery-conscious
+   setting).
+================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .clouds,
+  .ambient-1,
+  .ambient-2,
+  .ambient-3,
+  .aurora::before,
+  .aurora::after {
+    animation: none;
   }
 }

@@ -17,7 +17,7 @@
 [![Groq](https://img.shields.io/badge/AI-Groq-F55036?style=flat-square)](https://groq.com)
 [![Firebase](https://img.shields.io/badge/Auth-Firebase-FFCA28?style=flat-square&logo=firebase&logoColor=white)](https://firebase.google.com)
 
-![Joule AI Hero](https://joule-ai.vercel.app/Assets/Images/bot.png)
+![Joule AI Hero](https://joule-ai.vercel.app/Assets/Images/bot.jpeg)
 
 </div>
 
@@ -687,7 +687,7 @@ joule-ai/
 │   │   └── Assets/
 │   │       ├── Avatars/             # avatar1.png – avatar6.png
 │   │       ├── Icons/               # SVG icons (mic, send, play, pause...)
-│   │       ├── Images/              # bot.png, shinigami.jpg, user.png
+│   │       ├── Images/              # bot.jpeg, shinigami.jpg, user.png
 │   │       ├── Songs/               # 4 ambient MP3s
 │   │       ├── Sound Effects/       # mic-on.mp3, mic-off.mp3
 │   │       └── logo/                # favicon.png

@@ -209,7 +209,7 @@ export function renderStreakBadge() {
     badge.id = "joule-streak-badge";
     badge.style.cssText = `
       position: fixed;
-      bottom: 16px;
+      bottom: 90px;
       right: 16px;
       background: rgba(255,140,0,0.15);
       border: 1px solid rgba(255,140,0,0.4);

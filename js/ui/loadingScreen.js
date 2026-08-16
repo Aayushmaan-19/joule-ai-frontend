@@ -16,8 +16,8 @@ import {
 ========================================================= */
 
 const PRELOAD_IMAGES = [
-  "Assets/Images/bot.png",
-  "Assets/Images/user.png",
+  "Assets/Images/bot.jpeg",
+  "Assets/Images/user.jpeg",
   "Assets/Avatars/avatar1.png",
   "Assets/Avatars/avatar2.png",
   "Assets/Avatars/avatar3.png",
