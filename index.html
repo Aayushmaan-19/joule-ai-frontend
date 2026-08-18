@@ -317,6 +317,63 @@
       </div>
     </div>
 
+    <!-- PEOPLE / MESSAGES — a full-screen section of its own, not a
+         modal. Swaps in over the whole app while open (see
+         #app.people-open in style.css) rather than sitting above a
+         dimmed backdrop like the overlays above. -->
+    <div id="peopleSection" class="people-section hidden">
+      <div class="people-topbar">
+        <button id="peopleBackBtn" class="people-back-btn hidden" aria-label="Back">
+          <img src="Assets/Icons/arrow-left.svg" class="icon" alt="" />
+        </button>
+        <h2 class="people-title" id="peopleTitle">Discover</h2>
+        <button id="peopleCloseBtn" class="people-close-btn" aria-label="Close People">
+          <img src="Assets/Icons/x.svg" class="icon" alt="" />
+        </button>
+      </div>
+
+      <div class="people-tabs" id="peopleTabs">
+        <button class="people-tab active" data-tab="directory">Discover</button>
+        <button class="people-tab" data-tab="requests">
+          Requests<span class="people-tab-badge hidden" id="requestsBadge">0</span>
+        </button>
+        <button class="people-tab" data-tab="messages">Messages</button>
+      </div>
+
+      <div class="people-panels" id="peoplePanels">
+        <div class="people-panel active" id="directoryPanel">
+          <div class="directory-grid" id="directoryGrid"></div>
+          <div class="people-empty hidden" id="directoryEmpty">No one else has joined yet.</div>
+          <button class="people-load-more hidden" id="directoryLoadMore">Load more</button>
+        </div>
+
+        <div class="people-panel" id="requestsPanel">
+          <div class="requests-list" id="requestsList"></div>
+          <div class="people-empty hidden" id="requestsEmpty">No pending follow requests.</div>
+        </div>
+
+        <div class="people-panel" id="messagesPanel">
+          <div class="conversations-list" id="conversationsList"></div>
+          <div class="people-empty hidden" id="conversationsEmpty">No conversations yet — follow someone, and start chatting once they accept.</div>
+        </div>
+
+        <div class="people-panel" id="profilePanel">
+          <div class="profile-view" id="profileViewContent"></div>
+        </div>
+
+        <div class="people-panel" id="threadPanel">
+          <div class="thread-header" id="threadHeader"></div>
+          <div class="thread-messages" id="threadMessages"></div>
+          <div class="thread-input-row">
+            <input type="text" id="threadInput" class="thread-input" placeholder="Message..." maxlength="2000" autocomplete="off" />
+            <button class="thread-send-btn" id="threadSendBtn" aria-label="Send">
+              <img src="Assets/Icons/send.svg" class="icon" alt="" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Voice overlay (full-screen, above everything) -->
     <div id="voiceOverlay">
       <div class="voice-particles"></div>
@@ -417,6 +474,11 @@
               alt=""
             />
             <span class="icon-btn-label">Theme</span>
+          </button>
+          <button class="icon-btn hidden" id="peopleOpenBtn" aria-label="People">
+            <img src="Assets/Icons/people.svg" class="icon" alt="" />
+            <span class="icon-btn-label">People</span>
+            <span class="people-nav-badge hidden" id="peopleNavBadge"></span>
           </button>
         </div>
 

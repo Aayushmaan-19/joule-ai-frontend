@@ -5,6 +5,7 @@ import { setUser, setProfile, setPrivateMode } from "../config/actions.js";
 import { syncProfileAvatar } from "../ui/profileManager.js";
 import { initSidebar, destroySidebar, toggle as toggleSidebar } from "../ui/sidebar.js";
 import { saveCurrentSession } from "../chat/chatHistory.js";
+import { initPeopleSection, destroyPeopleSection } from "../social/peopleSection.js";
 
 const sidebarOpenBtn = document.getElementById("sidebarOpenBtn");
 
@@ -40,13 +41,15 @@ export function initializeAuthState() {
         console.error("Profile avatar sync failed:", err.message);
       }
 
-      // Sidebar only for verified users
+      // Sidebar and People section: verified users only
       if (user.emailVerified) {
         initSidebar();
         if (sidebarOpenBtn) {
           sidebarOpenBtn.classList.remove("hidden");
           sidebarOpenBtn.onclick = toggleSidebar;
         }
+
+        initPeopleSection();
       }
 
     } else {
@@ -72,6 +75,8 @@ export function initializeAuthState() {
 
       destroySidebar();
       if (sidebarOpenBtn) sidebarOpenBtn.classList.add("hidden");
+
+      destroyPeopleSection();
     }
   });
 }
