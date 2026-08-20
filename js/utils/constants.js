@@ -32,6 +32,8 @@ export const IMAGE_API_URL = "https://joule-ai-backend.onrender.com/api/image/ge
 
 export const SOCIAL_API_URL = "https://joule-ai-backend.onrender.com/api/social";
 
+export const PROFILE_API_URL = "https://joule-ai-backend.onrender.com/api/profile";
+
 export const SILENCE_THRESHOLD = 8;
 
 export const SILENCE_DURATION = 3000;

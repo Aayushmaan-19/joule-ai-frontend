@@ -249,9 +249,26 @@
             src="Assets/Avatars/avatar1.png"
             alt="Avatar"
           />
+          <div class="avatar-upload-spinner hidden" id="avatarUploadSpinner"></div>
         </div>
 
+        <input
+          type="file"
+          id="avatarFileInput"
+          accept="image/*"
+          class="hidden"
+        />
+        <p class="avatar-upload-status hidden" id="avatarUploadStatus"></p>
+
         <div class="avatar-grid" id="avatarGrid">
+          <button
+            type="button"
+            class="avatar-option avatar-upload-option"
+            id="avatarUploadTile"
+            aria-label="Upload your own photo"
+          >
+            <img src="Assets/Icons/camera.svg" class="icon" alt="" />
+          </button>
           <button
             class="avatar-option"
             data-avatar="Assets/Avatars/avatar1.png"

@@ -175,6 +175,18 @@ export const profilePreviewImg =
 export const avatarGrid =
   document.getElementById("avatarGrid");
 
+export const avatarUploadTile =
+  document.getElementById("avatarUploadTile");
+
+export const avatarFileInput =
+  document.getElementById("avatarFileInput");
+
+export const avatarUploadSpinner =
+  document.getElementById("avatarUploadSpinner");
+
+export const avatarUploadStatus =
+  document.getElementById("avatarUploadStatus");
+
 export const profileStatus =
   document.getElementById("profileStatus");
 

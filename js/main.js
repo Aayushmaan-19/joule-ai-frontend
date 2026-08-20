@@ -43,7 +43,7 @@ import "./ui/modalManager.js";
 import "./ui/profileManager.js";
 import "./ui/toolsMenu.js";
 import "./ui/wakeButton.js";
-import { initAnimationManager, recordActivity } from "./ui/animationManager.js";
+import { initAnimationManager } from "./ui/animationManager.js";
 import "./ui/legalModal.js";
 import { initLoadingScreen } from "./ui/loadingScreen.js";
 
@@ -107,8 +107,6 @@ async function dispatchSend() {
 function setupVoiceEvents() {
   micBtn.addEventListener("click", () => {
     voiceController.toggle();
-    // Record activity when user interacts via voice
-    recordActivity();
   });
 }
 

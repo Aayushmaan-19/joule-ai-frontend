@@ -20,6 +20,15 @@ html::-webkit-scrollbar {
   display: none;
 }
 
+body {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
+
 *{
   box-sizing:border-box;
 }
@@ -3212,13 +3221,6 @@ input:focus {
   color: #f8fafc;
 }
 
-.profile-avatar-preview {
-  display: flex;
-  justify-content: center;
-
-  margin-bottom: 18px;
-}
-
 .profile-avatar-preview img {
   width: 88px;
   height: 88px;
@@ -3234,7 +3236,7 @@ input:focus {
 
 .avatar-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(7, 1fr);
   gap: 10px;
 
   margin-bottom: 24px;
@@ -3243,6 +3245,7 @@ input:focus {
 .avatar-option {
   padding: 0;
 
+  aspect-ratio: 1;
   border-radius: 50%;
   border: 2px solid transparent;
 
@@ -3272,6 +3275,69 @@ input:focus {
   border-color: #3b82f6;
 
   box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.25);
+}
+
+.avatar-upload-option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: linear-gradient(135deg, #3b82f6, #6366f1);
+}
+
+.avatar-upload-option img {
+  width: 44%;
+  height: 44%;
+
+  color: #fff;
+  filter: brightness(0) invert(1);
+}
+
+.profile-avatar-preview {
+  position: relative;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin-bottom: 18px;
+}
+
+.avatar-upload-spinner {
+  position: absolute;
+
+  width: 100px;
+  height: 100px;
+
+  border-radius: 50%;
+  border: 3px solid transparent;
+  border-top-color: #3b82f6;
+  border-right-color: #3b82f6;
+
+  animation: spin 0.8s linear infinite;
+}
+
+.avatar-upload-spinner.hidden {
+  display: none;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.avatar-upload-status {
+  margin: -10px 0 16px;
+
+  text-align: center;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #1e3a8a;
+}
+
+.avatar-upload-status.hidden {
+  display: none;
 }
 
 .field-label {
@@ -6509,50 +6575,241 @@ body.private-mode .input-area:focus-within {
 
 @media (max-width: 768px) {
   .people-topbar {
-    padding: 14px 16px 12px;
+    padding: 16px 18px 14px;
   }
 
   .people-title {
-    font-size: 17px;
+    font-size: 18px;
+  }
+
+  .people-back-btn,
+  .people-close-btn {
+    width: 40px;
+    height: 40px;
   }
 
   .people-tabs {
-    padding: 0 16px 12px;
+    padding: 0 18px 14px;
+    gap: 8px;
   }
 
   .people-tab {
-    padding: 9px 8px;
-    font-size: 13px;
+    padding: 11px 8px;
+    font-size: 13.5px;
   }
 
   .people-panel {
-    padding: 0 16px 16px;
+    padding: 0 18px 20px;
   }
 
   .directory-grid {
-    grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
   }
 
   .directory-card {
-    padding: 16px 10px;
+    padding: 22px 14px;
+    border-radius: 26px;
   }
 
   .directory-card-avatar {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 12px;
+  }
+
+  .directory-card-name {
+    font-size: 14.5px;
+  }
+
+  .directory-follow-btn {
+    padding: 10px 0;
+    margin-top: 16px;
+    font-size: 12.5px;
+  }
+
+  .request-row,
+  .conversation-row {
+    padding: 14px 16px;
+    border-radius: 22px;
+  }
+
+  .request-avatar,
+  .conversation-avatar {
     width: 48px;
     height: 48px;
   }
 
+  .request-name,
+  .conversation-name {
+    font-size: 14.5px;
+  }
+
+  .conversation-preview {
+    font-size: 13px;
+  }
+
   .profile-view-avatar {
-    width: 76px;
-    height: 76px;
+    width: 84px;
+    height: 84px;
+  }
+
+  .profile-view-name {
+    font-size: 19px;
+  }
+
+  .profile-follow-btn,
+  .profile-message-btn {
+    padding: 13px 0;
   }
 
   .thread-msg {
     max-width: 86%;
   }
 
+  .thread-msg-bubble {
+    padding: 11px 15px;
+    font-size: 14.5px;
+  }
+
+  .thread-input {
+    padding: 13px 18px;
+    font-size: 15px;
+  }
+
+  .thread-send-btn {
+    width: 46px;
+    height: 46px;
+  }
+
   .thread-input-row {
     padding-bottom: 16px;
+    gap: 10px;
   }
+}
+
+/* =========================================================
+   PEOPLE SECTION — ANIMATION POLISH
+   All transform/opacity only, no filter:blur — the streaming-chat
+   fix earlier this project found blur-per-element to be the single
+   biggest mobile jank source, so none of these repeat that mistake.
+========================================================= */
+
+@keyframes panelIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.people-panel.active {
+  animation: panelIn 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.directory-card {
+  animation: cardIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.directory-card-body,
+.directory-follow-btn {
+  transition: transform 0.15s ease;
+}
+
+.directory-card:hover .directory-card-avatar {
+  transform: scale(1.05);
+}
+
+.directory-card-avatar {
+  transition: transform 0.2s ease;
+}
+
+.request-row-new,
+.conversation-row-new {
+  animation: cardIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes rowLeave {
+  to {
+    opacity: 0;
+    transform: scale(0.92) translateX(12px);
+  }
+}
+
+.request-row-leaving {
+  animation: rowLeave 0.22s ease forwards;
+  pointer-events: none;
+}
+
+/* Thread message bubbles — only .thread-msg-new plays the entrance;
+   already-rendered bubbles are left alone on re-render (see
+   threadView.js's renderedIds tracking), so the whole thread doesn't
+   "pop" every time one new message arrives. */
+@keyframes bubbleIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.thread-msg-new {
+  animation: bubbleIn 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.thread-msg-pending {
+  opacity: 0.6;
+}
+
+.thread-msg-failed {
+  opacity: 1;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.thread-msg-retry {
+  border: none;
+  background: none;
+  padding: 0;
+
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #ef4444;
+
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.thread-send-btn {
+  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.thread-send-btn:active {
+  transform: scale(0.85) rotate(-8deg);
+}
+
+/* Tab switch — the active pill already transitions background/color;
+   give the underlying content a quick settle too. */
+.people-tab {
+  transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease, box-shadow 0.25s ease;
+}
+
+.dark .thread-msg-failed {
+  border-color: rgba(248, 113, 113, 0.5);
 }
