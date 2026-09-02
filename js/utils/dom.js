@@ -192,3 +192,16 @@ export const profileStatus =
 
 export const logoutBtn =
   document.getElementById("logoutBtn");
+
+/* Gallery */
+export const galleryToolBtn =
+  document.getElementById("galleryToolBtn");
+
+export const galleryOverlay =
+  document.getElementById("galleryOverlay");
+
+export const closeGallery =
+  document.getElementById("closeGallery");
+
+export const galleryGrid =
+  document.getElementById("galleryGrid");
