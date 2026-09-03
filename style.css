@@ -6813,3 +6813,322 @@ body.private-mode .input-area:focus-within {
 .dark .thread-msg-failed {
   border-color: rgba(248, 113, 113, 0.5);
 }
+
+/* ---------- Message actions (react / reply / edit / delete / forward) ---------- */
+
+.thread-msg-actions {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+
+  opacity: 0;
+  transform: translateY(2px);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  pointer-events: none;
+}
+
+.thread-msg:hover .thread-msg-actions,
+.thread-msg-active .thread-msg-actions {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.thread-msg-action-btn {
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+  cursor: pointer;
+}
+
+.thread-msg-action-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.thread-msg-action-btn:hover {
+  background: rgba(59, 130, 246, 0.2);
+}
+
+.thread-msg-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.thread-msg-mine .thread-msg-row {
+  flex-direction: row-reverse;
+}
+
+/* ---------- Reactions ---------- */
+
+.thread-msg-reactions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.thread-reaction-pill {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 7px;
+  border-radius: 10px;
+  background: rgba(99, 102, 241, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.thread-reaction-pill.mine-reaction {
+  background: rgba(99, 102, 241, 0.28);
+}
+
+.thread-reaction-pill .count {
+  font-size: 10px;
+  color: #6366f1;
+  font-weight: 600;
+}
+
+.thread-reaction-picker {
+  position: absolute;
+  display: flex;
+  gap: 2px;
+  padding: 6px 8px;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  z-index: 40;
+}
+
+.thread-reaction-picker button {
+  border: none;
+  background: none;
+  font-size: 19px;
+  padding: 3px;
+  cursor: pointer;
+  transition: transform 0.12s ease;
+  line-height: 1;
+}
+
+.thread-reaction-picker button:hover {
+  transform: scale(1.25);
+}
+
+/* ---------- Reply ---------- */
+
+.thread-msg-reply-preview {
+  display: block;
+  padding: 4px 8px;
+  margin-bottom: 4px;
+  border-left: 2px solid #6366f1;
+  border-radius: 4px;
+  background: rgba(99, 102, 241, 0.08);
+  font-size: 11.5px;
+  color: #4f46e5;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.thread-msg-mine .thread-msg-reply-preview {
+  background: rgba(255, 255, 255, 0.18);
+  border-left-color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.thread-reply-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 14px;
+  border-left: 3px solid #6366f1;
+  background: rgba(99, 102, 241, 0.08);
+  font-size: 12.5px;
+  color: #4f46e5;
+}
+
+.thread-reply-bar-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.thread-reply-bar-cancel {
+  flex-shrink: 0;
+  border: none;
+  background: none;
+  color: #4f46e5;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* ---------- Edited / deleted / forwarded ---------- */
+
+.thread-msg-edited-tag {
+  font-size: 10px;
+  opacity: 0.6;
+  margin-left: 4px;
+}
+
+.thread-msg-bubble.thread-msg-deleted {
+  font-style: italic;
+  opacity: 0.55;
+  background: rgba(0, 0, 0, 0.05) !important;
+  color: inherit !important;
+}
+
+.thread-msg-forwarded-tag {
+  font-size: 10.5px;
+  font-style: italic;
+  opacity: 0.6;
+  margin-bottom: 2px;
+}
+
+/* ---------- Read receipts ---------- */
+
+.thread-read-tick {
+  display: inline-flex;
+  margin-left: 3px;
+  vertical-align: -2px;
+}
+
+.thread-read-tick img {
+  width: 12px;
+  height: 12px;
+  opacity: 0.45;
+}
+
+.thread-read-tick.is-read img {
+  opacity: 1;
+  filter: invert(35%) sepia(90%) saturate(1500%) hue-rotate(215deg);
+}
+
+/* ---------- Typing indicator ---------- */
+
+.thread-typing-bubble {
+  display: flex;
+  gap: 4px;
+  align-self: flex-start;
+  padding: 10px 14px;
+  border-radius: 20px;
+  border-bottom-left-radius: 6px;
+  background: rgba(255, 255, 255, 0.65);
+  width: fit-content;
+}
+
+.thread-typing-bubble span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #6366f1;
+  animation: typingBounce 1.2s ease-in-out infinite;
+}
+
+.thread-typing-bubble span:nth-child(2) { animation-delay: 0.15s; }
+.thread-typing-bubble span:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes typingBounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+  30% { transform: translateY(-3px); opacity: 1; }
+}
+
+/* ---------- Forward picker ---------- */
+
+.forward-picker-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 200;
+}
+
+.forward-picker-overlay.hidden {
+  display: none;
+}
+
+.forward-picker-sheet {
+  width: 100%;
+  max-width: 420px;
+  max-height: 70vh;
+  overflow-y: auto;
+  background: var(--surface, #fff);
+  border-radius: 20px 20px 0 0;
+  padding: 16px;
+}
+
+.forward-picker-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.forward-picker-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 6px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.forward-picker-row:hover {
+  background: rgba(99, 102, 241, 0.08);
+}
+
+.forward-picker-row img {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* ---------- Dark mode ---------- */
+
+.dark .thread-msg-action-btn {
+  background: rgba(233, 227, 255, 0.1);
+  color: #c4b5fd;
+}
+
+.dark .thread-reaction-pill {
+  background: rgba(85, 53, 173, 0.3);
+  border-color: rgba(196, 181, 253, 0.3);
+}
+
+.dark .thread-reaction-picker {
+  background: #241a4d;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.dark .thread-reply-bar,
+.dark .thread-msg-reply-preview {
+  background: rgba(85, 53, 173, 0.25);
+  color: #c4b5fd;
+  border-left-color: #8b7fff;
+}
+
+.dark .thread-typing-bubble {
+  background: rgba(85, 53, 173, 0.45);
+}
+
+.dark .forward-picker-sheet {
+  background: #1a1033;
+  color: #e9e3ff;
+}
+
+.shinigami .thread-reaction-pill.mine-reaction,
+.shinigami .thread-msg-action-btn:hover {
+  background: rgba(185, 28, 28, 0.25);
+}

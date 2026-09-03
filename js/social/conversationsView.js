@@ -10,6 +10,7 @@ const emptyEl = document.getElementById("conversationsEmpty");
 
 let conversations = [];
 let stop = null;
+let seenIds = new Set();
 
 export function initConversationsView() {
   if (stop) return;
@@ -23,6 +24,7 @@ export function destroyConversationsView() {
   if (stop) stop();
   stop = null;
   conversations = [];
+  seenIds = new Set();
   list.innerHTML = "";
   emptyEl.classList.add("hidden");
 }
@@ -30,7 +32,8 @@ export function destroyConversationsView() {
 function render() {
   emptyEl.classList.toggle("hidden", conversations.length > 0);
 
-  list.innerHTML = conversations.map(rowHtml).join("");
+  list.innerHTML = conversations.map(c => rowHtml(c, !seenIds.has(c.id))).join("");
+  seenIds = new Set(conversations.map(c => c.id));
 
   list.querySelectorAll(".conversation-row").forEach(row => {
     const convo = conversations.find(c => c.id === row.dataset.id);
@@ -42,14 +45,14 @@ function render() {
   });
 }
 
-function rowHtml(convo) {
+function rowHtml(convo, isNew) {
   const myUid = auth.currentUser?.uid;
   const preview = convo.lastMessage
     ? (convo.lastMessage.senderUid === myUid ? "You: " : "") + convo.lastMessage.text
     : "Say hello 👋";
 
   return `
-    <div class="conversation-row" data-id="${escHtml(convo.id)}">
+    <div class="conversation-row ${isNew ? "conversation-row-new" : ""}" data-id="${escHtml(convo.id)}">
       <img class="conversation-avatar" src="${escHtml(convo.otherAvatar || DEFAULT_AVATAR)}" alt="" />
       <div class="conversation-body">
         <div class="conversation-name">${escHtml(convo.otherName)}</div>

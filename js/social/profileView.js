@@ -12,6 +12,7 @@ import {
   cancelFollowRequest,
   unfollow
 } from "./socialApi.js";
+import { getOptimistic, setOptimistic, clearAllOptimistic, onOptimisticChange } from "./optimisticFollow.js";
 import { openThread } from "./threadView.js";
 
 const DEFAULT_AVATAR = "Assets/Avatars/avatar1.png";
@@ -24,6 +25,7 @@ let outgoing = new Set();
 let stopFollowing = null;
 let stopFollowers = null;
 let stopOutgoing = null;
+let stopOptimistic = null;
 let currentUid = null;
 
 function ensureListeners() {
@@ -31,6 +33,7 @@ function ensureListeners() {
 
   stopFollowing = subscribeFollowing(uids => {
     following = new Set(uids);
+    clearAllOptimistic();
     if (currentUid) render(currentUid);
   });
   stopFollowers = subscribeFollowers(uids => {
@@ -39,6 +42,10 @@ function ensureListeners() {
   });
   stopOutgoing = subscribeOutgoingRequests(uids => {
     outgoing = new Set(uids);
+    clearAllOptimistic();
+    if (currentUid) render(currentUid);
+  });
+  stopOptimistic = onOptimisticChange(() => {
     if (currentUid) render(currentUid);
   });
 }
@@ -66,17 +73,23 @@ export function closeProfileView() {
   if (stopFollowing) stopFollowing();
   if (stopFollowers) stopFollowers();
   if (stopOutgoing) stopOutgoing();
-  stopFollowing = stopFollowers = stopOutgoing = null;
+  if (stopOptimistic) stopOptimistic();
+  stopFollowing = stopFollowers = stopOutgoing = stopOptimistic = null;
+}
+
+function stateFor(uid) {
+  const optimistic = getOptimistic(uid);
+  if (optimistic) return optimistic;
+  return following.has(uid) ? "following" : outgoing.has(uid) ? "requested" : "none";
 }
 
 function render(uid) {
   const data = JSON.parse(content.dataset.user || "{}");
   if (data.uid !== uid) return;
 
-  const isFollowing = following.has(uid);
-  const isPending = outgoing.has(uid);
+  const state = stateFor(uid);
   const isFollower = followers.has(uid);
-  const canMessage = isFollowing || isFollower;
+  const canMessage = state === "following" || isFollower;
 
   content.innerHTML = `
     <div class="profile-view-header">
@@ -90,9 +103,9 @@ function render(uid) {
     </div>
 
     <div class="profile-view-actions">
-      <button class="profile-follow-btn ${isFollowing ? "is-following" : ""} ${isPending ? "is-pending" : ""}" id="profileFollowBtn">
-        <img src="Assets/Icons/${isFollowing ? "user-check" : "user-plus"}.svg" class="icon" alt="" />
-        <span>${isFollowing ? "Following" : isPending ? "Requested" : "Follow"}</span>
+      <button class="profile-follow-btn ${state === "following" ? "is-following" : ""} ${state === "requested" ? "is-pending" : ""}" id="profileFollowBtn">
+        <img src="Assets/Icons/${state === "following" ? "user-check" : "user-plus"}.svg" class="icon" alt="" />
+        <span>${state === "following" ? "Following" : state === "requested" ? "Requested" : "Follow"}</span>
       </button>
       <button class="profile-message-btn" id="profileMessageBtn" ${canMessage ? "" : "disabled"}>
         Message
@@ -102,7 +115,7 @@ function render(uid) {
     ${canMessage ? "" : `<div class="profile-view-hint">You can message ${escHtml(data.displayName || "this person")} once your follow is accepted.</div>`}
   `;
 
-  content.querySelector("#profileFollowBtn").addEventListener("click", () => handleFollowClick(uid, isFollowing, isPending));
+  content.querySelector("#profileFollowBtn").addEventListener("click", () => handleFollowClick(uid, state));
 
   const messageBtn = content.querySelector("#profileMessageBtn");
   if (canMessage) {
@@ -112,23 +125,25 @@ function render(uid) {
   }
 }
 
-async function handleFollowClick(uid, isFollowing, isPending) {
-  const btn = content.querySelector("#profileFollowBtn");
-  btn.disabled = true;
+async function handleFollowClick(uid, currentState) {
+  if (currentState === "following") {
+    const confirmed = window.confirm("Unfollow this person?");
+    if (!confirmed) return;
+  }
+
+  setOptimistic(uid, currentState === "none" ? "requested" : "none");
 
   try {
-    if (isFollowing) {
-      const confirmed = window.confirm("Unfollow this person?");
-      if (confirmed) await unfollow(uid);
-    } else if (isPending) {
+    if (currentState === "following") {
+      await unfollow(uid);
+    } else if (currentState === "requested") {
       await cancelFollowRequest(uid);
     } else {
       await sendFollowRequest(uid);
     }
   } catch (err) {
+    setOptimistic(uid, null);
     window.alert(err.message || "Something went wrong.");
-  } finally {
-    btn.disabled = false;
   }
 }
 

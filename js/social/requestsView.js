@@ -8,23 +8,41 @@ const list = document.getElementById("requestsList");
 const emptyEl = document.getElementById("requestsEmpty");
 
 let stop = null;
+let dismissed = new Set(); // uids optimistically removed, pending server confirmation
+let lastKnownRequests = [];
+let seenUids = new Set();
 
 export function initRequestsView() {
   if (stop) return;
-  stop = subscribeIncomingRequests(render);
+  stop = subscribeIncomingRequests(requests => {
+    lastKnownRequests = requests;
+
+    // Real data has arrived — anything still "dismissed" that's gone
+    // from the list is confirmed; drop it from the dismissed set so
+    // it doesn't leak if the same person re-requests later.
+    const live = new Set(requests.map(r => r.requester));
+    dismissed = new Set([...dismissed].filter(uid => live.has(uid)));
+    render(requests);
+  });
 }
 
 export function destroyRequestsView() {
   if (stop) stop();
   stop = null;
+  dismissed = new Set();
+  lastKnownRequests = [];
+  seenUids = new Set();
   list.innerHTML = "";
   emptyEl.classList.add("hidden");
 }
 
 function render(requests) {
-  emptyEl.classList.toggle("hidden", requests.length > 0);
+  const visible = requests.filter(r => !dismissed.has(r.requester));
 
-  list.innerHTML = requests.map(rowHtml).join("");
+  emptyEl.classList.toggle("hidden", visible.length > 0);
+
+  list.innerHTML = visible.map(r => rowHtml(r, !seenUids.has(r.requester))).join("");
+  seenUids = new Set(visible.map(r => r.requester));
 
   list.querySelectorAll(".request-row").forEach(row => {
     const uid = row.dataset.uid;
@@ -34,9 +52,9 @@ function render(requests) {
   });
 }
 
-function rowHtml(req) {
+function rowHtml(req, isNew) {
   return `
-    <div class="request-row" data-uid="${escHtml(req.requester)}">
+    <div class="request-row ${isNew ? "request-row-new" : ""}" data-uid="${escHtml(req.requester)}">
       <img class="request-avatar" src="${escHtml(req.requesterAvatar || DEFAULT_AVATAR)}" alt="" />
       <div class="request-name">${escHtml(req.requesterName || "Joule User")}</div>
       <div class="request-actions">
@@ -52,25 +70,35 @@ function rowHtml(req) {
 }
 
 async function handleAccept(uid, row) {
-  setRowBusy(row, true);
+  dismissOptimistically(uid, row);
   try {
     await acceptFollowRequest(uid);
   } catch (err) {
+    restore(uid);
     window.alert(err.message || "Couldn't accept this request.");
-    setRowBusy(row, false);
   }
 }
 
 async function handleDecline(uid, row) {
-  setRowBusy(row, true);
+  dismissOptimistically(uid, row);
   try {
     await declineFollowRequest(uid);
   } catch (err) {
+    restore(uid);
     window.alert(err.message || "Couldn't decline this request.");
-    setRowBusy(row, false);
   }
 }
 
-function setRowBusy(row, busy) {
-  row.querySelectorAll("button").forEach(btn => (btn.disabled = busy));
+function dismissOptimistically(uid, row) {
+  dismissed.add(uid);
+  row.classList.add("request-row-leaving");
+  setTimeout(() => {
+    if (dismissed.has(uid)) row.remove();
+    emptyEl.classList.toggle("hidden", list.children.length > 0);
+  }, 220);
+}
+
+function restore(uid) {
+  dismissed.delete(uid);
+  render(lastKnownRequests);
 }

@@ -1,3 +1,7 @@
+import { WAKE_API_URL } from "../utils/constants.js";
+import { getTokenOptional } from "../auth/getToken.js";
+import { setBackendAwake } from "../config/actions.js";
+import { isBackendAwake } from "../config/selectors.js";
 import { subscribeIncomingRequests } from "./followState.js";
 import { initDirectoryView, destroyDirectoryView } from "./directoryView.js";
 import { initRequestsView, destroyRequestsView } from "./requestsView.js";
@@ -68,9 +72,29 @@ function updateBadge(count) {
   }
 }
 
+function syncViewport() {
+  if (!window.visualViewport) return;
+  const vv = window.visualViewport;
+
+  peopleSection.style.height = `${vv.height}px`;
+  peopleSection.style.top = `${vv.offsetTop}px`;
+}
+
+if (window.visualViewport) {
+  window.visualViewport.addEventListener("resize", () => {
+    if (!peopleSection.classList.contains("hidden")) syncViewport();
+  });
+  window.visualViewport.addEventListener("scroll", () => {
+    if (!peopleSection.classList.contains("hidden")) syncViewport();
+  });
+}
+
 function open() {
   document.getElementById("app").classList.add("people-open");
   peopleSection.classList.remove("hidden");
+
+  syncViewport();
+  prewarmBackend();
 
   initDirectoryView();
   initRequestsView();
@@ -79,9 +103,28 @@ function open() {
   showTab(activeTab);
 }
 
+/** Silent — no bubble, no button state. Just gets the dyno warm before the user's first Follow/Send tap. */
+async function prewarmBackend() {
+  if (isBackendAwake()) return;
+
+  try {
+    const token = await getTokenOptional();
+    const headers = { "Content-Type": "application/json" };
+    if (token) headers.Authorization = `Bearer ${token}`;
+
+    const response = await fetch(WAKE_API_URL, { method: "POST", headers });
+    if (response.ok) setBackendAwake(true);
+  } catch {
+    // Silent by design — the real request will just take a while
+    // if this didn't land, same as it would have anyway.
+  }
+}
+
 function close() {
   document.getElementById("app").classList.remove("people-open");
   peopleSection.classList.add("hidden");
+  peopleSection.style.height = "";
+  peopleSection.style.top = "";
 
   stack = [];
   closeProfileView();

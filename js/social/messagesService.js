@@ -1,4 +1,4 @@
-import { collection, query, orderBy, limitToLast, onSnapshot } from "firebase/firestore";
+import { collection, doc, query, orderBy, limitToLast, onSnapshot } from "firebase/firestore";
 import { db } from "../auth/firebase.js";
 
 const HISTORY_LIMIT = 100;
@@ -6,8 +6,7 @@ const HISTORY_LIMIT = 100;
 /**
  * Live messages for one conversation, oldest first, capped to the
  * most recent 100 — enough for an open thread without an unbounded
- * read as history grows. callback receives an array of
- * { id, senderUid, text, sentAt }.
+ * read as history grows.
  */
 export function subscribeMessages(conversationId, callback) {
   const q = query(
@@ -24,9 +23,38 @@ export function subscribeMessages(conversationId, callback) {
           id: d.id,
           senderUid: data.senderUid,
           text: data.text,
-          sentAt: data.sentAt?.toMillis?.() ?? Date.now()
+          sentAt: data.sentAt?.toMillis?.() ?? Date.now(),
+          reactions: data.reactions || {},
+          replyTo: data.replyTo || null,
+          editedAt: data.editedAt?.toMillis?.() ?? null,
+          deleted: !!data.deleted,
+          forwardedFrom: data.forwardedFrom || null
         };
       })
     );
+  });
+}
+
+/**
+ * Live conversation-level metadata: each participant's read cursor
+ * (for read-receipt ticks) and typing timestamp (for the typing
+ * indicator, self-expired by the caller comparing against Date.now()
+ * rather than a separate "stopped typing" event).
+ */
+export function subscribeConversationMeta(conversationId, callback) {
+  return onSnapshot(doc(db, "conversations", conversationId), snap => {
+    if (!snap.exists()) return;
+
+    const data = snap.data();
+    const toMillis = ts => ts?.toMillis?.() ?? null;
+
+    callback({
+      lastRead: Object.fromEntries(
+        Object.entries(data.lastRead || {}).map(([uid, ts]) => [uid, toMillis(ts)])
+      ),
+      typing: Object.fromEntries(
+        Object.entries(data.typing || {}).map(([uid, ts]) => [uid, toMillis(ts)])
+      )
+    });
   });
 }

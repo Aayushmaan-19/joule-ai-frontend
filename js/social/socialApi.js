@@ -48,6 +48,30 @@ export function unfollow(targetUid) {
   return post("/unfollow", { targetUid });
 }
 
-export function sendMessage(toUid, text) {
-  return post("/message/send", { toUid, text });
+export function sendMessage(toUid, text, replyTo = null) {
+  return post("/message/send", { toUid, text, replyTo });
+}
+
+export function editMessage(conversationId, messageId, text) {
+  return post("/message/edit", { conversationId, messageId, text });
+}
+
+export function deleteMessage(conversationId, messageId) {
+  return post("/message/delete", { conversationId, messageId });
+}
+
+export function reactToMessage(conversationId, messageId, emoji) {
+  return post("/message/react", { conversationId, messageId, emoji });
+}
+
+export function forwardMessage(conversationId, messageId, toUid) {
+  return post("/message/forward", { conversationId, messageId, toUid });
+}
+
+export function markConversationRead(conversationId) {
+  return post("/message/read", { conversationId });
+}
+
+export function pingTyping(conversationId) {
+  return post("/typing", { conversationId });
 }
