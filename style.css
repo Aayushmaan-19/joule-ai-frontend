@@ -4761,9 +4761,9 @@ body.private-mode .input-area:focus-within {
 
   .signup-btn {
     position: relative;
-    background: #0a0a0a;
+    background: var(--joule-spark, #ffb238);
     border: none;
-    color: #fff;
+    color: var(--joule-spark-ink, #241a05);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     box-shadow: none;
@@ -4966,6 +4966,112 @@ body.private-mode .input-area:focus-within {
   #app.sidebar-visible .hero-logo {
     opacity: 0;
     pointer-events: none;
+  }
+
+  /* ============================================================
+     NEW MOBILE DIRECTION — flat "energy" language, light mode.
+     Two accents carry the whole identity: amber (--joule-spark)
+     for you/outgoing, violet (--joule-current) for the assistant/
+     incoming — same two colors used in the DM thread's reaction
+     and reply styling, so the two messaging surfaces read as one
+     app. Everything here is a *visual* override only — every
+     position/z-index/transition/sizing rule above this point is
+     unchanged, so nothing here can be the reason a gesture, the
+     sidebar, or the tools popover stops working.
+
+     Also a real perf win, not just a look: every backdrop-filter
+     blur() on this screen (bubbles, input bar, tools popover) is
+     gone rather than just reduced — flat surfaces don't have the
+     mobile Safari blur-repaint cost the old glass ones did.
+
+     Scope: light mode only. .dark and .shinigami still render the
+     previous glass styling on mobile for now — flagged as its own
+     follow-up rather than reskinned blind in the same pass.
+     ============================================================ */
+
+  :root {
+    --joule-spark: #ffb238;
+    --joule-spark-ink: #241a05;
+    --joule-current: #8b7fff;
+    --joule-current-soft: rgba(139, 127, 255, 0.1);
+  }
+
+  /* Bubbles */
+  .user .chat {
+    background: var(--joule-spark);
+    color: var(--joule-spark-ink);
+    font-weight: 500;
+    border-radius: 16px 4px 16px 16px;
+  }
+
+  .bot .chat {
+    background: #fff;
+    color: #1e293b;
+    border-left: 2px solid var(--joule-current);
+    border-radius: 4px 16px 16px 16px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+  }
+
+  .bubble-btn {
+    background: var(--joule-current-soft);
+    color: var(--joule-current);
+  }
+
+  /* Input bar — flat card instead of frosted glass */
+  .input-area {
+    background: #fff;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    box-shadow: 0 2px 14px rgba(15, 23, 42, 0.07);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .input-area::before {
+    display: none; /* the old glass sheen overlay — nothing to shine on a flat surface */
+  }
+
+  .input-area:focus-within {
+    border-color: var(--joule-current);
+    box-shadow: 0 2px 16px rgba(139, 127, 255, 0.18);
+  }
+
+  #sendBtn {
+    background: var(--joule-spark);
+    color: var(--joule-spark-ink);
+  }
+
+  #sendBtn:active {
+    transform: scale(0.92);
+  }
+
+  /* Tools popover */
+  .tools-menu {
+    background: #fff;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    box-shadow: 0 8px 28px rgba(15, 23, 42, 0.14);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .tools-menu-item.active {
+    background: var(--joule-current-soft);
+    color: var(--joule-current);
+  }
+
+  #toolsBtn.has-active-tool {
+    background: var(--joule-current);
+    color: #fff;
+  }
+
+  /* Icon controls row — same flat white circle shape, new accent on interaction */
+  .icon-btn:active {
+    background: var(--joule-current-soft);
+  }
+
+  /* Sidebar drawer surface */
+  .chat-sidebar {
+    background: #fff;
+    border-right: 1px solid rgba(15, 23, 42, 0.08);
   }
 }
 
