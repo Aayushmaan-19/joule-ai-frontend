@@ -17,6 +17,7 @@ import { isPrivateMode } from "../config/selectors.js";
 
 let sidebarEl = null;
 let isOpen = false;
+let searchQuery = "";
 
 /* =========================================================
    INIT
@@ -89,16 +90,32 @@ function buildDOM() {
       </div>
     </div>
 
+    <div class="sidebar-search-row">
+      <div class="sidebar-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="sidebarSearchInput" placeholder="Search conversations" autocomplete="off" />
+      </div>
+    </div>
+
     <div class="sidebar-list" id="sidebarList"></div>
+
+    <button class="sidebar-fab" id="sidebarFabBtn" aria-label="New chat">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    </button>
   `;
 
   const appEl = document.getElementById("app");
   appEl.insertBefore(sidebarEl, appEl.firstChild);
 
   sidebarEl.querySelector("#sidebarNewBtn").addEventListener("click", handleNew);
+  sidebarEl.querySelector("#sidebarFabBtn").addEventListener("click", handleNew);
   sidebarEl.querySelector("#sidebarPrivateBtn").addEventListener("click", handleTogglePrivate);
   sidebarEl.querySelector("#sidebarCollapseBtn").addEventListener("click", close);
   sidebarEl.querySelector("#sidebarClearAllBtn").addEventListener("click", handleClearAll);
+  sidebarEl.querySelector("#sidebarSearchInput").addEventListener("input", e => {
+    searchQuery = e.target.value.trim().toLowerCase();
+    applySearchFilter();
+  });
 
   appEl.addEventListener("click", e => {
     if (isOpen && e.target === appEl) close();
@@ -137,6 +154,8 @@ export function render() {
 
     const date = formatDate(session.updatedAt);
     const preview = session.preview || "";
+
+    item.dataset.searchText = `${session.name} ${preview}`.toLowerCase();
 
     item.innerHTML = `
       <div class="sidebar-item-content" data-id="${session.id}">
@@ -180,8 +199,54 @@ export function render() {
       handleDelete(session.id);
     });
 
+    wireSwipeToDelete(item, session.id);
+
     listEl.appendChild(item);
   }
+
+  applySearchFilter();
+}
+
+/** Horizontal swipe reveals the same delete action the button already provides — mobile-only affordance, same touch-delta-threshold pattern as the DM thread's swipe-to-reply. */
+function wireSwipeToDelete(item, sessionId) {
+  const content = item.querySelector(".sidebar-item-content");
+  let startX = 0;
+  let dx = 0;
+  let tracking = false;
+
+  content.addEventListener("touchstart", e => {
+    startX = e.touches[0].clientX;
+    dx = 0;
+    tracking = true;
+  }, { passive: true });
+
+  content.addEventListener("touchmove", e => {
+    if (!tracking) return;
+    dx = e.touches[0].clientX - startX;
+    if (dx > 0) dx = 0; // only swipe left, revealing delete on the right
+    content.style.transform = `translateX(${Math.max(-72, dx)}px)`;
+  }, { passive: true });
+
+  content.addEventListener("touchend", () => {
+    tracking = false;
+    if (dx < -55) {
+      content.style.transform = "translateX(-72px)";
+      item.classList.add("swiped");
+    } else {
+      content.style.transform = "";
+      item.classList.remove("swiped");
+    }
+  });
+}
+
+/** Filters the already-rendered list by the current search query — cheap enough to run on every keystroke against a person's own chat history (never more than a few dozen items). */
+function applySearchFilter() {
+  if (!sidebarEl) return;
+
+  sidebarEl.querySelectorAll(".sidebar-item").forEach(item => {
+    const matches = !searchQuery || item.dataset.searchText.includes(searchQuery);
+    item.classList.toggle("search-hidden", !matches);
+  });
 }
 
 /* =========================================================

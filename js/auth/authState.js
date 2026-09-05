@@ -21,6 +21,7 @@ export function initializeAuthState() {
       localStorage.setItem("firebaseToken", token);
 
       document.body.classList.add("authenticated");
+      document.body.classList.toggle("verified", user.emailVerified);
 
       setUser({
         uid: user.uid,
@@ -63,6 +64,7 @@ export function initializeAuthState() {
       localStorage.removeItem("firebaseToken");
 
       document.body.classList.remove("authenticated");
+      document.body.classList.remove("verified");
 
       setUser(null);
       setProfile(null);

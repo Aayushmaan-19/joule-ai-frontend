@@ -307,6 +307,33 @@
           </button>
         </div>
 
+        <div class="profile-settings" id="profileSettings">
+          <div class="profile-setrow">
+            <div class="profile-setrow-left">
+              <span class="profile-setrow-icon"><img src="Assets/Icons/sun.svg" class="icon" alt="" /></span>
+              Appearance
+            </div>
+            <div class="theme-swatches" id="themeSwatches">
+              <button type="button" class="theme-swatch" data-mode="light" aria-label="Light"></button>
+              <button type="button" class="theme-swatch" data-mode="dark" aria-label="Dark"></button>
+            </div>
+          </div>
+          <div class="profile-setrow">
+            <div class="profile-setrow-left">
+              <span class="profile-setrow-icon"><img src="Assets/Icons/sparkles.svg" class="icon" alt="" /></span>
+              Sound
+            </div>
+            <button type="button" class="profile-toggle" id="profileSoundToggle" role="switch" aria-checked="false"></button>
+          </div>
+          <button type="button" class="profile-setrow profile-setrow-link" id="profileGalleryRow">
+            <div class="profile-setrow-left">
+              <span class="profile-setrow-icon"><img src="Assets/Icons/images.svg" class="icon" alt="" /></span>
+              My images
+            </div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="profile-setrow-chevron"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+
         <form id="profileForm">
           <label class="field-label" for="profileName">Display name</label>
           <input
@@ -570,6 +597,43 @@
         </div>
       </div>
       <!-- /#main -->
+
+      <!-- MOBILE TAB BAR — mobile-only (see @media in style.css).
+           Desktop navigation (topbar icons, sidebar drawer, profile
+           modal) is completely untouched and still works exactly as
+           before; this is an additional mobile-only entry point that
+           drives the same underlying panels via mobileNav.js. -->
+      <nav class="mobile-tabbar" id="mobileTabBar">
+        <button type="button" class="mobile-tab active" data-tab="chat" aria-label="Chat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span>Chat</span>
+        </button>
+        <button type="button" class="mobile-tab" data-tab="chats" aria-label="Chats">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3h18v14H7l-4 4V3z"/><line x1="7" y1="8" x2="17" y2="8"/><line x1="7" y1="12" x2="13" y2="12"/></svg>
+          <span>Chats</span>
+        </button>
+        <button type="button" class="mobile-tab" data-tab="people" aria-label="People">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span>People</span>
+          <span class="mobile-tab-badge hidden" id="mobileTabPeopleBadge"></span>
+        </button>
+        <button type="button" class="mobile-tab" data-tab="profile" aria-label="Profile">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span>Profile</span>
+        </button>
+      </nav>
+
+      <div class="mobile-lock-overlay hidden" id="mobileLockOverlay">
+        <div class="mobile-lock-card">
+          <div class="mobile-lock-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+          </div>
+          <h3 id="mobileLockTitle">Sign up to continue</h3>
+          <p id="mobileLockMessage">Create an account to use this.</p>
+          <button type="button" class="mobile-lock-cta" id="mobileLockCta">Create account</button>
+          <button type="button" class="mobile-lock-secondary" id="mobileLockSecondary">Log in instead</button>
+        </div>
+      </div>
     </div>
     <!-- /#app -->
 

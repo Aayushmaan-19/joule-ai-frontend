@@ -13,7 +13,10 @@ import {
   avatarUploadSpinner,
   avatarUploadStatus,
   profileStatus,
-  logoutBtn
+  logoutBtn,
+  themeBtn,
+  musicBtn,
+  galleryToolBtn
 } from "../utils/dom.js";
 
 import { auth } from "../auth/firebase.js";
@@ -22,6 +25,12 @@ import { fetchProfile, updateProfile, uploadAvatarImage } from "../auth/profileS
 import { cropToSquare } from "../utils/imageCrop.js";
 import { setProfile } from "../config/actions.js";
 import { currentProfile } from "../config/selectors.js";
+import { isDarkMode } from "../config/selectors.js";
+import { isPlaying } from "../config/selectors.js";
+
+const themeSwatches = document.querySelectorAll(".theme-swatch");
+const profileSoundToggle = document.getElementById("profileSoundToggle");
+const profileGalleryRow = document.getElementById("profileGalleryRow");
 
 const DEFAULT_AVATAR = "Assets/Avatars/avatar1.png";
 
@@ -50,6 +59,7 @@ async function openProfile() {
 
   updateAvatarPreview();
   highlightSelectedAvatar();
+  updateSettingsUI();
 }
 
 function closeProfilePanel() {
@@ -64,6 +74,44 @@ profileOverlay.addEventListener("click", e => {
   if (e.target === profileOverlay) {
     closeProfilePanel();
   }
+});
+
+/* =========================
+   SETTINGS (theme / sound / gallery)
+   Every row here drives the same buttons and functions that already
+   exist elsewhere (themeBtn, musicBtn, galleryToolBtn) rather than
+   reimplementing their logic — this panel is just a second, more
+   discoverable entry point to controls that were previously only
+   reachable as small icon buttons.
+========================= */
+
+function updateSettingsUI() {
+  themeSwatches.forEach(btn => {
+    btn.classList.toggle("active", (btn.dataset.mode === "dark") === isDarkMode());
+  });
+
+  profileSoundToggle.classList.toggle("on", isPlaying());
+  profileSoundToggle.setAttribute("aria-checked", String(isPlaying()));
+}
+
+themeSwatches.forEach(btn => {
+  btn.addEventListener("click", () => {
+    const wantsDark = btn.dataset.mode === "dark";
+    if (wantsDark !== isDarkMode()) themeBtn.click();
+    updateSettingsUI();
+  });
+});
+
+profileSoundToggle.addEventListener("click", () => {
+  musicBtn.click();
+  // musicPlayer.js's own click handler runs synchronously, so state
+  // is already current by the time this runs.
+  updateSettingsUI();
+});
+
+profileGalleryRow.addEventListener("click", () => {
+  closeProfilePanel();
+  galleryToolBtn.click();
 });
 
 /* =========================

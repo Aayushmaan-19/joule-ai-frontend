@@ -4642,6 +4642,19 @@ body.private-mode .input-area:focus-within {
    separate below — those are an information-density fix, not sizing.
 ================================= */
 
+/* Both mobile-only, new components with no existing "display:contents"
+   parent to hide behind (unlike .topbar-mobile's children) — explicit
+   display:none here, overridden to display:flex inside the mobile
+   media query below. Correct on desktop regardless of any class
+   state a script might otherwise set on them. */
+.mobile-tabbar {
+  display: none;
+}
+
+.mobile-lock-overlay {
+  display: none;
+}
+
 @media (max-width: 768px) {
 
   #main {
@@ -4926,42 +4939,32 @@ body.private-mode .input-area:focus-within {
   }
 
   /* Sidebar: on desktop it's a flex sibling that pushes #main
-     over by 270px. On a ~360px phone that squeezes the entire
-     app (header/buttons/input) into a ~90px sliver, which is
-     the real source of things looking "shrunk" or "huge" once
-     the sidebar is opened. Below 768px it becomes a fixed
-     overlay instead, so #main always keeps its full width. */
+     over by 270px. On mobile it's now a full-screen tab ("Chats"
+     in the bottom tab bar) rather than a slide-in drawer — reserves
+     space at the bottom for the tab bar so it stays visible and
+     switchable while a chat list fills the rest. */
   .chat-sidebar {
     position: fixed;
-    inset: 0 auto 0 0;
-    width: min(280px, 82vw);
+    inset: 0 0 var(--mobile-tabbar-clearance, 60px) 0;
+    width: 100%;
     min-width: 0;
-    z-index: 500;
-    transform: translateX(-100%);
-    transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+    z-index: 1400;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s ease;
   }
 
   #app.sidebar-visible .chat-sidebar {
-    width: min(280px, 82vw);
+    width: 100%;
     min-width: 0;
-    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
   }
 
-  /* Dims the app behind the open sidebar and doubles as a
-     tap-outside-to-close target (wired in sidebar.js). */
-  #app.sidebar-visible::after {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: 400;
-    background: rgba(15, 23, 42, 0.35);
-  }
-
-  /* .topbar-mobile and .hero-logo are both z-index:1000 — well
-     above the sidebar (500) and its scrim (400) above, so without
-     this they render on top of an open sidebar instead of receding
-     behind it like everything else does. Fades out in step with
-     the sidebar's own 0.32s slide, not a hard cut. */
+  /* .topbar-mobile and .hero-logo still need to get out of the way
+     while a full-screen tab is open — same fade as before, just no
+     longer paired with a dimming scrim behind it (nothing shows
+     through an opaque full-screen tab, so there's nothing to dim). */
   #app.sidebar-visible .topbar-mobile,
   #app.sidebar-visible .hero-logo {
     opacity: 0;
@@ -4990,10 +4993,17 @@ body.private-mode .input-area:focus-within {
      ============================================================ */
 
   :root {
-    --joule-spark: #ffb238;
-    --joule-spark-ink: #241a05;
-    --joule-current: #8b7fff;
-    --joule-current-soft: rgba(139, 127, 255, 0.1);
+    --joule-spark: #eeb27f;
+    --joule-spark-ink: #5c3a1e;
+    --joule-current: #8e7fd1;
+    --joule-current-soft: rgba(142, 127, 209, 0.12);
+    --joule-ink: #3a352f;
+    --joule-ink-2: #96907f;
+    --joule-line: #ece3d3;
+    --joule-paper: #ffffff;
+    --joule-paper-2: #fbf6ee;
+    --mobile-tabbar-h: 60px;
+    --mobile-tabbar-clearance: calc(60px + env(safe-area-inset-bottom, 0px));
   }
 
   /* Bubbles */
@@ -5068,10 +5078,426 @@ body.private-mode .input-area:focus-within {
     background: var(--joule-current-soft);
   }
 
-  /* Sidebar drawer surface */
+  /* Sidebar surface — now a full-screen tab, not a drawer */
   .chat-sidebar {
+    background: var(--joule-paper-2);
+    border-right: none;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* peopleOpenBtn/profileBtn are superseded by the People/Profile
+     tabs below — kept fully intact for desktop, just not shown
+     twice on mobile. Both were already conditionally shown/hidden
+     by authState.js; this only affects mobile's visual presentation
+     of that same state, never the state itself. */
+  #peopleOpenBtn,
+  #profileBtn {
+    display: none;
+  }
+
+  /* Input bar and chat area both need to clear the fixed tab bar
+     now sitting under them, on top of what they already cleared. */
+  .input-area {
+    bottom: calc(var(--mobile-tabbar-clearance) + 12px);
+  }
+
+  .chat-container {
+    padding-bottom: calc(var(--mobile-tabbar-clearance) + 24px);
+  }
+
+  /* ============================================================
+     MOBILE TAB BAR + LOCK OVERLAY
+     ============================================================ */
+
+  .mobile-tabbar.hidden {
+    display: none;
+  }
+
+  .mobile-tabbar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2600;
+
+    display: flex;
+    height: var(--mobile-tabbar-h);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+
+    background: var(--joule-paper);
+    border-top: 1px solid var(--joule-line);
+  }
+
+  .mobile-tab {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+
+    border: none;
+    background: none;
+    color: #c2bcac;
+    position: relative;
+  }
+
+  .mobile-tab svg {
+    width: 21px;
+    height: 21px;
+  }
+
+  .mobile-tab span {
+    font-size: 10px;
+    font-weight: 600;
+  }
+
+  .mobile-tab.active {
+    color: var(--joule-spark-ink);
+  }
+
+  .mobile-tab-badge {
+    position: absolute;
+    top: 2px;
+    right: calc(50% - 20px);
+    min-width: 15px;
+    height: 15px;
+    padding: 0 3px;
+    border-radius: 8px;
+    background: #e0574f;
+    color: #fff;
+    font-size: 9.5px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mobile-tab-badge.hidden {
+    display: none;
+  }
+
+  /* ---------- Sidebar → "Chats" tab ---------- */
+
+  .sidebar-header {
+    padding-top: max(16px, env(safe-area-inset-top, 0px));
+  }
+
+  /* Collapse button no longer means anything once leaving the tab
+     IS how you close this screen — hidden here, kept for desktop's
+     drawer where it's still the only way to close it. */
+  #sidebarCollapseBtn {
+    display: none;
+  }
+
+  .sidebar-search-row {
+    padding: 4px 16px 10px;
+  }
+
+  .sidebar-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 38px;
+    padding: 0 12px;
+    border-radius: 12px;
+    background: var(--joule-paper);
+    border: 1px solid var(--joule-line);
+    color: var(--joule-ink-2);
+  }
+
+  .sidebar-search svg {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+  }
+
+  .sidebar-search input {
+    border: none;
+    background: none;
+    outline: none;
+    width: 100%;
+    font-size: 13.5px;
+    color: var(--joule-ink);
+  }
+
+  .sidebar-search input::placeholder {
+    color: var(--joule-ink-2);
+  }
+
+  .sidebar-item.search-hidden {
+    display: none;
+  }
+
+  .sidebar-item-content {
+    transition: transform 0.2s ease;
+    background: var(--joule-paper-2);
+  }
+
+  .sidebar-item.swiped .sidebar-item-actions {
+    pointer-events: auto;
+  }
+
+  .sidebar-fab {
+    position: absolute;
+    right: 18px;
+    bottom: calc(var(--mobile-tabbar-clearance) + 18px);
+
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+
+    background: var(--joule-spark);
+    color: var(--joule-spark-ink);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    box-shadow: 0 6px 18px rgba(238, 178, 127, 0.5);
+  }
+
+  .sidebar-fab svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .sidebar-fab:active {
+    transform: scale(0.94);
+  }
+
+  /* ---------- Profile overlay → "Profile" tab ---------- */
+
+  #profileOverlay {
+    background: var(--joule-paper-2);
+  }
+
+  #profileOverlay .profile-panel {
+    position: fixed;
+    inset: 0 0 var(--mobile-tabbar-clearance, 60px) 0;
+    width: 100%;
+    max-width: none;
+    height: auto;
+    border-radius: 0;
+    overflow-y: auto;
+    padding: max(20px, env(safe-area-inset-top, 0px)) 20px 20px;
+    background: var(--joule-paper-2);
+    box-shadow: none;
+  }
+
+  .profile-settings {
+    margin: 18px 0;
+    border-radius: 14px;
+    background: var(--joule-paper);
+    border: 1px solid var(--joule-line);
+    overflow: hidden;
+  }
+
+  .profile-setrow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 13px 14px;
+    border: none;
+    border-bottom: 1px solid var(--joule-line);
+    background: none;
+    font-size: 14px;
+    color: var(--joule-ink);
+    text-align: left;
+  }
+
+  .profile-setrow:last-child {
+    border-bottom: none;
+  }
+
+  .profile-setrow-left {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+  }
+
+  .profile-setrow-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--joule-paper-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .profile-setrow-icon img {
+    width: 15px;
+    height: 15px;
+  }
+
+  .profile-setrow-chevron {
+    width: 15px;
+    height: 15px;
+    color: var(--joule-ink-2);
+    flex-shrink: 0;
+  }
+
+  .theme-swatches {
+    display: flex;
+    gap: 8px;
+  }
+
+  .theme-swatch {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid var(--joule-paper);
+    box-shadow: 0 0 0 1px var(--joule-line);
+    padding: 0;
+  }
+
+  .theme-swatch[data-mode="light"] {
+    background: var(--joule-paper-2);
+  }
+
+  .theme-swatch[data-mode="dark"] {
+    background: #14131a;
+  }
+
+  .theme-swatch.active {
+    box-shadow: 0 0 0 2px var(--joule-current);
+  }
+
+  .profile-toggle {
+    width: 38px;
+    height: 22px;
+    border-radius: 11px;
+    border: none;
+    background: var(--joule-line);
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .profile-toggle::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
     background: #fff;
-    border-right: 1px solid rgba(15, 23, 42, 0.08);
+    transition: left 0.15s ease;
+  }
+
+  .profile-toggle.on {
+    background: var(--joule-current);
+  }
+
+  .profile-toggle.on::after {
+    left: 18px;
+  }
+
+  /* ---------- Lock overlay (auth-gated tabs) ---------- */
+
+  .mobile-lock-overlay.hidden {
+    display: none;
+  }
+
+  .mobile-lock-overlay {
+    position: fixed;
+    inset: 0 0 var(--mobile-tabbar-clearance, 60px) 0;
+    z-index: 1500;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+
+    background: var(--joule-paper-2);
+    opacity: 0;
+    transition: opacity 0.22s ease;
+  }
+
+  .mobile-lock-overlay.in {
+    opacity: 1;
+  }
+
+  .mobile-lock-card {
+    width: 100%;
+    max-width: 300px;
+    text-align: center;
+
+    padding: 30px 22px;
+    border-radius: 20px;
+    background: var(--joule-paper);
+    border: 1px solid var(--joule-line);
+
+    transform: translateY(10px) scale(0.97);
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .mobile-lock-overlay.in .mobile-lock-card {
+    transform: translateY(0) scale(1);
+  }
+
+  .mobile-lock-icon {
+    width: 52px;
+    height: 52px;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    background: var(--joule-current-soft);
+    color: var(--joule-current);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mobile-lock-icon svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .mobile-lock-card h3 {
+    margin: 0 0 8px;
+    font-size: 16px;
+    color: var(--joule-ink);
+  }
+
+  .mobile-lock-card p {
+    margin: 0 0 20px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--joule-ink-2);
+  }
+
+  .mobile-lock-cta {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 14px;
+    background: var(--joule-spark);
+    color: var(--joule-spark-ink);
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .mobile-lock-cta:active {
+    transform: scale(0.97);
+  }
+
+  .mobile-lock-secondary {
+    margin-top: 10px;
+    padding: 8px;
+    border: none;
+    background: none;
+    color: var(--joule-current);
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .mobile-lock-secondary.hidden {
+    display: none;
   }
 }
 
@@ -6791,6 +7217,21 @@ body.private-mode .input-area:focus-within {
   .thread-input-row {
     padding-bottom: 16px;
     gap: 10px;
+  }
+
+  /* The fixed mobile tab bar sits on top of this full-screen section
+     (higher z-index) — without this, its last list item or the
+     thread's input row would render underneath it. */
+  .people-panels {
+    padding-bottom: var(--mobile-tabbar-clearance, 60px);
+  }
+
+  .thread-input-row {
+    padding-bottom: calc(var(--mobile-tabbar-clearance, 60px) + 12px);
+  }
+
+  .thread-reply-bar {
+    margin-bottom: calc(var(--mobile-tabbar-clearance, 60px) - 30px);
   }
 }
 

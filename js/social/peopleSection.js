@@ -17,6 +17,7 @@ const peopleTitle = document.getElementById("peopleTitle");
 const peopleTabs = document.getElementById("peopleTabs");
 const peopleNavBadge = document.getElementById("peopleNavBadge");
 const requestsBadge = document.getElementById("requestsBadge");
+const mobileTabPeopleBadge = document.getElementById("mobileTabPeopleBadge");
 
 const TAB_TITLES = {
   directory: "Discover",
@@ -65,7 +66,7 @@ export function destroyPeopleSection() {
 }
 
 function updateBadge(count) {
-  for (const el of [peopleNavBadge, requestsBadge]) {
+  for (const el of [peopleNavBadge, requestsBadge, mobileTabPeopleBadge]) {
     if (!el) continue;
     el.textContent = count > 9 ? "9+" : String(count);
     el.classList.toggle("hidden", count === 0);
