@@ -1,4 +1,4 @@
-const CACHE_NAME = "joule-shell-v1";
+const CACHE_NAME = "joule-shell-v2";
 
 self.addEventListener("install", () => {
   self.skipWaiting();
@@ -27,10 +27,14 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Navigations (the app shell itself): network first, so a signed-in
-  // user always gets the latest deploy when they're online. Falls
-  // back to whatever was last cached if the network is unreachable.
-  if (request.mode === "navigate") {
+  // Navigations (the app shell) and stylesheets: network first.
+  // Stylesheets are linked by plain filename (style.css, mobile.css),
+  // not run through Vite's hashed-asset pipeline the way genuinely
+  // immutable chunks are — so "same URL" does NOT mean "same content"
+  // for them, and cache-first was silently freezing them at whatever
+  // was fetched on a person's very first visit. Falls back to
+  // whatever was last cached if the network is unreachable.
+  if (request.mode === "navigate" || new URL(request.url).pathname.endsWith(".css")) {
     event.respondWith(
       fetch(request)
         .then((response) => {
@@ -43,9 +47,9 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Everything else (Vite's hashed JS/CSS, images, fonts): cache
-  // first. A hashed asset never changes under the same URL, so once
-  // it's cached there's no need to hit the network for it again.
+  // Everything else (Vite's genuinely hashed JS chunks, images,
+  // fonts): cache first is correct here because these DO change URL
+  // when their content changes.
   event.respondWith(
     caches.match(request).then((cached) => {
       if (cached) return cached;
