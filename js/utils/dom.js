@@ -163,6 +163,9 @@ export const closeProfile =
 export const profileForm =
   document.getElementById("profileForm");
 
+export const profileUsername =
+  document.getElementById("profileUsername");
+
 export const profileName =
   document.getElementById("profileName");
 

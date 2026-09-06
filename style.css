@@ -3357,6 +3357,20 @@ input:focus {
   color: rgba(255, 255, 255, 0.5);
 }
 
+.field-hint {
+  margin: -2px 0 0;
+  font-size: 11.5px;
+  color: rgba(30, 58, 138, 0.45);
+}
+
+.dark .field-hint {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.field-hint.error {
+  color: #dc2626;
+}
+
 .profile-panel input {
   width: 100%;
 

@@ -4,6 +4,7 @@ import {
   profileOverlay,
   closeProfile,
   profileForm,
+  profileUsername,
   profileName,
   profileEmail,
   profilePreviewImg,
@@ -21,7 +22,7 @@ import {
 
 import { auth } from "../auth/firebase.js";
 import { logout } from "../auth/logout.js";
-import { fetchProfile, updateProfile, uploadAvatarImage } from "../auth/profileService.js";
+import { fetchProfile, updateProfile, uploadAvatarImage, setUsername } from "../auth/profileService.js";
 import { cropToSquare } from "../utils/imageCrop.js";
 import { setProfile } from "../config/actions.js";
 import { currentProfile } from "../config/selectors.js";
@@ -53,6 +54,7 @@ async function openProfile() {
   const profile = await fetchProfile(user.uid);
 
   selectedAvatar = profile?.avatar || DEFAULT_AVATAR;
+  profileUsername.value = profile?.username || "";
   profileName.value = profile?.displayName || "";
 
   setProfile(profile);
@@ -243,6 +245,14 @@ profileForm.addEventListener("submit", async e => {
   submitBtn.textContent = "Saving...";
 
   try {
+    const newUsername = profileUsername.value.trim().toLowerCase();
+    const priorUsername = currentProfile()?.username || "";
+
+    if (newUsername !== priorUsername) {
+      await setUsername(newUsername);
+      setProfile({ ...(currentProfile() || {}), username: newUsername });
+    }
+
     const updated = {
       displayName: profileName.value.trim(),
       avatar: selectedAvatar
@@ -260,7 +270,7 @@ profileForm.addEventListener("submit", async e => {
     showStatus("Profile updated ✨");
   } catch (err) {
     console.error(err);
-    showStatus("Couldn't save changes");
+    showStatus(err.message || "Couldn't save changes");
   } finally {
     submitBtn.disabled = false;
     submitBtn.textContent = "Save changes";

@@ -396,7 +396,8 @@
   }
 
   .input-area::before {
-    display: none; /* the old glass sheen overlay — nothing to shine on a flat surface */
+    display: none;
+    /* the old glass sheen overlay — nothing to shine on a flat surface */
   }
 
   .input-area:focus-within {
@@ -513,7 +514,7 @@
   }
 
   .mobile-tab.active {
-    color: var(--joule-spark-ink);
+    color: var(--joule-spark);
   }
 
   .mobile-tab-badge {
@@ -720,7 +721,7 @@
   }
 
   .theme-swatch[data-mode="dark"] {
-    background: #14131a;
+    background: #170f33;
   }
 
   .theme-swatch.active {
@@ -1037,8 +1038,10 @@
   /* Base page wash — was a cool blue/cyan/mint gradient
      (#dbeafe → #e0f2fe → #ecfdf5); replaced with a warm cream
      gradient in the same style so the .ambient blobs still have
-     something to glow against. */
-  body {
+     something to glow against. Light mode only — dark mode gets
+     its own version right below, using the app's existing
+     violet-black dark identity rather than a competing palette. */
+  body:not(.dark):not(.shinigami) {
     background:
       radial-gradient(
         circle at 50% 0%,
@@ -1051,16 +1054,17 @@
   /* The three floating ambient blobs were blue/pink/teal — retinted
      to the same two accents as everything else (peach + lavender)
      plus one warm gold, so the idle screen's atmosphere actually
-     matches the chat screen it leads into. */
-  .ambient-1 {
+     matches the chat screen it leads into. Light mode only, same
+     reasoning as body above. */
+  body:not(.dark):not(.shinigami) .ambient-1 {
     background: rgba(238, 178, 127, 0.22);
   }
 
-  .ambient-2 {
+  body:not(.dark):not(.shinigami) .ambient-2 {
     background: rgba(142, 127, 209, 0.16);
   }
 
-  .ambient-3 {
+  body:not(.dark):not(.shinigami) .ambient-3 {
     background: rgba(240, 200, 120, 0.16);
   }
 
@@ -1088,6 +1092,75 @@
   .login-btn {
     border-color: rgba(58, 53, 47, 0.45);
     color: var(--joule-ink, #3a352f);
+  }
+
+  /* ============================================================
+     DARK MODE — the idle screen (body wash, ambient blobs, wake
+     button, login pill, hero glow) and every Bloom component built
+     on --joule-* variables (tab bar, Chats/Profile full screens,
+     lock overlay, bubbles, tools sheet, sidebar) all only ever had
+     light values. Redefining the variables here re-themes all of
+     those at once; the few hand-written colors above (body wash,
+     ambient blobs, wake/login/hero-glow) need their own explicit
+     dark versions since they were never variable-driven.
+     ============================================================ */
+
+  .dark {
+    --joule-current: #ab9ee8;
+    --joule-current-soft: rgba(171, 158, 232, 0.2);
+    --joule-ink: #f2ecff;
+    --joule-ink-2: #b8aed9;
+    --joule-line: rgba(196, 181, 253, 0.18);
+    --joule-paper: #241a4d;
+    --joule-paper-2: #170f33;
+  }
+
+  .dark body {
+    background:
+      radial-gradient(
+        circle at 50% 0%,
+        rgba(171, 158, 232, 0.1),
+        transparent 60%
+      ),
+      linear-gradient(180deg, #1a1233 0%, #170f33 55%, #130a2b 100%);
+  }
+
+  .dark .ambient-1 {
+    background: rgba(238, 178, 127, 0.14);
+  }
+
+  .dark .ambient-2 {
+    background: rgba(171, 158, 232, 0.22);
+  }
+
+  .dark .ambient-3 {
+    background: rgba(240, 200, 120, 0.1);
+  }
+
+  .dark .hero-logo {
+    filter: drop-shadow(0 10px 30px rgba(171, 158, 232, 0.45));
+  }
+
+  .dark #app:has(.chat-container .message) .hero-logo {
+    filter: drop-shadow(0 2px 10px rgba(171, 158, 232, 0.35));
+  }
+
+  /* Overrides the pre-existing (blue) .dark .wake-btn from
+     style.css — same specificity, wins on cascade order since this
+     file loads after it, same mechanism as everything else here. */
+  .dark .wake-btn {
+    border-color: rgba(171, 158, 232, 0.3);
+    background: linear-gradient(
+      135deg,
+      rgba(36, 26, 77, 0.9),
+      rgba(23, 15, 51, 0.9)
+    );
+    color: #c4b5fd;
+  }
+
+  .dark .login-btn {
+    border-color: rgba(242, 236, 255, 0.35);
+    color: #f2ecff;
   }
 
   /* ---------- Footer removed on mobile ----------

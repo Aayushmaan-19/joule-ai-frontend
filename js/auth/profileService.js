@@ -31,6 +31,33 @@ export async function updateProfile(uid, { displayName, avatar }) {
  * backend rather than a direct client write, since it needs the
  * Admin SDK to write to Storage.
  */
+/**
+ * Unlike updateProfile() above, username changes go through the
+ * backend — uniqueness has to be enforced atomically (a direct
+ * client read-then-write has a race condition two people could hit
+ * at once), which needs a Firestore transaction only the Admin SDK
+ * can run safely.
+ */
+export async function setUsername(username) {
+  const token = await getToken();
+
+  const response = await fetch(`${PROFILE_API_URL}/username`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    },
+    body: JSON.stringify({ username })
+  });
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw new Error(data.error || "Couldn't update your username.");
+  }
+
+  return response.json();
+}
+
 export async function uploadAvatarImage(blob) {
   const token = await getToken();
 
