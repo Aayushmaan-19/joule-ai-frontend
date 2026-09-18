@@ -260,6 +260,7 @@ function handleNew() {
   updateGhostUI();
   startNewSession();
   render();
+  notifyChatOpened();
 }
 
 function handleLoad(id) {
@@ -283,6 +284,20 @@ function handleLoad(id) {
   }
 
   render();
+  notifyChatOpened();
+}
+
+/** Signals that a chat is now the thing to look at — on mobile, where
+ * the sidebar is a full-screen "Chats" tab rather than a permanent
+ * side panel, this is what gets the person off that tab and back onto
+ * the chat they just opened/started. mobileNav.js owns the tab bar,
+ * so this dispatches rather than importing it directly (sidebar.js
+ * has no business knowing tabs exist, and mobileNav.js already
+ * imports open/close from this file — a reverse import would be
+ * circular). Harmless no-op on desktop, where the sidebar sits beside
+ * the chat and there's nothing to switch away from. */
+function notifyChatOpened() {
+  window.dispatchEvent(new CustomEvent("joule:chat-opened"));
 }
 
 function handleDelete(id) {
@@ -321,6 +336,7 @@ function handleTogglePrivate() {
 
   updateGhostUI();
   render();
+  notifyChatOpened();
 }
 
 function updateGhostUI() {

@@ -89,6 +89,14 @@ if (tabBar) {
     await refreshUsernameStatus();
     switchTab(activeTab, true);
   });
+
+  // sidebar.js dispatches this after starting a new chat, opening a
+  // saved one, or toggling private/ghost mode — none of which know or
+  // care that a tab bar exists. Routing back to "chat" here is what
+  // actually shows the result instead of leaving the person parked on
+  // the full-screen Chats tab. switchTab("chat") is already a safe
+  // no-op if they weren't on Chats to begin with.
+  window.addEventListener("joule:chat-opened", () => switchTab("chat"));
 }
 
 function firstUnmetRequirement(tab) {

@@ -501,11 +501,15 @@
     background: none;
     color: #c2bcac;
     position: relative;
+
+    transition: color 0.2s ease;
   }
 
   .mobile-tab svg {
     width: 21px;
     height: 21px;
+
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
   .mobile-tab span {
@@ -515,6 +519,17 @@
 
   .mobile-tab.active {
     color: var(--joule-spark);
+  }
+
+  /* The one deliberate motion in the tab bar: the icon pops slightly
+     on arrival, answering the tap that switched tabs rather than
+     animating on its own. */
+  .mobile-tab.active svg {
+    transform: scale(1.12);
+  }
+
+  .mobile-tab:active svg {
+    transform: scale(0.92);
   }
 
   .mobile-tab-badge {

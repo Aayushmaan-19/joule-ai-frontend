@@ -3340,6 +3340,299 @@ input:focus {
   display: none;
 }
 
+/* =========================================================
+   PROFILE SETTINGS ROWS (Appearance / Sound / My images)
+   Desktop had zero rules for any of this — .theme-swatch,
+   .profile-toggle and .profile-setrow-chevron were rendering as
+   bare, unstyled buttons/SVGs. mobile.css already has a correct,
+   verified version of this block for <=768px; this is the desktop
+   counterpart, same structure, dressed in the panel's existing
+   blue-glass language instead of the mobile Bloom palette.
+========================================================= */
+
+.profile-settings {
+  margin: 22px 0;
+
+  border-radius: 18px;
+  overflow: hidden;
+
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(191, 219, 254, 0.65);
+}
+
+.profile-setrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  width: 100%;
+  padding: 14px 18px;
+
+  border: none;
+  border-bottom: 1px solid rgba(191, 219, 254, 0.45);
+
+  background: none;
+
+  font-family: inherit;
+  font-size: 14.5px;
+  font-weight: 500;
+  color: #1e3a8a;
+  text-align: left;
+
+  transition: background-color 0.2s ease;
+}
+
+.profile-setrow:last-child {
+  border-bottom: none;
+}
+
+/* .profile-setrow-link is the same row, but a real <button> that
+   navigates (My images) rather than a static row — gets its own
+   hover/press feedback so it reads as tappable. */
+.profile-setrow-link {
+  cursor: pointer;
+}
+
+.profile-setrow-link:hover {
+  background: rgba(219, 234, 254, 0.4);
+}
+
+.profile-setrow-link:active {
+  background: rgba(191, 219, 254, 0.5);
+}
+
+.profile-setrow-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.profile-setrow-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  width: 34px;
+  height: 34px;
+
+  border-radius: 50%;
+  background: rgba(219, 234, 254, 0.65);
+
+  transition: background-color 0.2s ease;
+}
+
+.profile-setrow-link:hover .profile-setrow-icon {
+  background: rgba(191, 219, 254, 0.8);
+}
+
+.profile-setrow-icon img {
+  width: 16px;
+  height: 16px;
+}
+
+.profile-setrow-chevron {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+
+  color: rgba(30, 58, 138, 0.4);
+
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+/* The single deliberate motion in this row: the chevron nudges
+   right on hover, answering the person's pointer rather than
+   animating on its own. */
+.profile-setrow-link:hover .profile-setrow-chevron {
+  transform: translateX(3px);
+  color: #3b82f6;
+}
+
+/* ---- Appearance: light/dark swatches ---- */
+
+.theme-swatches {
+  display: flex;
+  gap: 10px;
+}
+
+.theme-swatch {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px rgba(191, 219, 254, 0.8);
+
+  cursor: pointer;
+
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.theme-swatch[data-mode="light"] {
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+}
+
+.theme-swatch[data-mode="dark"] {
+  background: linear-gradient(135deg, #312e81, #1e1b4b);
+}
+
+.theme-swatch:hover {
+  transform: scale(1.1);
+}
+
+.theme-swatch.active {
+  box-shadow: 0 0 0 2px #3b82f6;
+}
+
+/* ---- Sound: on/off pill toggle ---- */
+
+.profile-toggle {
+  position: relative;
+  flex-shrink: 0;
+
+  width: 42px;
+  height: 24px;
+  padding: 0;
+
+  border: none;
+  border-radius: 12px;
+  background: rgba(191, 219, 254, 0.7);
+
+  cursor: pointer;
+
+  transition: background-color 0.2s ease;
+}
+
+.profile-toggle::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+
+  width: 20px;
+  height: 20px;
+
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(30, 58, 138, 0.25);
+
+  transition: left 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.profile-toggle.on {
+  background: linear-gradient(135deg, #60a5fa, #3b82f6);
+}
+
+.profile-toggle.on::after {
+  left: 20px;
+}
+
+/* ---- Dark mode ---- */
+
+.dark .profile-settings {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dark .profile-setrow {
+  color: #f8fafc;
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+.dark .profile-setrow-link:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.dark .profile-setrow-link:active {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.dark .profile-setrow-icon {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.dark .profile-setrow-link:hover .profile-setrow-icon {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.dark .profile-setrow-chevron {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.dark .profile-setrow-link:hover .profile-setrow-chevron {
+  color: #a58dff;
+}
+
+.dark .theme-swatch {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15);
+}
+
+.dark .theme-swatch.active {
+  box-shadow: 0 0 0 2px #9188ff;
+}
+
+.dark .profile-toggle {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.dark .profile-toggle.on {
+  background: linear-gradient(135deg, #7b7dff, #9a87ff);
+}
+
+/* ---- Shinigami mode ---- */
+
+.shinigami .profile-settings {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 0, 0, 0.16);
+}
+
+.shinigami .profile-setrow {
+  color: #f8e8e8;
+  border-bottom-color: rgba(255, 0, 0, 0.14);
+}
+
+.shinigami .profile-setrow-link:hover {
+  background: rgba(255, 0, 0, 0.06);
+}
+
+.shinigami .profile-setrow-link:active {
+  background: rgba(255, 0, 0, 0.1);
+}
+
+.shinigami .profile-setrow-icon {
+  background: rgba(255, 0, 0, 0.08);
+}
+
+.shinigami .profile-setrow-link:hover .profile-setrow-icon {
+  background: rgba(255, 0, 0, 0.14);
+}
+
+.shinigami .profile-setrow-chevron {
+  color: rgba(255, 180, 180, 0.4);
+}
+
+.shinigami .profile-setrow-link:hover .profile-setrow-chevron {
+  color: #ff2e2e;
+}
+
+.shinigami .theme-swatch {
+  box-shadow: 0 0 0 1px rgba(255, 0, 0, 0.2);
+}
+
+.shinigami .theme-swatch.active {
+  box-shadow: 0 0 0 2px #ff2e2e;
+}
+
+.shinigami .profile-toggle {
+  background: rgba(255, 0, 0, 0.14);
+}
+
+.shinigami .profile-toggle.on {
+  background: linear-gradient(135deg, #ff4d4d, #b91c1c);
+}
+
 .field-label {
   display: block;
 
