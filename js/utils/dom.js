@@ -16,6 +16,9 @@ export const loadingBarFill =
 export const loadingPercent =
   document.getElementById("loadingPercent");
 
+export const loadingStatus =
+  document.getElementById("loadingStatus");
+
 export const chat =
   document.getElementById("chat");
 
@@ -36,15 +39,6 @@ export const toolsMenu =
 
 export const imageGenToggle =
   document.getElementById("imageGenToggle");
-
-export const wakeBtn =
-  document.getElementById("wakeBtn");
-
-export const wakeBtnEmoji =
-  document.getElementById("wakeBtnEmoji");
-
-export const wakeBtnLabel =
-  document.getElementById("wakeBtnLabel");
 
 export const musicBtn =
   document.getElementById("musicBtn");

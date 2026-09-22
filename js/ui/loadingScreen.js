@@ -4,8 +4,10 @@ import {
   loadingLogo,
   loadingText,
   loadingBarFill,
-  loadingPercent
+  loadingPercent,
+  loadingStatus
 } from "../utils/dom.js";
+import { wakeBackend } from "../api/wakeService.js";
 
 /* =========================================================
    ASSETS TO PRELOAD
@@ -24,6 +26,7 @@ const PRELOAD_IMAGES = [
   "Assets/Avatars/avatar4.png",
   "Assets/Avatars/avatar5.png",
   "Assets/Avatars/avatar6.png",
+  "Assets/logo/icon-512.png",
   "Assets/Icons/send.svg",
   "Assets/Icons/mic.svg",
   "Assets/Icons/play.svg",
@@ -31,13 +34,79 @@ const PRELOAD_IMAGES = [
   "Assets/Icons/trash.svg",
   "Assets/Icons/sparkles.svg",
   "Assets/Icons/sun.svg",
-  "Assets/Icons/light.svg"
+  "Assets/Icons/light.svg",
+  "Assets/Icons/camera.svg",
+  "Assets/Icons/image.svg",
+  "Assets/Icons/images.svg",
+  "Assets/Icons/plus.svg",
+  "Assets/Icons/arrow-left.svg",
+  "Assets/Icons/sidebar-open.svg",
+  "Assets/Icons/sidebar-close.svg",
+  "Assets/Icons/download.svg",
+  // Social/messaging icons — these used to only load the first time
+  // the People section opened; now they're ready before it's tapped.
+  "Assets/Icons/people.svg",
+  "Assets/Icons/user-plus.svg",
+  "Assets/Icons/user-check.svg",
+  "Assets/Icons/check.svg",
+  "Assets/Icons/x.svg"
 ];
 
 const PRELOAD_AUDIO = [
   "Assets/Sound Effects/mic-on.mp3",
   "Assets/Sound Effects/mic-off.mp3"
 ];
+
+/* =========================================================
+   STATUS LINES
+   Small rotating caption under the wordmark. Purely cosmetic —
+   doesn't drive or gate anything — but it's also the thing that
+   keeps the screen feeling alive during the extra wait for
+   wakeBackend() below, on the (uncommon) cold-start case where
+   that takes longer than the aurora animation itself.
+========================================================= */
+
+const LOADING_LINES = [
+  "Initializing Joule...",
+  "Waking up the servers...",
+  "Adding life to the code...",
+  "Charging the aurora core...",
+  "Warming up the neurons...",
+  "Untangling a few wires...",
+  "Summoning some sparks...",
+  "Syncing with the cosmos...",
+  "Polishing the pixels...",
+  "Brewing something electric...",
+  "Loading good vibes...",
+  "Almost there..."
+];
+
+const STATUS_ROTATE_INTERVAL_MS = 1300;
+
+let statusIntervalId = null;
+
+function startStatusRotation() {
+  if (!loadingStatus) return;
+
+  let i = 0;
+  loadingStatus.textContent = LOADING_LINES[0];
+  loadingStatus.classList.add("status-visible");
+
+  statusIntervalId = setInterval(() => {
+    i = (i + 1) % LOADING_LINES.length;
+
+    loadingStatus.classList.remove("status-visible");
+    setTimeout(() => {
+      loadingStatus.textContent = LOADING_LINES[i];
+      loadingStatus.classList.add("status-visible");
+    }, 200);
+  }, STATUS_ROTATE_INTERVAL_MS);
+}
+
+function stopStatusRotation() {
+  if (statusIntervalId) clearInterval(statusIntervalId);
+  statusIntervalId = null;
+}
 
 /* =========================================================
    PALETTE
@@ -83,6 +152,18 @@ const TEXT_REVEAL_AT_MS =
   DISSOLVE_DURATION_MS * 0.7;
 
 const MIN_DISPLAY_MS = TOTAL_DURATION_MS + 550;
+
+/* Hard ceiling on how much longer the loading screen will wait for
+   wakeBackend() specifically, on top of MIN_DISPLAY_MS above. Most of
+   the time the backend is already warm and that ping resolves almost
+   instantly, so this never comes into play and the screen still
+   dismisses at MIN_DISPLAY_MS like before. On an actual Render cold
+   start it buys a few extra seconds so the wake finishes here, in the
+   loading screen, instead of on the user's first real message — but
+   it can't wait forever, so the app still opens on schedule even if
+   the ping is unusually slow (the first real request just pays
+   whatever's left of the cold-start cost itself in that case). */
+const MAX_EXTRA_WAKE_WAIT_MS = 9000;
 
 function easeInOutCubic(t) {
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
@@ -568,13 +649,24 @@ export function initLoadingScreen() {
   const loader = new AuroraLoader(loadingCanvas, loadingLogo, loadingText);
   loader.start();
   runBarLoop();
+  startStatusRotation();
 
   preloadAssets(p => setAssetProgress(p));
 
-  const animDone = new Promise(resolve => setTimeout(resolve, MIN_DISPLAY_MS));
+  // Fired as early as the app boots, not gated behind a "Wake Me Up"
+  // button anymore — this is what actually ends Render's cold start.
+  // Never throws, so it's safe to just kick off here.
+  const wakePromise = wakeBackend();
 
-  Promise.all([animDone]).then(() => {
+  const animDone = new Promise(resolve => setTimeout(resolve, MIN_DISPLAY_MS));
+  const wakeSettled = Promise.race([
+    wakePromise,
+    new Promise(resolve => setTimeout(resolve, MAX_EXTRA_WAKE_WAIT_MS))
+  ]);
+
+  Promise.all([animDone, wakeSettled]).then(() => {
     completeBar();
+    stopStatusRotation();
 
     setTimeout(() => {
       loadingScreen.classList.add("loading-done");

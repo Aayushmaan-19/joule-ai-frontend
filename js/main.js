@@ -44,7 +44,6 @@ import "./ui/profileManager.js";
 import "./ui/toolsMenu.js";
 import "./ui/gallery.js";
 import "./ui/mobileNav.js";
-import "./ui/wakeButton.js";
 import { initAnimationManager } from "./ui/animationManager.js";
 import "./ui/legalModal.js";
 import { initLoadingScreen } from "./ui/loadingScreen.js";
@@ -175,8 +174,14 @@ function cleanupApp() {
 
 /* =========================
    STARTUP
+   DOMContentLoaded, not window "load" — this is a type="module"
+   script, so it already only runs once the DOM is parsed. Waiting
+   for the full "load" event on top of that meant the loading screen
+   (and the backend wake ping it now kicks off) sat idle until every
+   image on the page — avatars, the hero logo, the loading logo
+   itself — had finished fetching, instead of starting immediately.
 ========================= */
 
-window.addEventListener("load", initializeApp);
+document.addEventListener("DOMContentLoaded", initializeApp);
 
 window.addEventListener("beforeunload", cleanupApp);

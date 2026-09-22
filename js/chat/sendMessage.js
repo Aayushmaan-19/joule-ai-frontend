@@ -10,7 +10,6 @@ import {
 } from "./chatHistory.js";
 import { render as renderSidebar } from "../ui/sidebar.js";
 import state from "../config/state.js";
-import { isBackendAwake } from "../config/selectors.js";
 
 const THINKING_HTML = `
   <div class="typing">
@@ -29,13 +28,6 @@ export async function sendMessage() {
   storeMessage({ role: "user", content: value });
 
   input.value = "";
-
-  if (!isBackendAwake()) {
-    const nudge = "😴 I'm still asleep — tap \"Wake Me Up\" below to get started!";
-    addMessage(nudge, "bot");
-    storeMessage({ role: "bot", content: nudge });
-    return;
-  }
 
   const botBubble = addMessage(THINKING_HTML, "bot");
   let isFirstChunk = true;

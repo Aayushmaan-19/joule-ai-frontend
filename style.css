@@ -117,15 +117,14 @@ body {
 
 /* Chat is the base layer: it fills #main edge-to-edge and sits
    lowest in the stack. The header group (logo, signature, icon
-   controls, wake button) stays in normal flow on top of it —
-   not a separate block pushing chat down, but floating chrome
-   sharing the same space, above the chat. Padding on
-   .chat-container (below) keeps messages clear of that chrome. */
+   controls) stays in normal flow on top of it — not a separate
+   block pushing chat down, but floating chrome sharing the same
+   space, above the chat. Padding on .chat-container (below) keeps
+   messages clear of that chrome. */
 
 .header-wrapper,
 .signature,
-.controls,
-.wake-wrapper {
+.controls {
   position: relative;
   z-index: 20;
   flex-shrink: 0;
@@ -289,74 +288,6 @@ body {
    (see MOBILE RESPONSIVE FIXES) — desktop's icon-only row is untouched. */
 .icon-btn-label {
   display: none;
-}
-
-/* =========================
-   WAKE ME UP
-   Soft, secondary — sits below the main controls, doesn't compete
-   with them visually.
-========================= */
-
-.wake-wrapper {
-  display: flex;
-  justify-content: center;
-  padding: 0 12px 14px;
-  margin-top: -6px;
-}
-
-.wake-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-
-  padding: 6px 16px;
-
-  border: 1px solid rgba(59, 130, 246, 0.22);
-  border-radius: 999px;
-
-  background: linear-gradient(135deg, rgba(219, 234, 254, 0.85), rgba(224, 242, 254, 0.85));
-
-  color: #2563eb;
-  font-size: 12.5px;
-  font-weight: 600;
-  font-family: inherit;
-
-  cursor: pointer;
-
-  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
-}
-
-.wake-btn:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.16);
-}
-
-.wake-btn:disabled {
-  cursor: default;
-  opacity: 0.7;
-}
-
-.wake-btn-emoji {
-  font-size: 13px;
-  line-height: 1;
-}
-
-.chat.wake-status {
-  font-size: 13px;
-  font-style: italic;
-  opacity: 0.85;
-}
-
-.dark .wake-btn {
-  background: linear-gradient(135deg, rgba(96, 165, 250, 0.16), rgba(59, 130, 246, 0.1));
-  border: 1px solid rgba(96, 165, 250, 0.28);
-  color: #93c5fd;
-}
-
-.shinigami .wake-btn {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  color: #dbeafe;
 }
 
 .icon-btn:disabled {
@@ -1005,8 +936,9 @@ body.voice-active .navbar {
   /* Clears the floating header group on top and the floating
      input bar on the bottom, so messages don't start out hidden
      behind them. Approximate — nudge if you change header/input
-     sizing and see a gap or overlap. */
-  padding-top: 300px;
+     sizing and see a gap or overlap. Reduced from 300px now that
+     the wake button is gone (was ~36px of that clearance). */
+  padding-top: 264px;
   padding-bottom: 100px;
   display: flex;
   flex-direction: column;
@@ -4126,6 +4058,27 @@ input:focus {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Rotating status caption ("Initializing...", "Waking up the
+   servers...", etc.) — driven entirely by loadingScreen.js toggling
+   .status-visible on and off between lines. Fixed min-height so the
+   line-length changing between phrases never shifts the bar below it. */
+.loading-status {
+  min-height: 16px;
+
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+
+  color: rgba(224, 231, 255, 0.65);
+
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.loading-status.status-visible {
+  opacity: 1;
 }
 
 /* ---- Loading bar ---- */

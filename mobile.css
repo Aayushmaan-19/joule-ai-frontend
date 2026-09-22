@@ -269,10 +269,11 @@
     /* .controls is back in normal flow (it's a real icon row again,
        not a hidden popover) — needs to clear: 56px fixed topbar +
        .controls' own ~72px box (72px margin-top that clears the
-       topbar, + up to 42px icon + 18px bottom padding) + .wake-wrapper
-       tucked -6px under it with its own ~43px (29px button + 14px
-       bottom padding), plus a small cushion. */
-    padding-top: 190px;
+       topbar, + up to 42px icon + 18px bottom padding), plus a small
+       cushion. (Used to also clear .wake-wrapper below .controls —
+       gone now that the wake button is gone, so this dropped from
+       190px to 152px.) */
+    padding-top: 152px;
   }
 
   .chat {
@@ -1091,16 +1092,6 @@
     filter: drop-shadow(0 2px 10px rgba(142, 127, 209, 0.25));
   }
 
-  .wake-btn {
-    border-color: rgba(142, 127, 209, 0.28);
-    background: linear-gradient(
-      135deg,
-      rgba(251, 246, 238, 0.9),
-      rgba(255, 255, 255, 0.9)
-    );
-    color: var(--joule-current, #8e7fd1);
-  }
-
   /* Login pill's black outline softened to the same warm ink used
      everywhere else, so it doesn't read as a leftover from the old
      theme sitting next to the now-peach signup button. */
@@ -1158,19 +1149,6 @@
 
   .dark #app:has(.chat-container .message) .hero-logo {
     filter: drop-shadow(0 2px 10px rgba(171, 158, 232, 0.35));
-  }
-
-  /* Overrides the pre-existing (blue) .dark .wake-btn from
-     style.css — same specificity, wins on cascade order since this
-     file loads after it, same mechanism as everything else here. */
-  .dark .wake-btn {
-    border-color: rgba(171, 158, 232, 0.3);
-    background: linear-gradient(
-      135deg,
-      rgba(36, 26, 77, 0.9),
-      rgba(23, 15, 51, 0.9)
-    );
-    color: #c4b5fd;
   }
 
   .dark .login-btn {

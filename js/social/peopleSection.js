@@ -1,7 +1,4 @@
-import { WAKE_API_URL } from "../utils/constants.js";
-import { getTokenOptional } from "../auth/getToken.js";
-import { setBackendAwake } from "../config/actions.js";
-import { isBackendAwake } from "../config/selectors.js";
+import { wakeBackend } from "../api/wakeService.js";
 import { subscribeIncomingRequests } from "./followState.js";
 import { initDirectoryView, destroyDirectoryView } from "./directoryView.js";
 import { initRequestsView, destroyRequestsView } from "./requestsView.js";
@@ -95,30 +92,17 @@ function open() {
   peopleSection.classList.remove("hidden");
 
   syncViewport();
-  prewarmBackend();
+
+  // Almost always a no-op by now — the loading screen's own wake
+  // ping has usually already landed by the time someone taps here.
+  // This is just the safety net for the rare case that ping failed.
+  wakeBackend();
 
   initDirectoryView();
   initRequestsView();
   initConversationsView();
 
   showTab(activeTab);
-}
-
-/** Silent — no bubble, no button state. Just gets the dyno warm before the user's first Follow/Send tap. */
-async function prewarmBackend() {
-  if (isBackendAwake()) return;
-
-  try {
-    const token = await getTokenOptional();
-    const headers = { "Content-Type": "application/json" };
-    if (token) headers.Authorization = `Bearer ${token}`;
-
-    const response = await fetch(WAKE_API_URL, { method: "POST", headers });
-    if (response.ok) setBackendAwake(true);
-  } catch {
-    // Silent by design — the real request will just take a while
-    // if this didn't land, same as it would have anyway.
-  }
 }
 
 function close() {
