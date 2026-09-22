@@ -2,7 +2,6 @@ import { auth } from "../auth/firebase.js";
 import state from "../config/state.js";
 import { setConversation, clearMessages } from "../config/actions.js";
 import { API_URL } from "../utils/constants.js";
-import { getTokenOptional } from "../auth/getToken.js";
 
 const STORAGE_KEY_PREFIX = "joule_chats_";
 const MAX_SESSIONS = 50;
@@ -98,16 +97,12 @@ export async function autoNameSession(sessionId, firstUserMessage) {
   if (sessions[idx].name !== "New Chat") return;
 
   try {
-    const token = await getTokenOptional();
-    const headers = { "Content-Type": "application/json" };
-
-    if (token) {
-      headers.Authorization = `Bearer ${token}`;
-    }
-
+    // The chat endpoint is a text stream, not a JSON { reply } endpoint.
+    // Use the shared API URL and read the stream as text so this never
+    // depends on a second hardcoded backend URL.
     const response = await fetch(API_URL, {
       method: "POST",
-      headers,
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         message: `Give this conversation a title in 4 words or less. No quotes, no punctuation, no explanation. Just the title. The conversation started with: "${firstUserMessage.slice(0, 120)}"`,
         history: []
@@ -116,8 +111,6 @@ export async function autoNameSession(sessionId, firstUserMessage) {
 
     if (!response.ok) return;
 
-    // /api/ai/chat streams plain text, not JSON. Read the complete streamed
-    // response as text instead of calling response.json().
     const rawName = (await response.text()).trim();
 
     if (!rawName) return;

@@ -25,20 +25,14 @@ export const SONGS = [
 export const BACKEND_BASE_URL = (
   import.meta.env.VITE_BACKEND_URL ||
   "https://joule-ai-backend.onrender.com"
-).replace(/\/+$/, "");
+).replace(/\/$/, "");
 
 export const API_URL = `${BACKEND_BASE_URL}/api/ai/chat`;
-
 export const WAKE_API_URL = `${BACKEND_BASE_URL}/api/wake`;
-
 export const AUTH_API_URL = `${BACKEND_BASE_URL}/api/auth`;
-
 export const IMAGE_API_URL = `${BACKEND_BASE_URL}/api/image/generate`;
-
 export const SOCIAL_API_URL = `${BACKEND_BASE_URL}/api/social`;
-
 export const PROFILE_API_URL = `${BACKEND_BASE_URL}/api/profile`;
-
 export const GALLERY_API_URL = `${BACKEND_BASE_URL}/api/image/gallery`;
 
 export const SILENCE_THRESHOLD = 8;
