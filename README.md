@@ -181,7 +181,7 @@ Toggling again deactivates it. No page refresh. Instant full-UI transformation.
 
 ### 🤖 AI Chat Engine
 
-The chat core is powered by **Groq** — ultra-fast LLM inference, currently running `groq/compound-mini`.
+The chat core is powered by **Groq** — ultra-fast LLM inference, currently running `llama-3.3-70b-versatile`.
 
 **Features:**
 - **Real token-by-token streaming** — not a simulated typewriter. The backend streams Groq's actual response chunks over a chunked HTTP response (`res.write()` per token as it arrives); the frontend reads it via `response.body.getReader()` and appends each real chunk to the DOM as it's decoded. What you see arriving is what Groq is actually generating, in real time.
@@ -194,7 +194,7 @@ The chat core is powered by **Groq** — ultra-fast LLM inference, currently run
 
 The AI route on the backend (`Routes/ai.js`) applies the optional auth middleware, checks usage via Firestore transactions, and streams the Groq response back.
 
-> **A note on the model:** Joule originally ran `llama-3.3-70b-versatile`. Groq deprecated that model in mid-2026 (shutdown around August 2026), which — combined with wanting real live-data access — is why the app now runs on `groq/compound-mini` instead. See [Live Web Search](#-live-web-search--weather-scores--current-events) below.
+> **A note on the model:** Joule originally ran `llama-3.3-70b-versatile`. Groq deprecated that model in mid-2026 (shutdown around August 2026), which — combined with wanting real live-data access — is why the app now runs on `llama-3.3-70b-versatile` instead. See [Live Web Search](#-live-web-search--weather-scores--current-events) below.
 
 ---
 
@@ -203,7 +203,7 @@ The AI route on the backend (`Routes/ai.js`) applies the optional auth middlewar
 Joule AI can answer questions about **live weather, sports scores, and current events** — not from training data, but from a real web search, automatically.
 
 **How it works:**
-- The model is `groq/compound-mini` — a Groq system (not a plain chat model) that has **built-in, server-side web search**. No separate weather API, no sports API, no extra API key to manage.
+- The model is `llama-3.3-70b-versatile` — a Groq system (not a plain chat model) that has **built-in, server-side web search**. No separate weather API, no sports API, no extra API key to manage.
 - The model decides for itself, per message, whether a query needs a live search — a normal conversational message costs nothing extra and streams exactly as fast as before; only a query that actually needs current data pays the (small) extra latency of a real search.
 - `compound-mini` specifically (not the larger `compound`) caps each request at a single tool call rather than several — a deliberate choice to keep token usage down against Groq's free-tier rate limits, made after hitting real rate-limit errors in production.
 - No system-prompt or history changes were needed to enable this — it's inherent to the model, not a prompt-engineering trick.
@@ -794,7 +794,7 @@ Things worth knowing rather than discovering the hard way:
 - **Text-to-speech has no custom cloned voice anymore.** Voice quality and available voices depend entirely on the visitor's own browser/OS — this was a deliberate trade for zero cost and zero external dependency, not an oversight.
 - **`marked`, `nodemailer`, and `jsonwebtoken` are listed in the backend's `package.json` but aren't actually imported anywhere** in the current codebase — leftover from earlier iterations (email now goes through Brevo's own SDK, not `nodemailer`; token verification goes through Firebase Admin SDK, not raw `jsonwebtoken`). Harmless, but worth pruning at some point.
 - **`js/chat/typingEffect.js` still exists in the frontend but is unused** — real Groq streaming replaced the simulated typewriter effect it implements. Kept in the repo, not wired into anything.
-- **`groq/compound-mini`'s underlying models are subject to Groq's own deprecation schedule**, same as `llama-3.3-70b-versatile` before it — worth keeping an eye on Groq's changelog.
+- **`llama-3.3-70b-versatile`'s underlying models are subject to Groq's own deprecation schedule**, same as `llama-3.3-70b-versatile` before it — worth keeping an eye on Groq's changelog.
 
 ---
 

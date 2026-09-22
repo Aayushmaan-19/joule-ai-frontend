@@ -22,19 +22,24 @@ export const SONGS = [
   "Assets/Songs/Aarzu.mp3",
 ];
 
-export const API_URL = "https://joule-ai-backend.onrender.com/api/ai/chat";
+export const BACKEND_BASE_URL = (
+  import.meta.env.VITE_BACKEND_URL ||
+  "https://joule-ai-backend.onrender.com"
+).replace(/\/+$/, "");
 
-export const WAKE_API_URL = "https://joule-ai-backend.onrender.com/api/wake";
+export const API_URL = `${BACKEND_BASE_URL}/api/ai/chat`;
 
-export const AUTH_API_URL = "https://joule-ai-backend.onrender.com/api/auth";
+export const WAKE_API_URL = `${BACKEND_BASE_URL}/api/wake`;
 
-export const IMAGE_API_URL = "https://joule-ai-backend.onrender.com/api/image/generate";
+export const AUTH_API_URL = `${BACKEND_BASE_URL}/api/auth`;
 
-export const SOCIAL_API_URL = "https://joule-ai-backend.onrender.com/api/social";
+export const IMAGE_API_URL = `${BACKEND_BASE_URL}/api/image/generate`;
 
-export const PROFILE_API_URL = "https://joule-ai-backend.onrender.com/api/profile";
+export const SOCIAL_API_URL = `${BACKEND_BASE_URL}/api/social`;
 
-export const GALLERY_API_URL = "https://joule-ai-backend.onrender.com/api/image/gallery";
+export const PROFILE_API_URL = `${BACKEND_BASE_URL}/api/profile`;
+
+export const GALLERY_API_URL = `${BACKEND_BASE_URL}/api/image/gallery`;
 
 export const SILENCE_THRESHOLD = 8;
 
