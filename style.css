@@ -4915,6 +4915,24 @@ body.private-mode .input-area:focus-within {
   display: none;
 }
 
+/* Same story, missed in that pass: the sidebar search bar and FAB
+   (js/ui/sidebar.js) have been mobile-only since the commit that
+   introduced them — .sidebar-search/.sidebar-fab were only ever
+   declared inside the mobile media query (now mobile.css), never
+   given a desktop rule. Their <svg> icons have no width/height
+   attributes either, so with no CSS to size them and no display:none
+   to hide them, desktop fell back to the browser's default
+   replaced-element box — the oversized search/plus icons. Hidden by
+   default here; mobile.css's existing `display: flex` on both
+   selectors already restores them on mobile. */
+.sidebar-search {
+  display: none;
+}
+
+.sidebar-fab {
+  display: none;
+}
+
 
 /* =================================
    FOOTER
