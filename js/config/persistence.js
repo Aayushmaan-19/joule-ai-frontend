@@ -11,7 +11,7 @@ export function loadSettings() {
     );
 
   setDarkMode(
-    savedTheme === "dark"
+    savedTheme !== "light"
   );
 }
 

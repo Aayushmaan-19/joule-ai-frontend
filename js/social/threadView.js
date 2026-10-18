@@ -266,7 +266,7 @@ function renderReactions(msg, myUid) {
         .map(
           ([emoji, count]) => `
         <button class="thread-reaction-pill ${emoji === mine ? "mine-reaction" : ""}" type="button" data-emoji="${escHtml(emoji)}">
-          <span>${emoji}</span>${count > 1 ? `<span class="count">${count}</span>` : ""}
+          <span>${escHtml(emoji)}</span>${count > 1 ? `<span class="count">${count}</span>` : ""}
         </button>
       `
         )

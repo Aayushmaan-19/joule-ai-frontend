@@ -1,0 +1,1217 @@
+/* =========================================================
+   JOULE v2 — calm, flat shell
+   Loaded LAST (see theme.css) so equal-specificity rules here win.
+   Everything is scoped under body.v2 so it can be switched off by
+   removing one class. Colors live in tokens: change a token, the whole
+   shell follows (light / dark / shinigami).
+========================================================= */
+
+body.v2 {
+  --bg: #faf8f5;
+  --sb: #f3f0eb;
+  --s2: #ffffff;
+  --hv: #ebe7e0;
+  --bd: #e4dfd7;
+  --bd2: #d8d2c8;
+  --tx: #1c1b1f;
+  --tx2: #3d3b42;
+  --mu: #6b6870;
+  --ac: #f2b47e;
+  --acfg: #a85a14;
+  --acink: #1a1208;
+  --vi: #7c6bd0;
+  --ub: #efebe4;
+  --ifx: none;
+  --shadow: 0 12px 32px rgba(40, 30, 20, 0.14);
+}
+
+body.v2.dark {
+  --bg: #0e0e10;
+  --sb: #121214;
+  --s2: #151518;
+  --hv: #1b1b1f;
+  --bd: #26262b;
+  --bd2: #2e2e34;
+  --tx: #ececee;
+  --tx2: #c9c9cf;
+  --mu: #8c8c95;
+  --acfg: #f2b47e;
+  --vi: #a99be8;
+  --ub: #1b1b1f;
+  --ifx: invert(0.85);
+  --shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+}
+
+body.v2.shinigami {
+  --ac: #e53935;
+  --acfg: #ff6b66;
+  --acink: #ffffff;
+  --vi: #e53935;
+}
+
+/* Desktop-only chrome is hidden everywhere else (mobile restyle is separate). */
+.sb2-brand,
+.sb2-nav,
+.sb2-foot,
+.idle-hero {
+  display: none;
+}
+
+/* ---------- shared by desktop and mobile ---------- */
+
+body.v2,
+body.v2:not(.dark):not(.shinigami) {
+  background: var(--bg);
+  color: var(--tx);
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
+}
+
+body.v2 button,
+body.v2 input {
+  font-family: inherit;
+}
+
+/* old decorative layers: starfield, cursor glow, aurora background */
+body.v2::before,
+body.v2::after,
+body.v2 .ambient,
+body.v2 .aurora,
+body.v2 .clouds,
+body.v2 .mountains,
+body.v2 .input-area::before {
+  display: none;
+}
+
+body.v2 .login-btn,
+body.v2 .signup-btn {
+  height: 34px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font: 500 13px "IBM Plex Sans", system-ui, sans-serif;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  cursor: pointer;
+}
+
+body.v2 .login-btn {
+  background: none;
+  color: var(--tx2);
+  border: 1px solid var(--bd2);
+}
+
+body.v2 .signup-btn {
+  background: var(--ac);
+  color: var(--acink);
+  border: 1px solid transparent;
+}
+
+/* ---------- empty-chat screen ---------- */
+body.v2 .idle-hero {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 140px;
+  text-align: center;
+  pointer-events: none;
+}
+
+body.v2 #app:not(:has(.chat-container .message)) .idle-hero {
+  display: flex;
+}
+
+body.v2 .idle-mark {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+}
+
+body.v2 .idle-title {
+  margin: 22px 0 6px;
+  font: 500 28px "Space Grotesk", system-ui, sans-serif;
+  color: var(--tx);
+}
+
+body.v2 .idle-sub {
+  margin: 0 0 28px;
+  font-size: 14px;
+  color: var(--mu);
+}
+
+body.v2 .idle-chips {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 10px;
+  pointer-events: auto;
+}
+
+body.v2 .idle-chip {
+  padding: 9px 16px;
+  border: 1px solid var(--bd);
+  border-radius: 999px;
+  background: var(--s2);
+  color: var(--tx2);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+body.v2 .idle-chip:hover {
+  border-color: var(--bd2);
+  color: var(--tx);
+}
+
+/* ---------- conversation ---------- */
+body.v2 .chat-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 72px 24px 160px;
+  background: none;
+}
+
+body.v2 .chat-container .message {
+  width: min(760px, 100%);
+  box-sizing: border-box;
+}
+
+body.v2 .message img {
+  display: none;
+}
+
+body.v2 .message.user {
+  justify-content: flex-end;
+}
+
+body.v2 .message.user .chat {
+  max-width: 75%;
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 18px;
+  background: var(--ub);
+  color: var(--tx);
+  box-shadow: none;
+}
+
+body.v2 .message.bot .chat {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--tx);
+  box-shadow: none;
+  line-height: 1.7;
+}
+
+/* ---------- composer ---------- */
+body.v2 .input-area {
+  bottom: 40px;
+  width: min(760px, calc(100% - 48px));
+  height: 56px;
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: 0 10px;
+  gap: 6px;
+  border: 1px solid var(--bd2);
+  border-radius: 28px;
+  background: var(--s2);
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+body.v2 .input-area::after {
+  content: "Joule can make mistakes. Check important info.";
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 12px;
+  color: var(--mu);
+  background: none;
+  animation: none;
+}
+
+body.v2 .input-area input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: none;
+  color: var(--tx);
+  font-size: 15px;
+}
+
+body.v2 #input {
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--tx);
+}
+
+/* Shinigami keeps its wallpaper (a deliberate easter egg); only the shell
+   around it is flat. */
+body.v2.shinigami {
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.62), rgba(0, 0, 0, 0.62)),
+    url("https://w.wallhaven.cc/full/l3/wallhaven-l3my9p.png") center / cover fixed,
+    var(--bg);
+}
+
+body.v2 #input::placeholder,
+body.v2 .input-area input::placeholder,
+body.v2 .sb2 .sidebar-search input::placeholder {
+  color: var(--mu);
+  opacity: 1;
+}
+
+body.v2 .input-area .icon-btn {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  box-shadow: none;
+}
+
+body.v2 .input-area .icon-btn:hover {
+  background: var(--hv);
+}
+
+body.v2 .input-area .icon {
+  filter: var(--ifx);
+}
+
+body.v2 .input-area #sendBtn {
+  background: var(--ac);
+}
+
+body.v2 .input-area #sendBtn .icon {
+  filter: none;
+}
+
+body.v2 .tools-menu {
+  border: 1px solid var(--bd2);
+  border-radius: 12px;
+  background: var(--s2);
+  box-shadow: var(--shadow);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+body.v2 .tools-menu-item {
+  color: var(--tx2);
+}
+
+body.v2 .tools-menu-item:hover {
+  background: var(--hv);
+}
+
+body.v2 .tools-menu-item img {
+  filter: var(--ifx);
+}
+
+body.v2 .tools-menu-hint {
+  color: var(--mu);
+}
+
+/* ---------- desktop only (sidebar, geometry) ---------- */
+
+@media (min-width: 769px) {
+/* ---------- things the new shell no longer shows ---------- */
+  body.v2 .ambient,
+  body.v2 [class^="ambient-"],
+  body.v2 .header-wrapper,
+  body.v2 .signature,
+  body.v2 .controls,
+  body.v2 .footer,
+  body.v2 .sidebar-open-btn,
+  body.v2 .hero-logo,
+  body.v2 .sb2 .sidebar-header,
+  body.v2 .sb2 .sidebar-fab {
+    display: none;
+  }
+
+/* ---------- top label ---------- */
+  body.v2 #main::before {
+    content: "Joule AI";
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    height: 52px;
+    padding: 0 24px;
+    font: 600 15px "Space Grotesk", system-ui, sans-serif;
+    color: var(--tx);
+  }
+
+/* ---------- auth buttons (guests / unverified) ---------- */
+  body.v2 .navbar {
+    top: 10px;
+    right: 24px;
+  }
+
+/* The sidebar's profile card replaces the floating avatar button. */
+  body.v2.verified .profile-btn {
+    display: none;
+  }
+
+/* ---------- sidebar: always there for verified users ---------- */
+  body.v2 #app .chat-sidebar {
+    width: 272px;
+    min-width: 272px;
+    box-sizing: border-box;
+    padding: 14px 12px;
+    gap: 6px;
+    background: var(--sb);
+    border-right: 1px solid var(--bd);
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    overflow: visible;
+  }
+
+body.v2 .sb2-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 2px 6px 8px;
+  }
+
+body.v2 .sb2-mark {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+  }
+
+body.v2 .sb2-name {
+    flex: 1;
+    font: 600 16px "Space Grotesk", system-ui, sans-serif;
+    color: var(--tx);
+  }
+
+body.v2 .sb2-iconbtn {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: 8px;
+    background: none;
+    color: var(--tx2);
+    cursor: pointer;
+  }
+
+body.v2 .sb2-iconbtn:hover {
+    background: var(--hv);
+    color: var(--tx);
+  }
+
+body.v2 .sb2-ic {
+    width: 17px;
+    height: 17px;
+    flex: none;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+body.v2 .sb2 .sidebar-search-row {
+    padding: 0 0 6px;
+    border: 0;
+  }
+
+body.v2 .sb2 .sidebar-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 36px;
+    padding: 0 10px;
+    border: 1px solid var(--bd);
+    border-radius: 10px;
+    background: none;
+    box-shadow: none;
+    color: var(--mu);
+  }
+
+body.v2 .sb2 .sidebar-search svg {
+    width: 17px;
+    height: 17px;
+    flex: none;
+  }
+
+body.v2 .sb2 .sidebar-search input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: none;
+    color: var(--tx);
+    font-size: 13px;
+  }
+
+body.v2 .sb2-nav {
+    display: block;
+  }
+
+body.v2 .sb2-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px 10px;
+    border: 0;
+    border-radius: 8px;
+    background: none;
+    color: var(--tx2);
+    font-size: 13.5px;
+    text-align: left;
+    cursor: pointer;
+  }
+
+body.v2 .sb2-row:hover {
+    background: var(--hv);
+    color: var(--tx);
+  }
+
+body.v2 .sb2-row span:first-of-type {
+    flex: 1;
+  }
+
+body.v2 .sb2-badge {
+    min-width: 18px;
+    padding: 0 6px;
+    border-radius: 9px;
+    background: var(--ac);
+    color: var(--acink);
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 18px;
+    text-align: center;
+  }
+
+body.v2 .sb2-badge.hidden {
+    display: none;
+  }
+
+body.v2 .sb2-label {
+    padding: 12px 10px 4px;
+    font-size: 12px;
+    color: var(--mu);
+  }
+
+/* recents list: one quiet line per chat */
+  body.v2 .sb2 .sidebar-list {
+    flex: 1;
+    padding: 0;
+    overflow-y: auto;
+  }
+
+body.v2 .sb2 .sidebar-item {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 8px;
+    background: none;
+    box-shadow: none;
+  }
+
+body.v2 .sb2 .sidebar-item:hover,
+  body.v2 .sb2 .sidebar-item-active {
+    background: var(--hv);
+  }
+
+body.v2 .sb2 .sidebar-item-content {
+    flex: 1;
+    min-width: 0;
+    padding: 8px 10px;
+  }
+
+body.v2 .sb2 .sidebar-item-name-row {
+    display: block;
+  }
+
+body.v2 .sb2 .sidebar-item-name {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--tx2);
+    font-size: 13.5px;
+    font-weight: 400;
+  }
+
+body.v2 .sb2 .sidebar-item-active .sidebar-item-name {
+    color: var(--tx);
+  }
+
+body.v2 .sb2 .sidebar-item-date,
+  body.v2 .sb2 .sidebar-item-preview {
+    display: none;
+  }
+
+body.v2 .sb2 .sidebar-item-actions {
+    display: none;
+    gap: 2px;
+    padding-right: 6px;
+  }
+
+body.v2 .sb2 .sidebar-item:hover .sidebar-item-actions {
+    display: flex;
+  }
+
+body.v2 .sb2 .sidebar-item-btn {
+    border: 0;
+    background: none;
+    color: var(--mu);
+  }
+
+body.v2 .sb2 .sidebar-item-btn:hover {
+    color: var(--tx);
+  }
+
+body.v2 .sb2 .sidebar-empty {
+    padding: 8px 10px;
+    color: var(--mu);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+/* ---------- profile card + menu ---------- */
+  body.v2 .sb2-foot {
+    display: block;
+    position: relative;
+    margin-top: 6px;
+  }
+
+body.v2 .sb2-card {
+    padding: 8px;
+    border: 1px solid var(--bd);
+    border-radius: 12px;
+    background: var(--s2);
+  }
+
+body.v2 .sb2-who {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 4px;
+    border: 0;
+    border-radius: 8px;
+    background: none;
+    color: var(--tx);
+    text-align: left;
+    cursor: pointer;
+  }
+
+body.v2 .sb2-avatar {
+    width: 34px;
+    height: 34px;
+    flex: none;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+body.v2 .sb2-id {
+    flex: 1;
+    min-width: 0;
+  }
+
+body.v2 .sb2-id strong {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+body.v2 .sb2-id small {
+    font-size: 12px;
+    color: var(--mu);
+  }
+
+body.v2 .sb2-who .sb2-ic {
+    color: var(--mu);
+    transition: transform 0.18s ease;
+  }
+
+body.v2 .sb2-who[aria-expanded="true"] .sb2-ic {
+    transform: rotate(180deg);
+  }
+
+body.v2 .sb2-usage {
+    padding: 8px 4px 2px;
+    font-size: 12px;
+    color: var(--mu);
+  }
+
+body.v2 .sb2-usage[hidden] {
+    display: none;
+  }
+
+body.v2 .sb2-usage-row {
+    display: flex;
+    justify-content: space-between;
+  }
+
+body.v2 .sb2-bar {
+    height: 4px;
+    margin-top: 6px;
+    border-radius: 4px;
+    background: var(--bd);
+  }
+
+body.v2 .sb2-bar i {
+    display: block;
+    height: 100%;
+    border-radius: 4px;
+    background: var(--vi);
+  }
+
+body.v2 .sb2-sign {
+    padding-top: 8px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--mu);
+  }
+
+body.v2 .sb2-menu {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: calc(100% + 8px);
+    z-index: 30;
+    padding: 6px;
+    border: 1px solid var(--bd2);
+    border-radius: 12px;
+    background: var(--s2);
+    box-shadow: var(--shadow);
+  }
+
+body.v2 .sb2-menu[hidden] {
+    display: none;
+  }
+
+body.v2 .sb2-mrow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px 10px;
+    border: 0;
+    border-radius: 8px;
+    background: none;
+    color: var(--tx2);
+    font-size: 13.5px;
+    text-align: left;
+    cursor: pointer;
+  }
+
+body.v2 .sb2-mrow:hover {
+    background: var(--hv);
+    color: var(--tx);
+  }
+
+body.v2 .sb2-val {
+    font-size: 12px;
+    color: var(--mu);
+  }
+
+body.v2 .sb2-switch {
+    position: relative;
+    width: 30px;
+    height: 18px;
+    flex: none;
+    border-radius: 9px;
+    background: var(--bd2);
+    transition: background 0.18s ease;
+  }
+
+body.v2 .sb2-switch::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #fff;
+    transition: left 0.18s ease;
+  }
+
+body.v2 .sb2-switch.on {
+    background: var(--vi);
+  }
+
+body.v2 .sb2-switch.on::after {
+    left: 14px;
+  }
+
+body.v2 .sb2 .sidebar-item-active::before {
+    background: var(--vi);
+  }
+}
+
+/* Without the sidebar menu (guests, unverified), keep the quiet icon row. */
+@media (min-width: 769px) {
+  body.v2:not(.verified) .controls {
+    position: fixed;
+    top: 10px;
+    right: 130px;
+    z-index: 1000;
+    display: flex;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  body.v2:not(.verified) .controls .icon-btn {
+    width: 34px;
+    height: 34px;
+    border: 1px solid var(--bd2);
+    border-radius: 50%;
+    background: none;
+    box-shadow: none;
+  }
+
+  body.v2:not(.verified) .controls .icon-btn:hover {
+    background: var(--hv);
+  }
+
+  body.v2:not(.verified) .controls .icon {
+    filter: var(--ifx);
+  }
+
+  body.v2:not(.verified) .controls .icon-btn-label {
+    display: none;
+  }
+}
+
+/* =========================================================
+   MOBILE — same language, mobile shape
+========================================================= */
+@media (max-width: 768px) {
+  body.v2 .header-wrapper,
+  body.v2 .signature,
+  body.v2 .footer,
+  body.v2 .input-area::after {
+    display: none;
+  }
+
+  /* The empty-chat screen carries the mark; the docked one only appears in a chat. */
+  body.v2 #app:not(:has(.chat-container .message)) .hero-logo {
+    display: none;
+  }
+
+  body.v2 .hero-logo,
+  body.v2 #app:has(.chat-container .message) .hero-logo {
+    filter: none;
+  }
+
+  /* top bar */
+  body.v2 .topbar-mobile {
+    background: none;
+  }
+
+  body.v2 #app:has(.chat-container .message) .topbar-mobile {
+    background: var(--bg);
+    border-bottom: 1px solid var(--bd);
+  }
+
+  body.v2 #app:has(.chat-container .message) .topbar-mobile::before {
+    content: "Joule AI";
+    font: 600 15px "Space Grotesk", system-ui, sans-serif;
+    color: var(--tx);
+  }
+
+  /* icon row: only what the tabs don't already cover */
+  body.v2 .controls {
+    position: fixed;
+    top: 10px;
+    right: 12px;
+    z-index: 1001;
+    display: flex;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  body.v2.verified .controls #musicBtn,
+  body.v2.verified .controls #themeBtn,
+  body.v2.verified .controls #peopleOpenBtn,
+  body.v2.verified #app:not(:has(.chat-container .message)) .controls {
+    display: none;
+  }
+
+  body.v2:not(.verified) .controls {
+    right: 178px;
+  }
+
+  body.v2 .controls .icon-btn {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--bd2);
+    border-radius: 50%;
+    background: none;
+    box-shadow: none;
+  }
+
+  body.v2 .controls .icon {
+    filter: var(--ifx);
+  }
+
+  body.v2 .controls .icon-btn-label {
+    display: none;
+  }
+
+  /* empty-chat screen */
+  body.v2 .idle-hero {
+    padding: 0 20px calc(var(--mobile-tabbar-clearance, 60px) + 84px);
+  }
+
+  body.v2 .idle-mark {
+    width: 72px;
+    height: 72px;
+  }
+
+  body.v2 .idle-title {
+    font-size: 24px;
+  }
+
+  body.v2 .idle-chips {
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+    max-width: 360px;
+  }
+
+  body.v2 .idle-chip {
+    padding: 10px 12px;
+    border-radius: 14px;
+    font-size: 12.5px;
+    line-height: 1.3;
+  }
+
+  /* conversation */
+  body.v2 .chat-container {
+    padding: 72px 14px calc(var(--mobile-tabbar-clearance, 60px) + 92px);
+  }
+
+  body.v2 .message.user .chat {
+    max-width: 85%;
+    font-size: 15px;
+  }
+
+  body.v2 .message.bot .chat {
+    font-size: 15px;
+  }
+
+  /* composer sits above the tab bar */
+  body.v2 .input-area {
+    bottom: calc(var(--mobile-tabbar-clearance, 60px) + 12px);
+    width: calc(100% - 24px);
+    height: 52px;
+    border: 1px solid var(--bd2);
+    box-shadow: none;
+  }
+
+  body.v2 .input-area:focus-within {
+    border-color: var(--vi);
+    box-shadow: none;
+  }
+
+  /* tab bar */
+  body.v2 .mobile-tabbar {
+    background: var(--sb);
+    border-top: 1px solid var(--bd);
+    box-shadow: none;
+  }
+
+  body.v2 .mobile-tab {
+    color: var(--mu);
+  }
+
+  body.v2 .mobile-tab.active {
+    color: var(--acfg);
+  }
+
+  /* Chats tab */
+  body.v2 .chat-sidebar {
+    background: var(--bg);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: none;
+  }
+
+  body.v2 .sidebar-header {
+    background: none;
+    border-bottom: 0;
+  }
+
+  body.v2 .sidebar-title {
+    font: 600 20px "Space Grotesk", system-ui, sans-serif;
+    color: var(--tx);
+  }
+
+  body.v2 .sidebar-action-btn {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--bd2);
+    border-radius: 10px;
+    background: none;
+    box-shadow: none;
+    color: var(--tx2);
+  }
+
+  body.v2 .sidebar-action-btn.sidebar-danger-btn {
+    color: var(--mu);
+  }
+
+  body.v2 .sidebar-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid var(--bd);
+    border-radius: 12px;
+    background: none;
+    box-shadow: none;
+    color: var(--mu);
+  }
+
+  body.v2 .sidebar-search input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: none;
+    color: var(--tx);
+    font-size: 14px;
+  }
+
+  body.v2 .sidebar-item {
+    border: 0;
+    border-bottom: 1px solid var(--bd);
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+  }
+
+  body.v2 .sidebar-item-content {
+    background: var(--bg);
+  }
+
+  body.v2 .sidebar-item-name {
+    color: var(--tx);
+    font-weight: 500;
+  }
+
+  body.v2 .sidebar-item-date,
+  body.v2 .sidebar-item-preview,
+  body.v2 .sidebar-empty {
+    color: var(--mu);
+  }
+
+  body.v2 .sidebar-fab {
+    background: var(--ac);
+    color: var(--acink);
+    box-shadow: none;
+  }
+}
+
+/* =========================================================
+   PROFILE PANEL, GALLERY, PEOPLE — surfaces and controls only.
+   Geometry and behaviour stay as they were; this just moves the
+   colours onto the same tokens as the shell.
+========================================================= */
+body.v2 .modal-overlay {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+body.v2 .profile-panel,
+body.v2 .gallery-modal,
+body.v2 .people-section {
+  background: var(--bg);
+  color: var(--tx);
+  border-color: var(--bd);
+  box-shadow: var(--shadow);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
+}
+
+body.v2 .profile-panel h2,
+body.v2 .gallery-title,
+body.v2 .people-title {
+  font: 600 24px "Space Grotesk", system-ui, sans-serif;
+  color: var(--tx);
+  text-shadow: none;
+}
+
+body.v2 .close-btn,
+body.v2 .people-close-btn,
+body.v2 .people-back-btn {
+  border: 1px solid var(--bd2);
+  background: none;
+  box-shadow: none;
+  color: var(--tx2);
+}
+
+body.v2 .close-btn:hover,
+body.v2 .people-close-btn:hover,
+body.v2 .people-back-btn:hover {
+  background: var(--hv);
+}
+
+body.v2 .close-btn .icon,
+body.v2 .people-close-btn .icon,
+body.v2 .people-back-btn .icon,
+body.v2 .profile-setrow-icon img,
+body.v2 .avatar-upload-option .icon {
+  filter: var(--ifx);
+}
+
+body.v2 .profile-avatar-preview img {
+  box-shadow: none;
+  border-color: var(--bd2);
+}
+
+body.v2 .avatar-option {
+  border-color: transparent;
+}
+
+body.v2 .avatar-upload-option {
+  background: var(--hv);
+  border: 1px solid var(--bd2);
+}
+
+body.v2 .avatar-option.selected {
+  border-color: var(--ac);
+  box-shadow: 0 0 0 3px var(--bd2);
+}
+
+body.v2 .profile-settings {
+  background: var(--s2);
+  border: 1px solid var(--bd);
+  box-shadow: none;
+}
+
+body.v2 .profile-setrow {
+  color: var(--tx);
+  border-color: var(--bd);
+}
+
+body.v2 .profile-setrow-link:hover {
+  background: var(--hv);
+}
+
+body.v2 .profile-setrow-icon {
+  background: var(--hv);
+  box-shadow: none;
+}
+
+body.v2 .profile-setrow-chevron {
+  color: var(--mu);
+}
+
+body.v2 .theme-swatch {
+  border: 1px solid var(--bd2);
+}
+
+body.v2 .theme-swatch.active {
+  box-shadow: 0 0 0 2px var(--ac);
+}
+
+body.v2 .profile-toggle {
+  background: var(--bd2);
+}
+
+body.v2 .profile-toggle.on {
+  background: var(--vi);
+}
+
+body.v2 .field-label {
+  color: var(--mu);
+}
+
+body.v2 .field-hint {
+  color: var(--mu);
+}
+
+body.v2 .profile-panel input {
+  background: var(--s2);
+  border: 1px solid var(--bd2);
+  color: var(--tx);
+  box-shadow: none;
+}
+
+body.v2 .profile-panel input:focus {
+  border-color: var(--vi);
+  box-shadow: none;
+}
+
+body.v2 .continue-btn {
+  background: var(--ac);
+  color: var(--acink);
+  border: 0;
+  box-shadow: none;
+}
+
+body.v2 .logout-btn {
+  background: none;
+  border: 1px solid var(--bd2);
+  color: var(--tx2);
+  box-shadow: none;
+}
+
+body.v2 .people-tab {
+  color: var(--mu);
+}
+
+body.v2 .people-tab.active {
+  color: var(--tx);
+  border-color: var(--ac);
+}
+
+/* An older mobile rule gives the profile panel its own navy; the id wins it back. */
+body.v2 #profileOverlay .profile-panel {
+  background: var(--bg);
+}
+
+body.v2 .theme-swatch[data-mode="light"] {
+  background: #faf8f5;
+}
+
+body.v2 .theme-swatch[data-mode="dark"] {
+  background: #0e0e10;
+}
+
+@media (max-width: 768px) {
+  body.v2 #profileOverlay {
+    background: var(--bg);
+  }
+}

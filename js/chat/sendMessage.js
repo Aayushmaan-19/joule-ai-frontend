@@ -79,6 +79,14 @@ export async function sendMessage() {
       });
     }
 
+    if (typeof data.remaining === "number" && typeof data.limit === "number") {
+      window.dispatchEvent(
+        new CustomEvent("joule:usage", {
+          detail: { remaining: data.remaining, limit: data.limit }
+        })
+      );
+    }
+
     if (typeof data.remaining === "number" && data.remaining <= 3) {
       const hint = document.createElement("div");
       hint.className = "usage-hint";

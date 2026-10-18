@@ -54,6 +54,10 @@
          the file itself, so this shrinks how long .loading-text (or
          anything else using Allura) can be waiting on it. -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&family=Space+Grotesk:wght@500;600&display=swap"
+      rel="stylesheet"
+    />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
     <link
@@ -68,7 +72,7 @@
 
   </head>
 
-  <body>
+  <body class="v2">
     <!-- LOADING SCREEN: aurora condensation -->
     <div id="loadingScreen" class="loading-screen">
       <canvas id="loadingCanvas" class="loading-canvas"></canvas>
@@ -542,6 +546,17 @@
           </button>
         </div>
 
+        <div class="idle-hero" id="idleHero">
+          <img class="idle-mark" src="Assets/logo/icon-512.png" alt="Joule" />
+          <h1 class="idle-title">What's the spark today?</h1>
+          <p class="idle-sub">Joule helps you think, build and create.</p>
+          <div class="idle-chips">
+            <button type="button" class="idle-chip" data-prompt="Turn this idea into a plan: ">Turn this idea into a plan</button>
+            <button type="button" class="idle-chip" data-prompt="Debug this error with me: ">Debug this error with me</button>
+            <button type="button" class="idle-chip" data-prompt="Explain it like I'm new: ">Explain it like I'm new</button>
+            <button type="button" class="idle-chip" data-prompt="Brainstorm ideas with me about ">Brainstorm ideas with me</button>
+          </div>
+        </div>
         <div class="chat-container" id="chat"></div>
 
         <div class="input-area">

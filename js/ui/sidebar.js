@@ -14,6 +14,7 @@ import { addMessage as storeMessage, setConversation, clearMessages, setPrivateM
 import { renderMarkdown } from "../utils/markdown.js";
 import state from "../config/state.js";
 import { isPrivateMode } from "../config/selectors.js";
+import { initSidebarShell } from "./sidebarShell.js";
 
 let sidebarEl = null;
 let isOpen = false;
@@ -122,6 +123,7 @@ function buildDOM() {
   });
 
   updateGhostUI();
+  initSidebarShell(sidebarEl);
 }
 
 /* =========================================================
