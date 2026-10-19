@@ -21,6 +21,8 @@ body.v2 {
   --acink: #1a1208;
   --vi: #7c6bd0;
   --ub: #efebe4;
+  --err: #c0392b;
+  --ok: #2e7d4f;
   --ifx: none;
   --shadow: 0 12px 32px rgba(40, 30, 20, 0.14);
 }
@@ -38,6 +40,8 @@ body.v2.dark {
   --acfg: #f2b47e;
   --vi: #a99be8;
   --ub: #1b1b1f;
+  --err: #ff8a80;
+  --ok: #6fcf97;
   --ifx: invert(0.85);
   --shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
 }
@@ -178,7 +182,8 @@ body.v2 .chat-container .message {
   box-sizing: border-box;
 }
 
-body.v2 .message img {
+/* Avatars are direct children of .message; generated images live inside the bubble. */
+body.v2 .message > img {
   display: none;
 }
 
@@ -1214,4 +1219,152 @@ body.v2 .theme-swatch[data-mode="dark"] {
   body.v2 #profileOverlay {
     background: var(--bg);
   }
+}
+
+/* =========================================================
+   Theme button: the old per-theme violet/red glow wins on ids, so match it.
+========================================================= */
+body.v2 .controls #themeBtn,
+body.v2 .controls #themeBtn:hover,
+body.v2 .controls #themeBtn:active {
+  background: none;
+  border: 1px solid var(--bd2);
+  box-shadow: none;
+}
+
+body.v2 .controls #themeBtn:hover {
+  background: var(--hv);
+}
+
+body.v2 .controls #themeBtn::before,
+body.v2 .controls #themeBtn:hover::before {
+  display: none;
+}
+
+body.v2 .controls #themeBtn img {
+  filter: var(--ifx);
+  box-shadow: none;
+}
+
+/* =========================================================
+   Sign up / log in modal
+========================================================= */
+body.v2 .auth-modal {
+  background: var(--bg);
+  color: var(--tx);
+  border: 1px solid var(--bd);
+  box-shadow: var(--shadow);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
+}
+
+body.v2 .auth-modal::before,
+body.v2 .auth-modal::after {
+  display: none;
+}
+
+body.v2 .auth-modal h2 {
+  font: 600 28px "Space Grotesk", system-ui, sans-serif;
+  color: var(--tx);
+  text-shadow: none;
+}
+
+body.v2 .auth-modal .subtitle {
+  color: var(--mu);
+}
+
+body.v2 .auth-modal input {
+  background: var(--s2);
+  border: 1px solid var(--bd2);
+  color: var(--tx);
+  box-shadow: none;
+}
+
+body.v2 .auth-modal input::placeholder {
+  color: var(--mu);
+  opacity: 1;
+}
+
+body.v2 .auth-modal input:focus {
+  border-color: var(--vi);
+  box-shadow: none;
+}
+
+body.v2 .auth-modal .password-toggle {
+  color: var(--mu);
+  background: none;
+}
+
+body.v2 .auth-modal .password-toggle img,
+body.v2 .auth-modal .password-toggle svg {
+  filter: var(--ifx);
+}
+
+body.v2 .auth-error {
+  color: var(--err);
+}
+
+body.v2 .auth-success {
+  color: var(--ok);
+}
+
+body.v2 .auth-toggle,
+body.v2 .auth-modal .otp-resend {
+  color: var(--mu);
+}
+
+body.v2 .auth-modal .link-btn {
+  background: none;
+  border: 0;
+  color: var(--acfg);
+  text-decoration: underline;
+}
+
+body.v2 .auth-modal .divider span {
+  background: var(--bd);
+}
+
+body.v2 .auth-modal .divider p {
+  color: var(--mu);
+}
+
+body.v2 .auth-modal .google-btn {
+  background: none;
+  border: 1px solid var(--bd2);
+  color: var(--tx);
+  box-shadow: none;
+}
+
+body.v2 .auth-modal .google-btn:hover {
+  background: var(--hv);
+}
+
+body.v2 .auth-modal .otp-box {
+  background: var(--s2);
+  border: 1px solid var(--bd2);
+  color: var(--tx);
+}
+
+body.v2 .auth-modal .otp-box:focus {
+  border-color: var(--vi);
+}
+
+/* =========================================================
+   Desktop: the Appearance / Sound / My images box in the profile panel
+   duplicates the sidebar menu and the Gallery row, so it is not shown.
+   Mobile keeps it (the tabs have no equivalent).
+========================================================= */
+@media (min-width: 769px) {
+  body.v2 #profileSettings {
+    display: none;
+  }
+}
+
+/* Generated images: no glow, same hairline as everything else. */
+body.v2 .message .chat img.generated-image,
+body.v2 .chat img.generated-image {
+  border: 1px solid var(--bd);
+  box-shadow: none;
+  animation: none;
 }

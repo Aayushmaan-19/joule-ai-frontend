@@ -34,10 +34,17 @@ function openGallery() {
   );
 
   if (stopGallery) stopGallery();
-  stopGallery = onSnapshot(q, snap => {
-    const images = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    renderGallery(images);
-  });
+  stopGallery = onSnapshot(
+    q,
+    snap => {
+      const images = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderGallery(images);
+    },
+    err => {
+      console.error("Gallery listener failed:", err.code, err.message);
+      galleryGrid.innerHTML = `<div class="gallery-empty">Couldn't load your images. Please try again in a moment.</div>`;
+    }
+  );
 }
 
 function closeGalleryPanel() {
