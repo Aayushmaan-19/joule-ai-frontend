@@ -25,23 +25,26 @@ export function isShinigamiActive() {
 }
 
 /* =========================================================
-   TRIGGER 1: Click "Aayushmaan" 7 times rapidly
+   TRIGGER 1: Click the owner signature / logo mark 7 times rapidly
+
+   The redesign hides the old .signature (display:none), so the
+   trigger lives on what the shell actually shows: the sidebar
+   signature on desktop and the empty-chat logo mark on desktop and
+   mobile. Delegated, because the sidebar signature is created later
+   by sidebarShell.js.
 ========================================================= */
 
 const CLICK_TARGET = 7;
 const CLICK_WINDOW = 2000;
+const TRIGGER_SELECTOR = ".sb2-sign, .idle-mark";
 
 let clickCount = 0;
 let clickTimer = null;
 
 function initSignatureClick() {
-  const sig = document.querySelector(".signature");
-  if (!sig) return;
+  document.addEventListener("click", e => {
+    if (!e.target.closest(TRIGGER_SELECTOR)) return;
 
-  sig.style.cursor = "default";
-  sig.style.userSelect = "none";
-
-  sig.addEventListener("click", () => {
     clickCount++;
 
     clearTimeout(clickTimer);

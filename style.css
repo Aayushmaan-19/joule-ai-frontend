@@ -6722,7 +6722,9 @@ body.private-mode .input-area:focus-within {
   border-radius: 20px;
   background: #fff;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
-  z-index: 40;
+  /* Mounted on <body> but used inside .people-section (z-index 2000) —
+     anything lower renders underneath the DM panel and looks broken. */
+  z-index: 2100;
 }
 
 .thread-reaction-picker button {
@@ -6869,7 +6871,7 @@ body.private-mode .input-area:focus-within {
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  z-index: 200;
+  z-index: 2100;
 }
 
 .forward-picker-overlay.hidden {

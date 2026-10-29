@@ -1,4 +1,3 @@
-import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 import {
   galleryToolBtn,
   galleryOverlay,
@@ -7,12 +6,10 @@ import {
   toolsMenu,
   toolsBtn
 } from "../utils/dom.js";
-import { auth, db } from "../auth/firebase.js";
+import { auth } from "../auth/firebase.js";
 import { getToken } from "../auth/getToken.js";
 import { escHtml } from "../utils/helpers.js";
 import { GALLERY_API_URL } from "../utils/constants.js";
-
-let stopGallery = null;
 
 function closeToolsMenu() {
   toolsMenu.classList.add("hidden");
@@ -20,7 +17,20 @@ function closeToolsMenu() {
   toolsBtn.setAttribute("aria-expanded", "false");
 }
 
-function openGallery() {
+async function fetchGallery() {
+  const token = await getToken();
+
+  const response = await fetch(GALLERY_API_URL, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+
+  if (!response.ok) throw new Error(`Gallery request failed (${response.status})`);
+
+  const { images } = await response.json();
+  return images;
+}
+
+async function openGallery() {
   const user = auth.currentUser;
   if (!user) return;
 
@@ -28,30 +38,16 @@ function openGallery() {
   galleryOverlay.classList.remove("hidden");
   galleryGrid.innerHTML = `<div class="gallery-loading">Loading your images…</div>`;
 
-  const q = query(
-    collection(db, "users", user.uid, "images"),
-    orderBy("createdAt", "desc")
-  );
-
-  if (stopGallery) stopGallery();
-  stopGallery = onSnapshot(
-    q,
-    snap => {
-      const images = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      renderGallery(images);
-    },
-    err => {
-      console.error("Gallery listener failed:", err.code, err.message);
-      galleryGrid.innerHTML = `<div class="gallery-empty">Couldn't load your images. Please try again in a moment.</div>`;
-    }
-  );
+  try {
+    renderGallery(await fetchGallery());
+  } catch (err) {
+    console.error("Gallery load failed:", err.message);
+    galleryGrid.innerHTML = `<div class="gallery-empty">Couldn't load your images. Please try again in a moment.</div>`;
+  }
 }
 
 function closeGalleryPanel() {
   galleryOverlay.classList.add("hidden");
-
-  if (stopGallery) stopGallery();
-  stopGallery = null;
 }
 
 function renderGallery(images) {
@@ -112,8 +108,12 @@ async function deleteImage(imageId, itemEl) {
     });
 
     if (!response.ok) throw new Error("Delete failed");
-    // No manual DOM removal needed — the onSnapshot listener above
-    // fires again once the Firestore doc is gone and re-renders.
+
+    itemEl.remove();
+
+    if (!galleryGrid.querySelector(".gallery-item")) {
+      renderGallery([]);
+    }
   } catch (err) {
     console.error("Gallery delete failed:", err);
     itemEl.classList.remove("gallery-item-deleting");

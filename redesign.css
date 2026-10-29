@@ -1368,3 +1368,18 @@ body.v2 .chat img.generated-image {
   box-shadow: none;
   animation: none;
 }
+
+/* Secret-trigger targets (see animationManager.js): rapid clicks must not
+   select text or double-tap zoom, and the empty-chat mark sits inside a
+   pointer-events:none container so it needs to opt back in. */
+body.v2 .sb2-sign,
+body.v2 .idle-mark {
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body.v2 .idle-mark {
+  pointer-events: auto;
+}
