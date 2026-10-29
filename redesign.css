@@ -27,7 +27,11 @@ body.v2 {
   --shadow: 0 12px 32px rgba(40, 30, 20, 0.14);
 }
 
-body.v2.dark {
+/* Shinigami shares the dark neutrals: activating it calls forceLightMode()
+   (animationManager.js), so without these it fell through to the light
+   tokens — dark text on the dark wallpaper, a cream sidebar, a white composer. */
+body.v2.dark,
+body.v2.shinigami {
   --bg: #0e0e10;
   --sb: #121214;
   --s2: #151518;
@@ -46,6 +50,7 @@ body.v2.dark {
   --shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
 }
 
+/* ...then red replaces the accent (same specificity, later in the file, so it wins). */
 body.v2.shinigami {
   --ac: #e53935;
   --acfg: #ff6b66;
