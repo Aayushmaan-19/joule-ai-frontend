@@ -14,14 +14,6 @@ export const USER_PIC =
 export const BOT_PIC =
   "Assets/Images/bot.jpeg";
 
-export const SONGS = [
-  "Assets/Songs/Sahiba.mp3",
-  "Assets/Songs/Tu Hai Kaha.mp3",
-  "Assets/Songs/Samjho Na.mp3",
-  "Assets/Songs/Pal Pal.mp3",
-  "Assets/Songs/Aarzu.mp3",
-];
-
 export const BACKEND_BASE_URL = (
   import.meta.env.VITE_BACKEND_URL ||
   "https://joule-ai-backend.onrender.com"

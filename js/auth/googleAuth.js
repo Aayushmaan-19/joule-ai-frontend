@@ -1,27 +1,15 @@
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
-import { auth, db } from "./firebase.js";
+import { auth } from "./firebase.js";
 
 const provider = new GoogleAuthProvider();
 
+/**
+ * Signs in only. The user's Firestore profile is created by the backend
+ * (POST /api/auth/session, called from authState.js for every sign-in
+ * method) — a popup that succeeded must never be reported as failed
+ * because a second, unrelated step went wrong.
+ */
 export async function signInWithGoogle() {
-  const result = await signInWithPopup(auth, provider);
-  const user = result.user;
-
-  const userRef = doc(db, "users", user.uid);
-  const snap = await getDoc(userRef);
-
-  if (!snap.exists()) {
-    await setDoc(userRef, {
-      uid: user.uid,
-      email: user.email,
-      createdAt: serverTimestamp(),
-      plan: "free",
-      messagesUsed: 0,
-      voiceUsed: 0,
-      emailVerified: true  // Google accounts are pre-verified
-    });
-  }
-
+  const { user } = await signInWithPopup(auth, provider);
   return { success: true, user };
 }

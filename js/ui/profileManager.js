@@ -27,10 +27,9 @@ import { cropToSquare } from "../utils/imageCrop.js";
 import { setProfile } from "../config/actions.js";
 import { currentProfile } from "../config/selectors.js";
 import { isDarkMode } from "../config/selectors.js";
-import { isPlaying } from "../config/selectors.js";
 
 const themeSwatches = document.querySelectorAll(".theme-swatch");
-const profileSoundToggle = document.getElementById("profileSoundToggle");
+const profileMusicRow = document.getElementById("profileMusicRow");
 const profileGalleryRow = document.getElementById("profileGalleryRow");
 
 const DEFAULT_AVATAR = "Assets/Avatars/avatar1.png";
@@ -91,9 +90,6 @@ function updateSettingsUI() {
   themeSwatches.forEach(btn => {
     btn.classList.toggle("active", (btn.dataset.mode === "dark") === isDarkMode());
   });
-
-  profileSoundToggle.classList.toggle("on", isPlaying());
-  profileSoundToggle.setAttribute("aria-checked", String(isPlaying()));
 }
 
 themeSwatches.forEach(btn => {
@@ -104,11 +100,9 @@ themeSwatches.forEach(btn => {
   });
 });
 
-profileSoundToggle.addEventListener("click", () => {
+profileMusicRow.addEventListener("click", () => {
+  closeProfilePanel();
   musicBtn.click();
-  // musicPlayer.js's own click handler runs synchronously, so state
-  // is already current by the time this runs.
-  updateSettingsUI();
 });
 
 profileGalleryRow.addEventListener("click", () => {

@@ -1,0 +1,35 @@
+/* =========================================================
+   ON-SCREEN KEYBOARD (see js/ui/keyboardInset.js)
+   Only applies while html.kb-open is set, i.e. while a keyboard
+   is actually covering the page — no effect otherwise.
+========================================================= */
+
+/* The chat column ends where the keyboard begins, so the composer and the
+   newest messages (both anchored to #main's bottom) ride up above it. */
+html.kb-open #main {
+  height: var(--kb-main-h);
+}
+
+/* The tab bar sits behind the keyboard anyway; give its space back. */
+html.kb-open {
+  --mobile-tabbar-clearance: 0px;
+}
+
+html.kb-open body.v2 .mobile-tabbar {
+  display: none;
+}
+
+/* Centered dialogs (sign in, profile, gallery) re-center inside the
+   visible area instead of the whole screen, so the field you're typing in
+   and the button under it stay on screen. */
+html.kb-open .modal-overlay {
+  inset: auto 0 auto 0;
+  top: var(--vv-top);
+  height: var(--vv-height);
+}
+
+html.kb-open .auth-modal,
+html.kb-open .profile-panel {
+  max-height: calc(var(--vv-height) - 16px);
+  overflow-y: auto;
+}

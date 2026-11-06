@@ -57,7 +57,7 @@ function buildDOM() {
 
   sidebarEl.innerHTML = `
     <div class="sidebar-header">
-      <span class="sidebar-title">Chats</span>
+      <span class="sidebar-title">History</span>
 
       <div class="sidebar-header-actions">
         <button class="sidebar-action-btn" id="sidebarNewBtn" title="New chat">

@@ -1,22 +1,49 @@
 import { speakText } from "../api/ttsService.js";
 import { forceLightMode } from "./themeManager.js";
+import { startRealm, stopRealm, playAwakening, playFarewell } from "./shinigamiRealm.js";
 
 let currentMode = "normal";
 
-export function activateShinigamiProtocol() {
+function enterTheme() {
+  document.body.classList.add("shinigami");
+  forceLightMode();
+}
+
+function leaveShinigami() {
+  document.body.classList.remove("shinigami");
+  stopRealm();
+}
+
+/**
+ * `cinematic` plays the full awakening (shinigamiRealm.js) and swaps the
+ * theme in while the screen is black. The 12 AM auto-activation passes
+ * nothing: it can fire while the page is still loading, so it just
+ * switches the mode on quietly.
+ */
+export function activateShinigamiProtocol({ cinematic = false } = {}) {
   if (currentMode === "shinigami") return;
   currentMode = "shinigami";
-  document.body.classList.add("shinigami");
 
-  forceLightMode();
+  if (cinematic) {
+    playAwakening(enterTheme, startRealm);
+    return;
+  }
 
+  enterTheme();
+  startRealm();
   showShinigamiToast("Shinigami Protocol — Activated 💀");
 }
 
-export function disableShinigami() {
+export function disableShinigami({ cinematic = false } = {}) {
   if (currentMode === "normal") return;
   currentMode = "normal";
-  document.body.classList.remove("shinigami");
+
+  if (cinematic) {
+    playFarewell(leaveShinigami);
+    return;
+  }
+
+  leaveShinigami();
   showShinigamiToast("Returning to normal mode ✨");
 }
 
@@ -57,9 +84,9 @@ function initSignatureClick() {
       clearTimeout(clickTimer);
 
       if (isShinigamiActive()) {
-        disableShinigami();
+        disableShinigami({ cinematic: true });
       } else {
-        activateShinigamiProtocol();
+        activateShinigamiProtocol({ cinematic: true });
       }
     }
   });

@@ -16,11 +16,9 @@ const peopleNavBadge = document.getElementById("peopleNavBadge");
 const requestsBadge = document.getElementById("requestsBadge");
 const mobileTabPeopleBadge = document.getElementById("mobileTabPeopleBadge");
 
-const TAB_TITLES = {
-  directory: "Discover",
-  requests: "Requests",
-  messages: "Messages"
-};
+// The header always says where you are in the app ("People"); the tabs
+// underneath name the section. Thread / profile views swap in a person's name.
+const PEOPLE_TITLE = "People";
 
 let activeTab = "directory";
 let stopBadgeListener = null;
@@ -128,7 +126,7 @@ function switchTab(tab) {
 function showTab(tab) {
   peopleTabs.classList.remove("hidden");
   peopleBackBtn.classList.add("hidden");
-  peopleTitle.textContent = TAB_TITLES[tab];
+  peopleTitle.textContent = PEOPLE_TITLE;
 
   peopleTabs.querySelectorAll(".people-tab").forEach(btn => {
     btn.classList.toggle("active", btn.dataset.tab === tab);

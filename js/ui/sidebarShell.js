@@ -1,7 +1,6 @@
 import { auth } from "../auth/firebase.js";
 import {
   isDarkMode,
-  isPlaying,
   isPrivateMode,
   currentProfile
 } from "../config/selectors.js";
@@ -26,6 +25,8 @@ const ICONS = {
     '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14c2.2.7 3.5 2.6 3.5 6"/>',
   gallery:
     '<rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="m21 16-5-5-9 9"/>',
+  music:
+    '<path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>',
   chevron: '<path d="m7 15 5-5 5 5"/>'
 };
 
@@ -83,12 +84,19 @@ export function initSidebarShell(sidebarEl) {
   nav.innerHTML = `
     <button type="button" class="sb2-row" id="sb2People">${icon(ICONS.people)}<span>People</span><span class="sb2-badge hidden" id="sb2PeopleBadge"></span></button>
     <button type="button" class="sb2-row" id="sb2Gallery">${icon(ICONS.gallery)}<span>Gallery</span></button>
-    <div class="sb2-label">Recents</div>
+    <button type="button" class="sb2-row" id="sb2Music">${icon(ICONS.music)}<span>Music</span><span class="mp-eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button>
+    <div class="sb2-label">History</div>
   `;
   sidebarEl.querySelector(".sidebar-search-row").after(nav);
 
   nav.querySelector("#sb2People").addEventListener("click", () => $("peopleOpenBtn").click());
   nav.querySelector("#sb2Gallery").addEventListener("click", () => $("galleryToolBtn").click());
+  nav.querySelector("#sb2Music").addEventListener("click", () => $("musicBtn").click());
+
+  // Little equalizer on the row while a song is playing (musicPlayer.js announces changes).
+  const musicRow = nav.querySelector("#sb2Music");
+  musicRow.classList.toggle("is-playing", document.getElementById("musicBtn").classList.contains("is-playing"));
+  window.addEventListener("joule:music", e => musicRow.classList.toggle("is-playing", e.detail.playing));
 
   // Mirror the existing unread badge instead of recomputing it.
   const srcBadge = $("peopleNavBadge");
@@ -112,7 +120,6 @@ export function initSidebarShell(sidebarEl) {
     <div class="sb2-menu" id="sb2Menu" role="menu" hidden>
       <button type="button" class="sb2-mrow" role="menuitem" data-act="profile"><span>Profile &amp; settings</span></button>
       <button type="button" class="sb2-mrow" role="menuitem" data-act="theme"><span>Theme</span><span class="sb2-val" id="sb2ThemeVal"></span></button>
-      <button type="button" class="sb2-mrow" role="menuitemcheckbox" data-act="music"><span>Music</span><i class="sb2-switch" id="sb2MusicSw"></i></button>
       <button type="button" class="sb2-mrow" role="menuitemcheckbox" data-act="private"><span>Private chat</span><i class="sb2-switch" id="sb2PrivateSw"></i></button>
       <button type="button" class="sb2-mrow" role="menuitem" data-act="clear"><span>Clear this chat</span></button>
       <button type="button" class="sb2-mrow" role="menuitem" data-act="wipe"><span>Delete all history</span></button>
@@ -158,9 +165,6 @@ export function initSidebarShell(sidebarEl) {
 
   const syncMenuState = () => {
     foot.querySelector("#sb2ThemeVal").textContent = isDarkMode() ? "Dark" : "Light";
-    const music = foot.querySelector("#sb2MusicSw");
-    music.classList.toggle("on", isPlaying());
-    music.parentElement.setAttribute("aria-checked", String(isPlaying()));
     const priv = foot.querySelector("#sb2PrivateSw");
     priv.classList.toggle("on", isPrivateMode());
     priv.parentElement.setAttribute("aria-checked", String(isPrivateMode()));
@@ -183,12 +187,11 @@ export function initSidebarShell(sidebarEl) {
 
     const act = row.dataset.act;
     // Toggle rows stay open so the switch visibly flips; navigation rows close.
-    const keepOpen = act === "theme" || act === "music" || act === "private";
+    const keepOpen = act === "theme" || act === "private";
 
     switch (act) {
       case "profile": $("profileBtn").click(); break;
       case "theme": $("themeBtn").click(); break;
-      case "music": $("musicBtn").click(); break;
       case "private": sidebarEl.querySelector("#sidebarPrivateBtn").click(); break;
       case "clear": $("clearBtn").click(); break;
       case "wipe": sidebarEl.querySelector("#sidebarClearAllBtn").click(); break;

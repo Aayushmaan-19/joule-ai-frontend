@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
 
-    <link rel="stylesheet" href="theme.css" />
+    <link rel="stylesheet" href="css/theme.css" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
@@ -62,6 +62,13 @@
 
     <link
       href="https://fonts.googleapis.com/css2?family=Allura&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Subset font holding only the two characters 死神 shown by the Shinigami
+         awakening, so they render the same on every device (a few hundred bytes). -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@700&text=%E6%AD%BB%E7%A5%9E&display=swap"
       rel="stylesheet"
     />
 
@@ -124,6 +131,9 @@
               type="email"
               placeholder="Email"
               autocomplete="email"
+              autocapitalize="off"
+              autocorrect="off"
+              spellcheck="false"
               required
             />
 
@@ -133,6 +143,9 @@
                 type="password"
                 placeholder="Password"
                 autocomplete="current-password"
+                autocapitalize="off"
+                autocorrect="off"
+                spellcheck="false"
                 minlength="6"
                 required
               />
@@ -329,17 +342,24 @@
               <button type="button" class="theme-swatch" data-mode="dark" aria-label="Dark"></button>
             </div>
           </div>
-          <div class="profile-setrow">
+          <button type="button" class="profile-setrow profile-setrow-link" id="profileMusicRow">
             <div class="profile-setrow-left">
-              <span class="profile-setrow-icon"><img src="Assets/Icons/sparkles.svg" class="icon" alt="" /></span>
-              Sound
+              <span class="profile-setrow-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></span>
+              Music
             </div>
-            <button type="button" class="profile-toggle" id="profileSoundToggle" role="switch" aria-checked="false"></button>
-          </div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="profile-setrow-chevron"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
           <button type="button" class="profile-setrow profile-setrow-link" id="profileGalleryRow">
             <div class="profile-setrow-left">
               <span class="profile-setrow-icon"><img src="Assets/Icons/images.svg" class="icon" alt="" /></span>
-              My images
+              Gallery
+            </div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="profile-setrow-chevron"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+          <button type="button" class="profile-setrow profile-setrow-link" id="profileAdminRow">
+            <div class="profile-setrow-left">
+              <span class="profile-setrow-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 4.5 3.2 8 8 9 4.8-1 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/></svg></span>
+              Admin console
             </div>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="profile-setrow-chevron"><polyline points="9 18 15 12 9 6"/></svg>
           </button>
@@ -377,7 +397,7 @@
     <div id="galleryOverlay" class="modal-overlay hidden">
       <div class="gallery-modal">
         <button id="closeGallery" class="close-btn">×</button>
-        <h2 class="gallery-title">Your Images</h2>
+        <h2 class="gallery-title">Gallery</h2>
         <div class="gallery-grid" id="galleryGrid"></div>
       </div>
     </div>
@@ -391,7 +411,7 @@
         <button id="peopleBackBtn" class="people-back-btn hidden" aria-label="Back">
           <img src="Assets/Icons/arrow-left.svg" class="icon" alt="" />
         </button>
-        <h2 class="people-title" id="peopleTitle">Discover</h2>
+        <h2 class="people-title" id="peopleTitle">People</h2>
         <button id="peopleCloseBtn" class="people-close-btn" aria-label="Close People">
           <img src="Assets/Icons/x.svg" class="icon" alt="" />
         </button>
@@ -475,8 +495,8 @@
           <button
             id="sidebarOpenBtn"
             class="sidebar-open-btn hidden"
-            aria-label="Toggle chat history"
-            title="Chat history"
+            aria-label="Toggle history"
+            title="History"
           >
             <span class="sidebar-open-icon"></span>
           </button>
@@ -604,14 +624,14 @@
                 <span class="tools-menu-item-icon">
                   <img src="Assets/Icons/images.svg" alt="" />
                 </span>
-                <span class="tools-menu-item-label">My Images</span>
+                <span class="tools-menu-item-label">Gallery</span>
               </button>
 
               <div class="tools-menu-hint">More features coming soon!</div>
             </div>
           </div>
 
-          <input id="input" placeholder="Type message..." autocomplete="off" />
+          <input id="input" placeholder="Ask Anything..." autocomplete="off" enterkeyhint="send" />
           <button class="icon-btn" id="micBtn" aria-label="Voice Input">
             <span class="mic-ring"></span>
             <img src="Assets/Icons/mic.svg" class="icon" id="micIcon" alt="" />
@@ -629,13 +649,13 @@
            before; this is an additional mobile-only entry point that
            drives the same underlying panels via mobileNav.js. -->
       <nav class="mobile-tabbar" id="mobileTabBar">
-        <button type="button" class="mobile-tab active" data-tab="chat" aria-label="Chat">
+        <button type="button" class="mobile-tab active" data-tab="chat" aria-label="AI Chat">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          <span>Chat</span>
+          <span>AI Chat</span>
         </button>
-        <button type="button" class="mobile-tab" data-tab="chats" aria-label="Chats">
+        <button type="button" class="mobile-tab" data-tab="chats" aria-label="History">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3h18v14H7l-4 4V3z"/><line x1="7" y1="8" x2="17" y2="8"/><line x1="7" y1="12" x2="13" y2="12"/></svg>
-          <span>Chats</span>
+          <span>History</span>
         </button>
         <button type="button" class="mobile-tab" data-tab="people" aria-label="People">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>

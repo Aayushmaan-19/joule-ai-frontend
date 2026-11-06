@@ -35,6 +35,7 @@ import { login } from "../auth/login.js";
 import { sendOtp } from "../auth/sendOtp.js";
 import { verifyOtp } from "../auth/verifyOtp.js";
 import { signInWithGoogle } from "../auth/googleAuth.js";
+import { describeAuthError } from "../auth/authErrors.js";
 
 const authModal = modalOverlay.querySelector(".auth-modal");
 
@@ -255,21 +256,31 @@ function resetAuthForm() {
   updatePasswordRequirements("");
 }
 
+// Resets only the button's label. It must never touch the error line:
+// the submit handler calls this in its `finally`, which runs right
+// after showAuthError() — clearing the error there made every failed
+// sign-in look like nothing happened.
+function setSubmitLabel() {
+  authSubmitBtn.textContent = mode === "signup" ? "Continue" : "Log in";
+}
+
 function setMode(newMode) {
   mode = newMode;
+
+  setSubmitLabel();
 
   if (mode === "signup") {
     authTitle.textContent = "Welcome";
     authSubtitle.textContent = "Create your Joule account";
-    authSubmitBtn.textContent = "Continue";
     authToggleText.textContent = "Already have an account?";
     authToggleBtn.textContent = "Log in";
+    authPassword.autocomplete = "new-password";
   } else {
     authTitle.textContent = "Welcome back";
     authSubtitle.textContent = "Log in to your Joule account";
-    authSubmitBtn.textContent = "Log in";
     authToggleText.textContent = "Don't have an account?";
     authToggleBtn.textContent = "Sign up";
+    authPassword.autocomplete = "current-password";
     // Hide requirements in login mode
     hidePasswordRequirements();
   }
@@ -339,7 +350,7 @@ authForm.addEventListener("submit", async e => {
       const result = await login(email, password);
 
       if (!result.success) {
-        if (result.error === "Please verify your email first.") {
+        if (result.unverified) {
           const otpResult = await sendOtp();
 
           if (otpResult.success) {
@@ -355,9 +366,12 @@ authForm.addEventListener("submit", async e => {
 
       closeAuthModal();
     }
+  } catch (err) {
+    console.error("[auth] submit failed:", err);
+    showAuthError("Something went wrong. Please try again.");
   } finally {
     authSubmitBtn.disabled = false;
-    setMode(mode);
+    setSubmitLabel();
   }
 });
 
@@ -571,7 +585,7 @@ googleBtn.addEventListener("click", async () => {
 
   } catch (err) {
     if (err.code !== "auth/popup-closed-by-user" && err.code !== "auth/cancelled-popup-request") {
-      showAuthError("Google sign-in failed. Try again.");
+      showAuthError(describeAuthError(err, "google"));
     }
   } finally {
     googleBtn.disabled = false;

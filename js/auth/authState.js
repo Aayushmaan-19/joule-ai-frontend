@@ -6,6 +6,7 @@ import { syncProfileAvatar } from "../ui/profileManager.js";
 import { initSidebar, destroySidebar, toggle as toggleSidebar } from "../ui/sidebar.js";
 import { saveCurrentSession } from "../chat/chatHistory.js";
 import { initPeopleSection, destroyPeopleSection } from "../social/peopleSection.js";
+import { syncSession, clearSessionState } from "./sessionSync.js";
 
 const sidebarOpenBtn = document.getElementById("sidebarOpenBtn");
 
@@ -32,6 +33,10 @@ export function initializeAuthState() {
       openAuth.classList.add("hidden");
       openLogin.classList.add("hidden");
       profileBtn.classList.remove("hidden");
+
+      // Creates/tops up the Firestore profile on the backend and reports
+      // admin status. Not awaited: a sleeping server must never delay sign-in.
+      syncSession().catch(err => console.error("[session] sync failed:", err.message));
 
       // Avatar sync is cosmetic; sidebar init below is not. A failure
       // here (e.g. a Firestore rules issue) must not be allowed to
@@ -68,6 +73,7 @@ export function initializeAuthState() {
 
       setUser(null);
       setProfile(null);
+      clearSessionState();
 
       profileAvatar.src = DEFAULT_AVATAR;
 

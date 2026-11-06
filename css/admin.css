@@ -1,0 +1,528 @@
+/* =========================================================
+   ADMIN CONSOLE + "OPEN AS USER" BAR (js/admin/*)
+   Uses the app's own v2 colour tokens so it follows light / dark / Shinigami.
+========================================================= */
+
+/* the entry point only exists for admins (the server enforces it regardless) */
+body:not(.is-admin) #profileAdminRow {
+  display: none;
+}
+
+/* ---------- console ---------- */
+
+.ad {
+  position: fixed;
+  inset: 0;
+  z-index: 10060;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
+}
+
+.ad.in {
+  opacity: 1;
+}
+
+.ad-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(8, 8, 10, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.ad-card {
+  position: relative;
+  width: min(1040px, 100%);
+  height: min(720px, calc(100dvh - 48px));
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 24px;
+  background: var(--s2, #fff);
+  color: var(--tx, #1c1b1f);
+  border: 1px solid var(--bd, #e4dfd7);
+  box-shadow: 0 30px 90px -20px rgba(0, 0, 0, 0.5);
+}
+
+.ad-head {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px 14px 22px;
+  border-bottom: 1px solid var(--bd, #e4dfd7);
+}
+
+.ad-title {
+  font: 600 16px "Space Grotesk", system-ui, sans-serif;
+}
+
+.ad-status {
+  flex: 1;
+  min-width: 0;
+  padding: 0 8px;
+  font-size: 12.5px;
+  color: var(--mu, #6b6870);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ad-status.err,
+.ad-note.err,
+.ad-empty.err {
+  color: #d33a32;
+}
+
+.ad-btn {
+  flex: none;
+  padding: 7px 12px;
+  border: 1px solid var(--bd2, #d8d2c8);
+  border-radius: 10px;
+  background: transparent;
+  color: inherit;
+  font: 500 13px inherit;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.ad-btn:hover:not(:disabled) {
+  background: var(--hv, #ebe7e0);
+}
+
+.ad-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.ad-btn.ok {
+  background: var(--ac, #f2b47e);
+  border-color: transparent;
+  color: var(--acink, #1a1208);
+}
+
+.ad-x {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.ad-x:hover {
+  background: var(--hv, #ebe7e0);
+}
+
+.ad-body {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+}
+
+.ad-users {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-right: 1px solid var(--bd, #e4dfd7);
+}
+
+.ad-search {
+  flex: none;
+  margin: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--bd2, #d8d2c8);
+  border-radius: 12px;
+  background: var(--bg, #faf8f5);
+  color: inherit;
+  font: 14px inherit;
+  font-family: inherit;
+  outline: none;
+}
+
+.ad-search:focus {
+  border-color: var(--ac, #f2b47e);
+}
+
+.ad-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0 8px 12px;
+}
+
+.ad-user,
+.ad-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+
+.ad-user {
+  cursor: pointer;
+}
+
+.ad-user:hover {
+  background: var(--hv, #ebe7e0);
+}
+
+.ad-user.on {
+  background: var(--hv, #ebe7e0);
+  box-shadow: inset 0 0 0 1px var(--bd2, #d8d2c8);
+}
+
+.ad-av {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--ac, #f2b47e);
+  color: var(--acink, #1a1208);
+  font: 600 14px "Space Grotesk", system-ui, sans-serif;
+}
+
+.ad-user-meta {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.ad-user-meta strong {
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ad-user-meta small,
+.ad-sub,
+.ad-time {
+  font-size: 12px;
+  color: var(--mu, #6b6870);
+}
+
+.ad-user-meta small {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ad-chip {
+  flex: none;
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--hv, #ebe7e0);
+  font-size: 12px;
+}
+
+.ad-chip.ok { background: rgba(46, 160, 90, 0.16); color: #2a8a4d; }
+.ad-chip.warn { background: rgba(214, 140, 30, 0.18); color: #a8680f; }
+
+.ad-note,
+.ad-none {
+  padding: 14px 10px;
+  font-size: 13px;
+  color: var(--mu, #6b6870);
+}
+
+.ad-detail {
+  min-height: 0;
+  overflow-y: auto;
+  padding: 20px 24px 28px;
+}
+
+.ad-empty {
+  height: 100%;
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+  color: var(--mu, #6b6870);
+}
+
+.ad-back {
+  display: none;
+  margin-bottom: 12px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--mu, #6b6870);
+  font: 500 13px inherit;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.ad-who {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.ad-who .ad-av {
+  width: 50px;
+  height: 50px;
+  font-size: 20px;
+}
+
+.ad-who h3,
+.ad-detail > h3 {
+  margin: 0;
+  font: 600 20px "Space Grotesk", system-ui, sans-serif;
+}
+
+.ad-badges {
+  margin-left: auto;
+  display: flex;
+  gap: 6px;
+}
+
+.ad-ids {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0 4px;
+}
+
+.ad-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  padding: 6px 10px;
+  border: 1px solid var(--bd, #e4dfd7);
+  border-radius: 10px;
+  background: var(--bg, #faf8f5);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.ad-copy span {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--mu, #6b6870);
+}
+
+.ad-copy code {
+  font-size: 12.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ad-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
+  margin: 14px 0 18px;
+}
+
+.ad-facts div {
+  padding: 10px 12px;
+  border: 1px solid var(--bd, #e4dfd7);
+  border-radius: 12px;
+}
+
+.ad-facts dt {
+  font-size: 11.5px;
+  color: var(--mu, #6b6870);
+}
+
+.ad-facts dd {
+  margin: 2px 0 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.ad-primary {
+  padding: 11px 16px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--ac, #f2b47e);
+  color: var(--acink, #1a1208);
+  font: 600 14px inherit;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.ad-primary:disabled {
+  opacity: 0.55;
+}
+
+.ad-detail h4 {
+  margin: 24px 0 6px;
+  font: 600 11.5px "IBM Plex Sans", system-ui, sans-serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mu, #6b6870);
+}
+
+.ad-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 4px 0;
+}
+
+.ad-row {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--bd, #e4dfd7);
+  border-radius: 0;
+}
+
+.ad-row .ad-av {
+  width: 30px;
+  height: 30px;
+  font-size: 12px;
+}
+
+@media (max-width: 768px) {
+  .ad {
+    padding: 0;
+  }
+
+  .ad-card {
+    width: 100%;
+    height: 100dvh;
+    border-radius: 0;
+  }
+
+  .ad-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ad-users {
+    border-right: 0;
+  }
+
+  .ad-detail {
+    display: none;
+  }
+
+  .ad-card.has-detail .ad-users {
+    display: none;
+  }
+
+  .ad-card.has-detail .ad-detail {
+    display: block;
+  }
+
+  .ad-back {
+    display: block;
+  }
+
+  .ad-status {
+    display: none;
+  }
+
+  .ad-title {
+    white-space: nowrap;
+  }
+
+  .ad-head {
+    padding-left: 16px;
+  }
+
+  .ad-btn {
+    padding: 6px 9px;
+    font-size: 12px;
+  }
+}
+
+/* ---------- "Open as user" bar ---------- */
+
+.imp-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100001;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 10px;
+  background: #b4281f;
+  color: #fff;
+  font: 500 12.5px "IBM Plex Sans", system-ui, sans-serif;
+}
+
+.imp-dot {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #fff;
+  animation: imp-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes imp-pulse {
+  50% { opacity: 0.35; }
+}
+
+.imp-text {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.imp-exit {
+  flex: none;
+  padding: 3px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 999px;
+  background: transparent;
+  color: #fff;
+  font: 600 12px inherit;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.imp-exit:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+/* Shifting #app with a transform (not margins) also moves every
+   position:fixed element inside it, so nothing hides under the bar. */
+body.imp-active #app {
+  translate: 0 32px;
+}
+
+body.imp-active #main {
+  height: calc(100dvh - 32px);
+}
+
+html.kb-open body.imp-active #main {
+  height: calc(var(--kb-main-h) - 32px);
+}
+
+@media (max-width: 480px) {
+  .imp-text {
+    font-size: 11.5px;
+  }
+}

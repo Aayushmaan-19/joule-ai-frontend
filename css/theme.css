@@ -1,3 +1,7 @@
 @import "./style.css";
 @import "./mobile.css" screen and (max-width: 768px);
 @import "./redesign.css";
+@import "./keyboard.css";
+@import "./music.css";
+@import "./shinigami.css";
+@import "./admin.css";

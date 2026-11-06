@@ -8,7 +8,6 @@ import {
   input,
   sendBtn,
   clearBtn,
-  musicBtn,
   micBtn
 } from "./utils/dom.js";
 
@@ -38,7 +37,10 @@ import { initializeTheme } from "./ui/themeManager.js";
    UI MODULES
 ========================= */
 
-import { toggleMusic } from "./ui/musicPlayer.js";
+import { initMusicPlayer } from "./ui/musicPlayer.js";
+import "./ui/keyboardInset.js";
+import "./admin/adminPanel.js";
+import "./admin/impersonation.js";
 import "./ui/modalManager.js";
 import "./ui/profileManager.js";
 import "./ui/toolsMenu.js";
@@ -117,7 +119,7 @@ function setupVoiceEvents() {
 ========================= */
 
 function setupMusicEvents() {
-  musicBtn.addEventListener("click", toggleMusic);
+  initMusicPlayer();
 }
 
 /* =========================
