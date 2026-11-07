@@ -4,7 +4,8 @@
 ========================================================= */
 
 /* the entry point only exists for admins (the server enforces it regardless) */
-body:not(.is-admin) #profileAdminRow {
+body:not(.is-admin) #profileAdminRow,
+body:not(.is-admin) .sb2-mrow.sb2-admin {
   display: none;
 }
 

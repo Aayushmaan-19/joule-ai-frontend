@@ -119,6 +119,7 @@ export function initSidebarShell(sidebarEl) {
   foot.innerHTML = `
     <div class="sb2-menu" id="sb2Menu" role="menu" hidden>
       <button type="button" class="sb2-mrow" role="menuitem" data-act="profile"><span>Profile &amp; settings</span></button>
+      <button type="button" class="sb2-mrow sb2-admin" role="menuitem" data-act="admin"><span>Admin console</span></button>
       <button type="button" class="sb2-mrow" role="menuitem" data-act="theme"><span>Theme</span><span class="sb2-val" id="sb2ThemeVal"></span></button>
       <button type="button" class="sb2-mrow" role="menuitemcheckbox" data-act="private"><span>Private chat</span><i class="sb2-switch" id="sb2PrivateSw"></i></button>
       <button type="button" class="sb2-mrow" role="menuitem" data-act="clear"><span>Clear this chat</span></button>
@@ -191,6 +192,7 @@ export function initSidebarShell(sidebarEl) {
 
     switch (act) {
       case "profile": $("profileBtn").click(); break;
+      case "admin": $("profileAdminRow").click(); break;
       case "theme": $("themeBtn").click(); break;
       case "private": sidebarEl.querySelector("#sidebarPrivateBtn").click(); break;
       case "clear": $("clearBtn").click(); break;
