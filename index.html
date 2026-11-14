@@ -3,6 +3,14 @@
   <head>
     <meta charset="UTF-8" />
 
+    <!-- Every relative asset path in this app (avatars, icons, song
+         files, the favicon/manifest below) was written assuming the
+         page is always served at "/". Now that routes like
+         /social/directory are real URLs, the browser would otherwise
+         resolve those same relative paths against the current route
+         instead of the site root — this pins them back to root. -->
+    <base href="/" />
+
     <link rel="stylesheet" href="css/theme.css" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
