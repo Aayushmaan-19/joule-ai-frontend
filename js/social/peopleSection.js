@@ -5,6 +5,7 @@ import { initRequestsView, destroyRequestsView } from "./requestsView.js";
 import { initConversationsView, destroyConversationsView } from "./conversationsView.js";
 import { closeProfileView } from "./profileView.js";
 import { closeThreadView } from "./threadView.js";
+import { navigate } from "../ui/router.js";
 
 const peopleOpenBtn = document.getElementById("peopleOpenBtn");
 const peopleSection = document.getElementById("peopleSection");
@@ -85,7 +86,7 @@ if (window.visualViewport) {
   });
 }
 
-function open() {
+export function open() {
   document.getElementById("app").classList.add("people-open");
   peopleSection.classList.remove("hidden");
 
@@ -101,9 +102,10 @@ function open() {
   initConversationsView();
 
   showTab(activeTab);
+  navigate(`/social/${activeTab}`);
 }
 
-function close() {
+export function close() {
   document.getElementById("app").classList.remove("people-open");
   peopleSection.classList.add("hidden");
   peopleSection.style.height = "";
@@ -115,12 +117,15 @@ function close() {
   destroyDirectoryView();
   destroyRequestsView();
   destroyConversationsView();
+
+  navigate("/chat");
 }
 
-function switchTab(tab) {
+export function switchTab(tab) {
   activeTab = tab;
   stack = [];
   showTab(tab);
+  navigate(`/social/${tab}`);
 }
 
 function showTab(tab) {
@@ -140,9 +145,11 @@ function showPanel(panelId) {
   document.getElementById(panelId)?.classList.add("active");
 }
 
-/** Called by a view module when the user drills into a profile or a thread. */
-export function pushPanel(panelId, title) {
-  stack.push({ panelId, title });
+/** Called by a view module when the user drills into a profile or a thread.
+ *  `uid` is stored alongside the panel so back() can rebuild the right
+ *  /social/profile/:uid or /social/messages/:uid URL when unwinding to it. */
+export function pushPanel(panelId, title, uid) {
+  stack.push({ panelId, title, uid });
   peopleTabs.classList.add("hidden");
   peopleBackBtn.classList.remove("hidden");
   peopleTitle.textContent = title;
@@ -156,10 +163,14 @@ function back() {
 
   if (stack.length === 0) {
     showTab(activeTab);
+    navigate(`/social/${activeTab}`);
     return;
   }
 
   const top = stack[stack.length - 1];
   peopleTitle.textContent = top.title;
   showPanel(top.panelId);
+
+  if (top.panelId === "profilePanel") navigate(`/social/profile/${top.uid}`);
+  if (top.panelId === "threadPanel") navigate(`/social/messages/${top.uid}`);
 }

@@ -15,6 +15,7 @@ import { renderMarkdown } from "../utils/markdown.js";
 import state from "../config/state.js";
 import { isPrivateMode } from "../config/selectors.js";
 import { initSidebarShell } from "./sidebarShell.js";
+import { navigate } from "./router.js";
 
 let sidebarEl = null;
 let isOpen = false;
@@ -394,12 +395,14 @@ export function open() {
   if (!sidebarEl) return;
   isOpen = true;
   document.getElementById("app")?.classList.add("sidebar-visible");
+  navigate("/history");
 }
 
 export function close() {
   if (!sidebarEl) return;
   isOpen = false;
   document.getElementById("app")?.classList.remove("sidebar-visible");
+  navigate("/chat");
 }
 
 export function toggle() {

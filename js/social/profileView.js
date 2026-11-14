@@ -14,6 +14,7 @@ import {
 } from "./socialApi.js";
 import { getOptimistic, setOptimistic, clearAllOptimistic, onOptimisticChange } from "./optimisticFollow.js";
 import { openThread } from "./threadView.js";
+import { navigate } from "../ui/router.js";
 
 const DEFAULT_AVATAR = "Assets/Avatars/avatar1.png";
 
@@ -56,7 +57,8 @@ export async function openProfileFor(uid, opts = {}) {
   currentUid = uid;
 
   content.innerHTML = `<div class="people-loading">Loading profile…</div>`;
-  pushPanel("profilePanel", opts.title || "Profile");
+  pushPanel("profilePanel", opts.title || "Profile", uid);
+  navigate(`/social/profile/${uid}`);
 
   const snap = await getDoc(doc(db, "users", uid));
   if (!snap.exists()) {

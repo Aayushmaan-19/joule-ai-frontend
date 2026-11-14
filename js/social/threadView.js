@@ -1,4 +1,5 @@
-import { auth } from "../auth/firebase.js";
+import { doc, getDoc } from "firebase/firestore";
+import { auth, db } from "../auth/firebase.js";
 import { escHtml } from "../utils/helpers.js";
 import { pushPanel } from "./peopleSection.js";
 import { conversationIdFor, subscribeConversations } from "./conversationsService.js";
@@ -12,6 +13,7 @@ import {
   markConversationRead,
   pingTyping
 } from "./socialApi.js";
+import { navigate } from "../ui/router.js";
 
 const DEFAULT_AVATAR = "Assets/Avatars/avatar1.png";
 const QUICK_REACTIONS = ["❤️", "😂", "😮", "😢", "👍", "🔥"];
@@ -82,8 +84,22 @@ export function openThread(uidToOpen, otherInfo = {}) {
     <span class="thread-name">${escHtml(otherInfo.displayName || "Joule User")}</span>
   `;
 
+  // Deep-linking straight into a thread (a shared URL, a refresh) means
+  // otherInfo arrives empty — backfill the real name/avatar once, the
+  // same way profileView.js already looks itself up by uid.
+  if (!otherInfo.displayName) {
+    getDoc(doc(db, "users", uidToOpen)).then(snap => {
+      if (otherUid !== uidToOpen || !snap.exists()) return;
+      const data = snap.data();
+      header.innerHTML = `
+        <img class="thread-avatar" src="${escHtml(data.avatar || DEFAULT_AVATAR)}" alt="" />
+        <span class="thread-name">${escHtml(data.displayName || "Joule User")}</span>
+      `;
+    }).catch(() => {});
+  }
+
   messagesEl.innerHTML = "";
-  pushPanel("threadPanel", otherInfo.displayName || "Message");
+  pushPanel("threadPanel", otherInfo.displayName || "Message", uidToOpen);
 
   conversationId = conversationIdFor(otherUid);
 
@@ -98,6 +114,8 @@ export function openThread(uidToOpen, otherInfo = {}) {
 
   markConversationRead(conversationId).catch(() => {});
   setTimeout(() => input.focus(), 250);
+
+  navigate(`/social/messages/${uidToOpen}`);
 }
 
 export function closeThreadView() {

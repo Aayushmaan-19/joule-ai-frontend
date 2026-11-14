@@ -36,6 +36,7 @@ import { sendOtp } from "../auth/sendOtp.js";
 import { verifyOtp } from "../auth/verifyOtp.js";
 import { signInWithGoogle } from "../auth/googleAuth.js";
 import { describeAuthError } from "../auth/authErrors.js";
+import { navigate } from "./router.js";
 
 const authModal = modalOverlay.querySelector(".auth-modal");
 
@@ -163,9 +164,10 @@ export function openModal() {
   modalOverlay.classList.remove("hidden");
   showAuthView();
   buildPasswordRequirements();
+  navigate("/auth");
 }
 
-function closeAuthModal() {
+export function closeAuthModal() {
   // No account exists until OTP verification succeeds, so there's
   // nothing to clean up here — closing mid-OTP simply abandons the
   // pending signup (the OTP record expires server-side on its own).
@@ -177,6 +179,7 @@ function closeAuthModal() {
   authView.classList.remove("hidden");
   otpView.classList.add("hidden");
   resetAuthForm();
+  navigate("/chat");
 }
 
 openAuth.addEventListener("click", openModal);
@@ -630,6 +633,7 @@ togglePassword.addEventListener("click", () => {
 export function openVerificationFlow(email) {
   modalOverlay.classList.remove("hidden");
   buildPasswordRequirements();
+  navigate("/auth");
   otpFlow = "existing";
   showOtpView(email);
 }

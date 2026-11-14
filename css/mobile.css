@@ -1156,13 +1156,14 @@
     color: #f2ecff;
   }
 
-  /* ---------- Footer removed on mobile ----------
-     The bottom tab bar is the app's navigation now; a website-style
-     footer with legal links doesn't fit that model and the extra
-     scroll real estate wasn't worth it. The pages themselves
-     (privacy-policy.html, terms.html) still exist and still work by
-     direct link — this only removes the in-app footer row. */
+  /* ---------- Footer reachable on mobile ----------
+     Was display:none here (the bottom tab bar is the nav now) but
+     that left no in-app way to reach Privacy/Terms/About/Contact on
+     mobile. Left as normal flow, so it's reachable below the 100vh
+     app shell (same place it'd sit without a tab bar) — just a bit
+     of safe-area padding so it doesn't land flush against a phone's
+     home-indicator once scrolled to. */
   .footer {
-    display: none;
+    padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
   }
 }

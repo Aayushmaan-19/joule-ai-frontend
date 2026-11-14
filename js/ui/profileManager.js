@@ -27,6 +27,7 @@ import { cropToSquare } from "../utils/imageCrop.js";
 import { setProfile } from "../config/actions.js";
 import { currentProfile } from "../config/selectors.js";
 import { isDarkMode } from "../config/selectors.js";
+import { navigate } from "./router.js";
 
 const themeSwatches = document.querySelectorAll(".theme-swatch");
 const profileMusicRow = document.getElementById("profileMusicRow");
@@ -40,10 +41,12 @@ let selectedAvatar = DEFAULT_AVATAR;
    OPEN / CLOSE
 ========================= */
 
-async function openProfile() {
+export async function openProfile() {
   const user = auth.currentUser;
 
   if (!user) return;
+
+  navigate("/profile");
 
   profileOverlay.classList.remove("hidden");
   profileEmail.value = user.email || "";
@@ -63,8 +66,9 @@ async function openProfile() {
   updateSettingsUI();
 }
 
-function closeProfilePanel() {
+export function closeProfilePanel() {
   profileOverlay.classList.add("hidden");
+  navigate("/chat");
 }
 
 profileBtn.addEventListener("click", openProfile);

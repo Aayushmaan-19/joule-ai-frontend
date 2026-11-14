@@ -823,7 +823,6 @@ body.v2 .sb2 .sidebar-item-active::before {
 @media (max-width: 768px) {
   body.v2 .header-wrapper,
   body.v2 .signature,
-  body.v2 .footer,
   body.v2 .input-area::after {
     display: none;
   }

@@ -49,6 +49,7 @@ import "./ui/mobileNav.js";
 import "./ui/idleHero.js";
 import { initAnimationManager } from "./ui/animationManager.js";
 import "./ui/legalModal.js";
+import { initRouter } from "./ui/router.js";
 import { initLoadingScreen } from "./ui/loadingScreen.js";
 
 import { initializeAuthState } from "./auth/authState.js";
@@ -143,6 +144,8 @@ function initializeApp() {
   initializeTheme();
 
   initializeAuthState();
+
+  initRouter();
 
   setupChatEvents();
 
