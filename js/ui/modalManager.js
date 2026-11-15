@@ -337,7 +337,7 @@ authForm.addEventListener("submit", async e => {
 
   try {
     if (mode === "signup") {
-      const otpResult = await requestSignupOtp(email, password);
+      const otpResult = await requestSignupOtp(email);
 
       if (!otpResult.success) {
         showAuthError(otpResult.error);
@@ -476,7 +476,7 @@ otpForm.addEventListener("submit", async e => {
   try {
     const result =
       otpFlow === "signup"
-        ? await verifySignupOtp(pendingSignupEmail, code)
+        ? await verifySignupOtp(pendingSignupEmail, code, pendingSignupPassword)
         : await verifyOtp(code);
 
     if (!result.success) {
@@ -522,7 +522,7 @@ otpResendBtn.addEventListener("click", async () => {
   try {
     const result =
       otpFlow === "signup"
-        ? await requestSignupOtp(pendingSignupEmail, pendingSignupPassword)
+        ? await requestSignupOtp(pendingSignupEmail)
         : await sendOtp();
 
     if (!result.success) {

@@ -4,16 +4,17 @@ import { AUTH_API_URL } from "../utils/constants.js";
 
 /**
  * No Firebase Auth account is created here. We only ask the backend
- * to send an OTP to this email/password pair. The pair is held by
- * the backend (Firestore, server-side only) and the account is
- * created ONLY if/when the correct OTP is verified.
+ * to send an OTP to this email. The password is never sent at this
+ * step and the backend never stores it — it's submitted again with
+ * verifySignupOtp() below, at the point the account actually gets
+ * created.
  */
-export async function requestSignupOtp(email, password) {
+export async function requestSignupOtp(email) {
   try {
     const response = await fetch(`${AUTH_API_URL}/signup/send-otp`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify({ email })
     });
 
     const data = await response.json();
@@ -34,17 +35,19 @@ export async function requestSignupOtp(email, password) {
 }
 
 /**
- * Verifies the OTP for a pending signup. On success, the backend
- * has just created the Firebase Auth account (already verified)
- * and returns a custom token — we use it to sign the user in on
- * the client, completing the flow without a second password entry.
+ * Verifies the OTP for a pending signup. The password the user
+ * originally typed is sent here (never persisted anywhere before
+ * this call). On success, the backend has just created the Firebase
+ * Auth account (already verified) and returns a custom token — we
+ * use it to sign the user in on the client, completing the flow
+ * without a second password entry.
  */
-export async function verifySignupOtp(email, code) {
+export async function verifySignupOtp(email, code, password) {
   try {
     const response = await fetch(`${AUTH_API_URL}/signup/verify-otp`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, code })
+      body: JSON.stringify({ email, code, password })
     });
 
     const data = await response.json();

@@ -88,6 +88,12 @@ export default class VoiceController {
   }
 
   async start() {
+    if (!this.transcription.supported) {
+      this.state.set("error");
+      this.ui.setError("Voice input isn't supported in this browser");
+      return;
+    }
+
     try {
       this.hasSpoken = false;
 

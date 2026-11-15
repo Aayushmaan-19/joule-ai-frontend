@@ -17,10 +17,6 @@ export function initializeAuthState() {
     if (user) {
       console.log("✅ Logged in:", user.email);
 
-      const token = await user.getIdToken();
-
-      localStorage.setItem("firebaseToken", token);
-
       document.body.classList.add("authenticated");
       document.body.classList.toggle("verified", user.emailVerified);
 
@@ -65,8 +61,6 @@ export function initializeAuthState() {
 
       setPrivateMode(false);
       document.body.classList.remove("private-mode");
-
-      localStorage.removeItem("firebaseToken");
 
       document.body.classList.remove("authenticated");
       document.body.classList.remove("verified");

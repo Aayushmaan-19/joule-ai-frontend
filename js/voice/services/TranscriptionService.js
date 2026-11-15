@@ -14,8 +14,16 @@ export default class TranscriptionService {
     const SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
 
-    if (!SpeechRecognition) {
-      throw new Error("Speech Recognition not supported");
+    this.supported = Boolean(SpeechRecognition);
+
+    if (!this.supported) {
+      // No Web Speech API in this browser (e.g. desktop Firefox). Leave
+      // this.recognition as null and stop here instead of throwing —
+      // VoiceController is built once at module load in main.js, so a
+      // throw here used to take the whole app down before chat, auth
+      // or anything else could initialize. start()/stop() below check
+      // `supported`/`recognition` instead.
+      return;
     }
 
     this.recognition = new SpeechRecognition();
@@ -60,6 +68,10 @@ export default class TranscriptionService {
   }
 
   start() {
+    if (!this.supported) {
+      throw new Error("Voice input isn't supported in this browser");
+    }
+
     this.finalTranscript = "";
 
     this.recognition.start();
@@ -68,6 +80,8 @@ export default class TranscriptionService {
   }
 
   stop() {
+    if (!this.recognition) return;
+
     this.recognition.stop();
 
     logger.log("Transcription stopping...");

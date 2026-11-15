@@ -179,7 +179,7 @@ async function showUser(uid) {
                 c => `
         <div class="ad-row">
           ${avatar(c.with)}
-          <span class="ad-user-meta"><strong>${esc(c.with.name)}</strong><small>${esc(c.lastMessagePreview || "—")}</small></span>
+          <span class="ad-user-meta"><strong>${esc(c.with.name)}</strong></span>
           <small class="ad-time">${esc(when(c.lastMessageAt))}</small>
         </div>`
               )
