@@ -415,26 +415,34 @@
          #app.people-open in style.css) rather than sitting above a
          dimmed backdrop like the overlays above. -->
     <div id="peopleSection" class="people-section hidden">
+      <nav class="people-rail" aria-label="Social navigation">
+        <button type="button" class="people-rail-btn people-rail-home" id="peopleRailHome" aria-label="Back to Joule" title="Back to Joule"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3 5 13h6l-1 8 8-10h-6z"/></svg></button>
+        <button type="button" class="people-rail-btn" data-rail-tab="messages" aria-label="Messages" title="Messages"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H10l-4 4v-4H4z"/></svg><span class="people-rail-dot hidden" id="peopleRailMsgDot"></span></button>
+        <button type="button" class="people-rail-btn" data-rail-tab="directory" aria-label="People" title="People"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="9" r="3.2"/><path d="M3 20c0-3.5 2.7-5.5 6-5.5s6 2 6 5.5"/><path d="M16 6.5a3 3 0 0 1 0 5.8M18.5 15c1.6.8 2.5 2.4 2.5 5"/></svg><span class="people-rail-badge hidden" id="peopleRailBadge">0</span></button>
+        <span class="people-rail-spacer"></span>
+        <button type="button" class="people-rail-btn" id="peopleRailProfile" aria-label="Your profile" title="Your profile"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-4 3.2-6 7-6s7 2 7 6"/></svg></button>
+      </nav>
+
       <div class="people-topbar">
         <button id="peopleBackBtn" class="people-back-btn hidden" aria-label="Back">
           <img src="Assets/Icons/arrow-left.svg" class="icon" alt="" />
         </button>
-        <h2 class="people-title" id="peopleTitle">People</h2>
+        <h2 class="people-title" id="peopleTitle">Messages</h2>
         <button id="peopleCloseBtn" class="people-close-btn" aria-label="Close People">
           <img src="Assets/Icons/x.svg" class="icon" alt="" />
         </button>
       </div>
 
       <div class="people-tabs" id="peopleTabs">
-        <button class="people-tab active" data-tab="directory">Discover</button>
+        <button class="people-tab active" data-tab="messages">Chats</button>
         <button class="people-tab" data-tab="requests">
           Requests<span class="people-tab-badge hidden" id="requestsBadge">0</span>
         </button>
-        <button class="people-tab" data-tab="messages">Messages</button>
+        <button class="people-tab" data-tab="directory">Discover</button>
       </div>
 
       <div class="people-panels" id="peoplePanels">
-        <div class="people-panel active" id="directoryPanel">
+        <div class="people-panel" id="directoryPanel">
           <div class="directory-grid" id="directoryGrid"></div>
           <div class="people-empty hidden" id="directoryEmpty">No one else has joined yet.</div>
           <button class="people-load-more hidden" id="directoryLoadMore">Load more</button>
@@ -445,9 +453,11 @@
           <div class="people-empty hidden" id="requestsEmpty">No pending follow requests.</div>
         </div>
 
-        <div class="people-panel" id="messagesPanel">
+        <div class="people-panel active" id="messagesPanel">
+          <label class="people-search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg><input type="search" id="conversationsSearch" class="people-search-input" placeholder="Search chats" aria-label="Search chats" autocomplete="off" /></label>
           <div class="conversations-list" id="conversationsList"></div>
-          <div class="people-empty hidden" id="conversationsEmpty">No conversations yet — follow someone, and start chatting once they accept.</div>
+          <div class="people-empty hidden" id="conversationsEmpty">No conversations yet — follow someone, and start chatting once they accept.<button type="button" class="people-empty-cta" data-goto-tab="directory">Find people</button></div>
+          <div class="people-empty hidden" id="conversationsNoMatch">No chats match your search.</div>
         </div>
 
         <div class="people-panel" id="profilePanel">
@@ -467,6 +477,12 @@
               <img src="Assets/Icons/send.svg" class="icon" alt="" />
             </button>
           </div>
+        </div>
+
+        <div class="people-detail-empty" id="peopleDetailEmpty">
+          <div class="people-detail-empty-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H10l-4 4v-4H4z"/></svg></div>
+          <h3>Pick a conversation</h3>
+          <p>Choose someone from your chats, or find people in Discover.</p>
         </div>
       </div>
     </div>
@@ -665,9 +681,9 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3h18v14H7l-4 4V3z"/><line x1="7" y1="8" x2="17" y2="8"/><line x1="7" y1="12" x2="13" y2="12"/></svg>
           <span>History</span>
         </button>
-        <button type="button" class="mobile-tab" data-tab="people" aria-label="People">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          <span>People</span>
+        <button type="button" class="mobile-tab" data-tab="people" aria-label="Messages">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H10l-4 4v-4H4z"/></svg>
+          <span>Messages</span>
           <span class="mobile-tab-badge hidden" id="mobileTabPeopleBadge"></span>
         </button>
         <button type="button" class="mobile-tab" data-tab="profile" aria-label="Profile">

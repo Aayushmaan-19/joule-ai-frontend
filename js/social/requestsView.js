@@ -56,11 +56,12 @@ function rowHtml(req, isNew) {
   return `
     <div class="request-row ${isNew ? "request-row-new" : ""}" data-uid="${escHtml(req.requester)}">
       <img class="request-avatar" src="${escHtml(req.requesterAvatar || DEFAULT_AVATAR)}" alt="" />
-      <div class="request-name">${escHtml(req.requesterName || "Joule User")}</div>
+      <div class="request-body">
+        <div class="request-name">${escHtml(req.requesterName || "Joule User")}</div>
+        <div class="request-sub">wants to follow you</div>
+      </div>
       <div class="request-actions">
-        <button class="request-accept-btn" type="button" aria-label="Accept">
-          <img src="Assets/Icons/check.svg" class="icon" alt="" />
-        </button>
+        <button class="request-accept-btn" type="button" aria-label="Accept">Accept</button>
         <button class="request-decline-btn" type="button" aria-label="Decline">
           <img src="Assets/Icons/x.svg" class="icon" alt="" />
         </button>

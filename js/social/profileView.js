@@ -1,7 +1,7 @@
 import { doc, getDoc } from "firebase/firestore";
 import { db, auth } from "../auth/firebase.js";
 import { escHtml } from "../utils/helpers.js";
-import { pushPanel } from "./peopleSection.js";
+import { pushPanel, showPanelBeside } from "./peopleSection.js";
 import {
   subscribeFollowing,
   subscribeFollowers,
@@ -56,11 +56,24 @@ export async function openProfileFor(uid, opts = {}) {
   ensureListeners();
   currentUid = uid;
 
-  content.innerHTML = `<div class="people-loading">Loading profile…</div>`;
-  pushPanel("profilePanel", opts.title || "Profile", uid);
-  navigate(`/social/profile/${uid}`);
+  // Embedded = the profile that sits beside an open thread on desktop. It is
+  // not a navigation step: no pushed panel, no URL change (the URL stays on
+  // the thread), and a profile that is already loaded for this person is kept.
+  if (opts.embedded) {
+    showPanelBeside("profilePanel");
+    if (JSON.parse(content.dataset.user || "{}").uid === uid) {
+      render(uid);
+      return;
+    }
+    content.innerHTML = `<div class="people-loading">Loading profile…</div>`;
+  } else {
+    content.innerHTML = `<div class="people-loading">Loading profile…</div>`;
+    pushPanel("profilePanel", opts.title || "Profile", uid);
+    navigate(`/social/profile/${uid}`);
+  }
 
   const snap = await getDoc(doc(db, "users", uid));
+  if (currentUid !== uid) return; // moved on to someone else while this loaded
   if (!snap.exists()) {
     content.innerHTML = `<div class="people-empty">This user no longer exists.</div>`;
     return;

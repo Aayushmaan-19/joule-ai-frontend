@@ -63,6 +63,35 @@ input.addEventListener("input", () => {
 });
 replyBarCancel.addEventListener("click", cancelReply);
 
+const BACK_SVG =
+  '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>';
+
+function headerHtml(avatar, name) {
+  return `
+    <button class="thread-back-btn" type="button" aria-label="Back">${BACK_SVG}</button>
+    <img class="thread-avatar" src="${escHtml(avatar || DEFAULT_AVATAR)}" alt="" />
+    <div class="thread-head-text">
+      <span class="thread-name">${escHtml(name || "Joule User")}</span>
+      <span class="thread-status" aria-live="polite"></span>
+    </div>
+  `;
+}
+
+// The back button only shows on mobile, where the section's own top bar is
+// hidden while a thread is open; it just forwards to that bar's back button.
+header.addEventListener("click", e => {
+  if (e.target.closest(".thread-back-btn")) document.getElementById("peopleBackBtn").click();
+});
+
+/** Uid of the person whose thread is open, or null — lets the list highlight its row. */
+export function getOpenThreadUid() {
+  return otherUid;
+}
+
+function announceThreadChange() {
+  window.dispatchEvent(new CustomEvent("joule:thread-changed"));
+}
+
 /**
  * Opens (or re-opens) the thread with `otherUid`. `otherInfo` is only
  * used for the header while the live listener attaches — once
@@ -79,10 +108,8 @@ export function openThread(uidToOpen, otherInfo = {}) {
   activeMessageKey = null;
   updateReplyBar();
 
-  header.innerHTML = `
-    <img class="thread-avatar" src="${escHtml(otherInfo.avatar || DEFAULT_AVATAR)}" alt="" />
-    <span class="thread-name">${escHtml(otherInfo.displayName || "Joule User")}</span>
-  `;
+  header.innerHTML = headerHtml(otherInfo.avatar, otherInfo.displayName);
+  input.placeholder = otherInfo.displayName ? `Message ${otherInfo.displayName}…` : "Message…";
 
   // Deep-linking straight into a thread (a shared URL, a refresh) means
   // otherInfo arrives empty — backfill the real name/avatar once, the
@@ -91,10 +118,8 @@ export function openThread(uidToOpen, otherInfo = {}) {
     getDoc(doc(db, "users", uidToOpen)).then(snap => {
       if (otherUid !== uidToOpen || !snap.exists()) return;
       const data = snap.data();
-      header.innerHTML = `
-        <img class="thread-avatar" src="${escHtml(data.avatar || DEFAULT_AVATAR)}" alt="" />
-        <span class="thread-name">${escHtml(data.displayName || "Joule User")}</span>
-      `;
+      header.innerHTML = headerHtml(data.avatar, data.displayName);
+      input.placeholder = data.displayName ? `Message ${data.displayName}…` : "Message…";
     }).catch(() => {});
   }
 
@@ -116,6 +141,7 @@ export function openThread(uidToOpen, otherInfo = {}) {
   setTimeout(() => input.focus(), 250);
 
   navigate(`/social/messages/${uidToOpen}`);
+  announceThreadChange();
 }
 
 export function closeThreadView() {
@@ -133,6 +159,7 @@ export function closeThreadView() {
   editingMessageId = null;
   input.value = "";
   updateReplyBar();
+  announceThreadChange();
 }
 
 function handleConfirmedMessages(messages) {
@@ -165,6 +192,9 @@ function isOtherTyping() {
 
 function render() {
   const myUid = auth.currentUser?.uid;
+
+  const status = header.querySelector(".thread-status");
+  if (status) status.textContent = isOtherTyping() ? "typing…" : "";
   const wasAtBottom =
     messagesEl.scrollHeight - messagesEl.scrollTop <= messagesEl.clientHeight + 40;
 
@@ -247,9 +277,7 @@ function bubbleHtml(msg, myUid, isRead) {
     <div class="thread-msg ${mine ? "thread-msg-mine" : "thread-msg-theirs"} ${isNew ? "thread-msg-new" : ""} ${msg.key === activeMessageKey ? "thread-msg-active" : ""}" data-key="${escHtml(msg.key)}" data-message-id="${escHtml(msg.id || "")}">
       ${forwardedTag}
       <div class="thread-msg-row">
-        <div class="thread-msg-bubble ${msg.isPending ? "thread-msg-pending" : ""} ${msg.failed ? "thread-msg-failed" : ""}">
-          ${replyPreview}${escHtml(msg.text)}
-        </div>
+        <div class="thread-msg-bubble ${msg.isPending ? "thread-msg-pending" : ""} ${msg.failed ? "thread-msg-failed" : ""}">${replyPreview}${escHtml(msg.text)}</div>
         ${!msg.isPending ? actionBarHtml(canModify) : ""}
       </div>
       ${reactions}

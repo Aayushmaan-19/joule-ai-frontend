@@ -11,7 +11,7 @@ export function conversationIdFor(otherUid) {
 /**
  * All of my conversations, most recently active first. callback
  * receives an array of { id, otherUid, otherName, otherAvatar,
- * lastMessage, updatedAt }, already shaped for a conversation-list row
+ * lastMessage, lastReadByMe, lastReadByOther, otherTypingAt, updatedAt }, already shaped for a conversation-list row
  * — the caller doesn't need to know about `participants`/`participantInfo`.
  */
 export function subscribeConversations(callback) {
@@ -30,12 +30,19 @@ export function subscribeConversations(callback) {
       const otherUid = data.participants.find(uid => uid !== myUid);
       const otherInfo = data.participantInfo?.[otherUid] || {};
 
+      const toMs = ts => ts?.toMillis?.() ?? 0;
+
       return {
         id: d.id,
         otherUid,
         otherName: otherInfo.displayName || "Joule User",
         otherAvatar: otherInfo.avatar || null,
-        lastMessage: data.lastMessage || null,
+        lastMessage: data.lastMessage
+          ? { ...data.lastMessage, sentAt: toMs(data.lastMessage.sentAt) }
+          : null,
+        lastReadByMe: toMs(data.lastRead?.[myUid]),
+        lastReadByOther: toMs(data.lastRead?.[otherUid]),
+        otherTypingAt: toMs(data.typing?.[otherUid]),
         updatedAt: data.updatedAt?.toMillis?.() ?? 0
       };
     });

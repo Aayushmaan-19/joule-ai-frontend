@@ -3,7 +3,7 @@ import { subscribeIncomingRequests } from "./followState.js";
 import { initDirectoryView, destroyDirectoryView } from "./directoryView.js";
 import { initRequestsView, destroyRequestsView } from "./requestsView.js";
 import { initConversationsView, destroyConversationsView } from "./conversationsView.js";
-import { closeProfileView } from "./profileView.js";
+import { openProfileFor, closeProfileView } from "./profileView.js";
 import { closeThreadView } from "./threadView.js";
 import { navigate } from "../ui/router.js";
 
@@ -16,12 +16,29 @@ const peopleTabs = document.getElementById("peopleTabs");
 const peopleNavBadge = document.getElementById("peopleNavBadge");
 const requestsBadge = document.getElementById("requestsBadge");
 const mobileTabPeopleBadge = document.getElementById("mobileTabPeopleBadge");
+const peopleRailBadge = document.getElementById("peopleRailBadge");
 
-// The header always says where you are in the app ("People"); the tabs
-// underneath name the section. Thread / profile views swap in a person's name.
-const PEOPLE_TITLE = "People";
+// The header names the section: chats live under "Messages", requests and
+// discovery both live under "People". Thread / profile views swap in a
+// person's name on mobile.
+const TAB_TITLES = { messages: "Messages", requests: "People", directory: "People" };
 
-let activeTab = "directory";
+// Which rail button is lit for each tab.
+const RAIL_FOR_TAB = { messages: "messages", requests: "directory", directory: "directory" };
+
+// Desktop shows a list, a thread and a profile side by side, so a panel only
+// replaces the panel in its own slot there. Mobile shows one panel at a time.
+const SLOT = {
+  directoryPanel: "list",
+  requestsPanel: "list",
+  messagesPanel: "list",
+  threadPanel: "thread",
+  profilePanel: "profile"
+};
+
+const desktopQuery = window.matchMedia("(min-width: 769px)");
+
+let activeTab = "messages";
 let stopBadgeListener = null;
 let initialized = false;
 
@@ -45,6 +62,32 @@ export function initPeopleSection() {
     btn.addEventListener("click", () => switchTab(btn.dataset.tab));
   });
 
+  // Desktop rail: Joule leaves, Messages / People switch tab, the last button
+  // leaves for the profile panel (same hand-off the mobile tab bar does).
+  document.getElementById("peopleRailHome").addEventListener("click", close);
+  peopleSection.querySelectorAll("[data-rail-tab]").forEach(btn => {
+    btn.addEventListener("click", () => switchTab(btn.dataset.railTab));
+  });
+  document.getElementById("peopleRailProfile").addEventListener("click", () => {
+    close();
+    document.getElementById("profileBtn")?.click();
+  });
+
+  // Empty-state buttons ("Find people") name the tab they go to.
+  peopleSection.addEventListener("click", e => {
+    const go = e.target.closest("[data-goto-tab]");
+    if (go) switchTab(go.dataset.gotoTab);
+  });
+
+  // Crossing the desktop/mobile breakpoint changes how many panels may be
+  // visible at once, so land back on the tab's list instead of a half state.
+  desktopQuery.addEventListener("change", () => {
+    if (peopleSection.classList.contains("hidden")) return;
+    stack = [];
+    showTab(activeTab);
+    navigate(`/social/${activeTab}`);
+  });
+
   stopBadgeListener = subscribeIncomingRequests(requests => updateBadge(requests.length));
 }
 
@@ -62,7 +105,7 @@ export function destroyPeopleSection() {
 }
 
 function updateBadge(count) {
-  for (const el of [peopleNavBadge, requestsBadge, mobileTabPeopleBadge]) {
+  for (const el of [peopleNavBadge, requestsBadge, mobileTabPeopleBadge, peopleRailBadge]) {
     if (!el) continue;
     el.textContent = count > 9 ? "9+" : String(count);
     el.classList.toggle("hidden", count === 0);
@@ -131,18 +174,42 @@ export function switchTab(tab) {
 function showTab(tab) {
   peopleTabs.classList.remove("hidden");
   peopleBackBtn.classList.add("hidden");
-  peopleTitle.textContent = PEOPLE_TITLE;
+  peopleTitle.textContent = TAB_TITLES[tab] || "People";
 
   peopleTabs.querySelectorAll(".people-tab").forEach(btn => {
     btn.classList.toggle("active", btn.dataset.tab === tab);
   });
+  peopleSection.querySelectorAll("[data-rail-tab]").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.railTab === RAIL_FOR_TAB[tab]);
+  });
+
+  // Showing a tab always means no thread or profile is open next to it.
+  closeProfileView();
+  closeThreadView();
+  hidePanel("threadPanel");
+  hidePanel("profilePanel");
 
   showPanel(`${tab}Panel`);
 }
 
+function hidePanel(panelId) {
+  document.getElementById(panelId)?.classList.remove("active");
+}
+
 function showPanel(panelId) {
-  document.querySelectorAll(".people-panel").forEach(p => p.classList.remove("active"));
+  const slot = SLOT[panelId];
+
+  document.querySelectorAll(".people-panel").forEach(p => {
+    if (desktopQuery.matches && SLOT[p.id] !== slot) return;
+    p.classList.remove("active");
+  });
   document.getElementById(panelId)?.classList.add("active");
+}
+
+/** Shows a panel next to what's already open without touching the back stack
+ *  or the URL — the profile that sits beside an open thread on desktop. */
+export function showPanelBeside(panelId) {
+  showPanel(panelId);
 }
 
 /** Called by a view module when the user drills into a profile or a thread.
@@ -150,10 +217,24 @@ function showPanel(panelId) {
  *  /social/profile/:uid or /social/messages/:uid URL when unwinding to it. */
 export function pushPanel(panelId, title, uid) {
   stack.push({ panelId, title, uid });
-  peopleTabs.classList.add("hidden");
-  peopleBackBtn.classList.remove("hidden");
-  peopleTitle.textContent = title;
+
+  if (!desktopQuery.matches) {
+    peopleTabs.classList.add("hidden");
+    peopleBackBtn.classList.remove("hidden");
+    peopleTitle.textContent = title;
+    showPanel(panelId);
+    return;
+  }
+
+  // Desktop keeps the tabs and list in place. A profile opened from the list
+  // replaces any open thread; a thread brings its person's profile along.
+  if (panelId === "profilePanel") {
+    closeThreadView();
+    hidePanel("threadPanel");
+  }
+
   showPanel(panelId);
+  if (panelId === "threadPanel") openProfileFor(uid, { embedded: true });
 }
 
 function back() {
