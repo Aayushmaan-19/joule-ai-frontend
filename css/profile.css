@@ -1,0 +1,485 @@
+/* =========================================================
+   Profile panel
+   The only stylesheet for #profileOverlay's content (markup: index.html,
+   behaviour: js/ui/profileManager.js). Everything reads the v2 tokens from
+   redesign.css (--bg --s2 --hv --bd --bd2 --tx --tx2 --mu --ac --acink --vi
+   --err --ok), so Light / Dark / Shinigami need no variants here.
+   Loaded last (see theme.css). The card itself — surface, radius on
+   desktop, full-screen on mobile — still comes from .profile-panel.
+========================================================= */
+
+body.v2 .pf {
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
+  color: var(--tx);
+}
+
+@media (min-width: 769px) {
+  body.v2 .profile-panel.pf {
+    width: min(460px, 94vw);
+    max-height: min(92vh, 880px);
+    overflow-y: auto;
+    padding: 26px 24px 24px;
+    border-radius: 20px;
+  }
+}
+
+.pf button,
+.pf a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pf button:focus-visible,
+.pf a:focus-visible,
+.pf input:focus-visible {
+  outline: 2px solid var(--vi);
+  outline-offset: 2px;
+}
+
+/* ---------- hero ---------- */
+
+.pf-hero {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-right: 44px; /* clear the close button */
+}
+
+.pf-avatar {
+  position: relative;
+  flex: none;
+  width: 84px;
+  height: 84px;
+  padding: 0;
+  border: 1px solid var(--bd2);
+  border-radius: 50%;
+  background: var(--hv);
+  cursor: pointer;
+}
+
+.pf-avatar > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.pf-avatar-cam {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--bg);
+  border-radius: 50%;
+  background: var(--ac);
+  color: var(--acink);
+  transition: transform 0.15s ease;
+}
+
+.pf-avatar:hover .pf-avatar-cam {
+  transform: scale(1.08);
+}
+
+.pf-spinner {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.pf-spinner::after {
+  content: "";
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: 24px;
+  height: 24px;
+  margin: -12px 0 0 -12px;
+  border: 3px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: pfSpin 0.8s linear infinite;
+}
+
+@keyframes pfSpin {
+  to { transform: rotate(360deg); }
+}
+
+.pf-ident {
+  min-width: 0;
+}
+
+body.v2 .pf .pf-ident h2 {
+  margin: 0;
+  overflow: hidden;
+  font: 600 22px/1.2 "Space Grotesk", system-ui, sans-serif;
+  letter-spacing: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--tx);
+}
+
+.pf-handle {
+  margin: 4px 0 0;
+  overflow: hidden;
+  font-size: 14px;
+  color: var(--mu);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pf-verified {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 2px 10px;
+  border: 1px solid var(--bd2);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ok);
+}
+
+.pf-verified::before {
+  content: "✓ ";
+}
+
+.pf-note {
+  margin: 10px 0 0;
+  font-size: 13px;
+  color: var(--mu);
+}
+
+/* ---------- sections ---------- */
+
+.pf-section {
+  margin-top: 24px;
+}
+
+.pf-h {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mu);
+}
+
+/* ---------- avatar presets ---------- */
+
+.pf-avatars {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+}
+
+.pf-avatar-opt {
+  aspect-ratio: 1 / 1;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--hv);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.pf-avatar-opt img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.pf-avatar-opt:hover {
+  transform: scale(1.06);
+}
+
+.pf-avatar-opt.selected {
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--ac);
+}
+
+/* ---------- form ---------- */
+
+.pf-field {
+  margin-bottom: 14px;
+}
+
+.pf-field label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--tx2);
+}
+
+.pf-input {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--bd2);
+  border-radius: 12px;
+  background: var(--s2);
+  box-sizing: border-box;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.pf-input:focus-within {
+  border-color: var(--vi);
+  box-shadow: 0 0 0 3px var(--hv);
+}
+
+.pf-input:has(input[aria-invalid="true"]) {
+  border-color: var(--err);
+}
+
+.pf-input input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--tx);
+  font: inherit;
+  font-size: 15px;
+  outline: none;
+}
+
+.pf-input input::placeholder {
+  color: var(--mu);
+}
+
+.pf-at,
+.pf-count {
+  flex: none;
+  color: var(--mu);
+}
+
+.pf-count {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.pf-input-locked {
+  background: var(--hv);
+}
+
+.pf-input-locked input {
+  color: var(--mu);
+  cursor: not-allowed;
+}
+
+.pf-lock {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  color: var(--mu);
+}
+
+.pf-msg {
+  margin: 6px 0 0;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--mu);
+}
+
+.pf-msg-error {
+  color: var(--err);
+}
+
+.pf-status {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: var(--ok);
+}
+
+.pf-status-error {
+  color: var(--err);
+}
+
+.pf-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.pf-ghost,
+body.v2 .pf .pf-save {
+  height: 44px;
+  margin: 0;
+  padding: 0 18px;
+  border-radius: 12px;
+  font: 600 14px "IBM Plex Sans", system-ui, sans-serif;
+  box-sizing: border-box;
+}
+
+.pf-ghost {
+  border: 1px solid var(--bd2);
+  background: none;
+  color: var(--tx2);
+  cursor: pointer;
+}
+
+.pf-ghost:not(:disabled):hover {
+  background: var(--hv);
+}
+
+body.v2 .pf .pf-save {
+  flex: 1;
+  width: auto;
+}
+
+.pf-ghost:disabled,
+body.v2 .pf .pf-save:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  filter: none;
+}
+
+/* ---------- rows (preferences, about) ---------- */
+
+.pf-list {
+  display: block;
+  overflow: hidden;
+  border: 1px solid var(--bd);
+  border-radius: 14px;
+  background: var(--s2);
+}
+
+.pf-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 48px;
+  padding: 0 14px;
+  border: 0;
+  border-top: 1px solid var(--bd);
+  background: none;
+  color: var(--tx);
+  font: 500 14.5px "IBM Plex Sans", system-ui, sans-serif;
+  text-align: left;
+  text-decoration: none;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.pf-list > .pf-row:first-child {
+  border-top: 0;
+}
+
+.pf-row:visited {
+  color: var(--tx);
+}
+
+.pf-row:not(.pf-row-static):hover {
+  background: var(--hv);
+}
+
+.pf-row-static {
+  min-height: 56px;
+  cursor: default;
+}
+
+.pf-row-ic {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: var(--hv);
+  color: var(--tx2);
+}
+
+.pf-row-label {
+  flex: 1;
+  min-width: 0;
+}
+
+.pf-chev {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  color: var(--mu);
+}
+
+.pf-seg {
+  display: flex;
+  padding: 3px;
+  border-radius: 10px;
+  background: var(--hv);
+}
+
+.pf-seg-btn {
+  padding: 6px 12px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--mu);
+  font: 500 13px "IBM Plex Sans", system-ui, sans-serif;
+  cursor: pointer;
+}
+
+.pf-seg-btn.active {
+  background: var(--s2);
+  color: var(--tx);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.14);
+}
+
+/* ---------- usage ---------- */
+
+.pf-usage-bar {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--hv);
+}
+
+.pf-usage-bar span {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--ac);
+  transition: width 0.4s ease;
+}
+
+.pf-usage p {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: var(--mu);
+}
+
+/* ---------- log out ---------- */
+
+.pf-logout {
+  width: 100%;
+  height: 46px;
+  margin-top: 24px;
+  border: 1px solid var(--bd2);
+  border-radius: 12px;
+  background: none;
+  color: var(--err);
+  font: 600 14.5px "IBM Plex Sans", system-ui, sans-serif;
+  cursor: pointer;
+}
+
+.pf-logout:hover {
+  background: var(--hv);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-spinner::after {
+    animation-duration: 2s;
+  }
+
+  .pf *,
+  .pf *::before {
+    transition: none !important;
+  }
+}

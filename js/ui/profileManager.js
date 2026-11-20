@@ -29,13 +29,41 @@ import { currentProfile } from "../config/selectors.js";
 import { isDarkMode } from "../config/selectors.js";
 import { navigate } from "./router.js";
 
-const themeSwatches = document.querySelectorAll(".theme-swatch");
-const profileMusicRow = document.getElementById("profileMusicRow");
-const profileGalleryRow = document.getElementById("profileGalleryRow");
-
 const DEFAULT_AVATAR = "Assets/Avatars/avatar1.png";
 
+// Same rule the backend enforces (Backend/Services/userIdentity.js).
+const USERNAME_PATTERN = /^[a-z0-9_]{3,20}$/;
+
+const $ = id => document.getElementById(id);
+
+const pfName = $("pfName");
+const pfHandle = $("pfHandle");
+const pfVerified = $("pfVerified");
+const pfUsernameMsg = $("pfUsernameMsg");
+const pfNameCount = $("pfNameCount");
+const pfSave = $("pfSave");
+const pfDiscard = $("pfDiscard");
+const pfUsage = $("pfUsage");
+const pfUsageFill = $("pfUsageFill");
+const pfUsageText = $("pfUsageText");
+const themeButtons = document.querySelectorAll(".pf-seg-btn");
+const profileMusicRow = $("profileMusicRow");
+const profileGalleryRow = $("profileGalleryRow");
+
+const USERNAME_HINT = pfUsernameMsg.textContent;
+
+/** What is stored on the server right now — the form is "dirty" when it differs. */
+let saved = { username: "", displayName: "", avatar: DEFAULT_AVATAR };
 let selectedAvatar = DEFAULT_AVATAR;
+let statusTimer = null;
+
+function toSaved(profile) {
+  return {
+    username: profile?.username || "",
+    displayName: profile?.displayName || "",
+    avatar: profile?.avatar || DEFAULT_AVATAR
+  };
+}
 
 /* =========================
    OPEN / CLOSE
@@ -50,20 +78,25 @@ export async function openProfile() {
 
   profileOverlay.classList.remove("hidden");
   profileEmail.value = user.email || "";
+  pfVerified.classList.toggle("hidden", !user.emailVerified);
 
   hideStatus();
+  renderUsage();
+
+  // Paint what login already loaded right away (empty after a logout), then
+  // refresh from the server — never another person's leftovers.
+  saved = toSaved(currentProfile());
+  resetForm();
 
   const profile = await fetchProfile(user.uid);
 
-  selectedAvatar = profile?.avatar || DEFAULT_AVATAR;
-  profileUsername.value = profile?.username || "";
-  profileName.value = profile?.displayName || "";
+  saved = toSaved(profile);
+  resetForm();
 
   setProfile(profile);
 
-  updateAvatarPreview();
-  highlightSelectedAvatar();
-  updateSettingsUI();
+  updateThemeButtons();
+  closeProfile.focus({ preventScroll: true });
 }
 
 export function closeProfilePanel() {
@@ -71,36 +104,133 @@ export function closeProfilePanel() {
   navigate("/chat");
 }
 
+/** A person closing the panel by hand (×, backdrop, Esc) must not silently lose edits. */
+function requestClose() {
+  if (isDirty()) {
+    showStatus("You have unsaved changes — save or discard them first.", true);
+    return;
+  }
+  closeProfilePanel();
+}
+
 profileBtn.addEventListener("click", openProfile);
 
-closeProfile.addEventListener("click", closeProfilePanel);
+closeProfile.addEventListener("click", requestClose);
 
 profileOverlay.addEventListener("click", e => {
-  if (e.target === profileOverlay) {
-    closeProfilePanel();
-  }
+  if (e.target === profileOverlay) requestClose();
+});
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape" && !profileOverlay.classList.contains("hidden")) requestClose();
 });
 
 /* =========================
-   SETTINGS (theme / sound / gallery)
-   Every row here drives the same buttons and functions that already
-   exist elsewhere (themeBtn, musicBtn, galleryToolBtn) rather than
-   reimplementing their logic — this panel is just a second, more
+   FORM STATE
+   One function decides everything the form shows, so the hero, the
+   counters, the validation message and the Save/Discard buttons can
+   never disagree with each other.
+========================= */
+
+function formValues() {
+  return {
+    username: profileUsername.value,
+    displayName: profileName.value.trim(),
+    avatar: selectedAvatar
+  };
+}
+
+function isDirty() {
+  const now = formValues();
+  return (
+    now.username !== saved.username ||
+    now.displayName !== saved.displayName ||
+    now.avatar !== saved.avatar
+  );
+}
+
+/** "" when the username is fine to save, otherwise what to tell the person. */
+function usernameProblem() {
+  const value = profileUsername.value;
+
+  if (value === saved.username) return "";
+  if (value === "") return "A username can't be removed once it's set.";
+  if (!USERNAME_PATTERN.test(value)) return "Use 3–20 lowercase letters, numbers or _.";
+  return "";
+}
+
+function refresh() {
+  const problem = usernameProblem();
+  const dirty = isDirty();
+
+  pfUsernameMsg.textContent = problem || USERNAME_HINT;
+  pfUsernameMsg.classList.toggle("pf-msg-error", Boolean(problem));
+  profileUsername.setAttribute("aria-invalid", problem ? "true" : "false");
+
+  pfNameCount.textContent = `${profileName.value.length}/${profileName.maxLength}`;
+
+  pfSave.disabled = !dirty || Boolean(problem);
+  pfDiscard.disabled = !dirty;
+}
+
+function renderHero() {
+  const user = auth.currentUser;
+  const fallback = user?.email?.split("@")[0] || "Your profile";
+
+  pfName.textContent = saved.displayName || saved.username || fallback;
+  pfHandle.textContent = saved.username ? `@${saved.username}` : "No username yet";
+  profilePreviewImg.src = selectedAvatar;
+}
+
+function resetForm() {
+  profileUsername.value = saved.username;
+  profileName.value = saved.displayName;
+  selectedAvatar = saved.avatar;
+
+  highlightSelectedAvatar();
+  renderHero();
+  refresh();
+}
+
+profileUsername.addEventListener("input", () => {
+  const cleaned = profileUsername.value.toLowerCase().replace(/[^a-z0-9_]/g, "");
+  if (cleaned !== profileUsername.value) profileUsername.value = cleaned;
+  hideStatus();
+  refresh();
+});
+
+profileName.addEventListener("input", () => {
+  hideStatus();
+  refresh();
+});
+
+pfDiscard.addEventListener("click", () => {
+  hideStatus();
+  resetForm();
+});
+
+/* =========================
+   SETTINGS (theme / music / gallery)
+   Every row drives the same buttons and functions that already exist
+   elsewhere (themeBtn, musicBtn, galleryToolBtn) rather than
+   reimplementing their logic — this panel is a second, more
    discoverable entry point to controls that were previously only
    reachable as small icon buttons.
 ========================= */
 
-function updateSettingsUI() {
-  themeSwatches.forEach(btn => {
-    btn.classList.toggle("active", (btn.dataset.mode === "dark") === isDarkMode());
+function updateThemeButtons() {
+  themeButtons.forEach(btn => {
+    const active = (btn.dataset.mode === "dark") === isDarkMode();
+    btn.classList.toggle("active", active);
+    btn.setAttribute("aria-pressed", String(active));
   });
 }
 
-themeSwatches.forEach(btn => {
+themeButtons.forEach(btn => {
   btn.addEventListener("click", () => {
     const wantsDark = btn.dataset.mode === "dark";
     if (wantsDark !== isDarkMode()) themeBtn.click();
-    updateSettingsUI();
+    updateThemeButtons();
   });
 });
 
@@ -115,36 +245,52 @@ profileGalleryRow.addEventListener("click", () => {
 });
 
 /* =========================
+   USAGE
+   Same event the sidebar meter listens to: the numbers come from the
+   X-Remaining / X-Limit headers on chat replies, so this section
+   appears after the first reply of a session.
+========================= */
+
+let lastUsage = null;
+
+window.addEventListener("joule:usage", e => {
+  lastUsage = e.detail;
+  renderUsage();
+});
+
+function renderUsage() {
+  if (!lastUsage) return;
+
+  const { remaining, limit } = lastUsage;
+
+  pfUsage.classList.remove("hidden");
+  pfUsageText.textContent = `${remaining} of ${limit} messages left today`;
+  pfUsageFill.style.width = `${Math.max(0, Math.min(100, (remaining / limit) * 100))}%`;
+}
+
+/* =========================
    AVATAR SELECTION
 ========================= */
 
-function updateAvatarPreview() {
-  profilePreviewImg.src = selectedAvatar;
-}
-
 function highlightSelectedAvatar() {
-  const options = avatarGrid.querySelectorAll(".avatar-option[data-avatar]");
-  const isUploaded = !Array.from(options).some(btn => btn.dataset.avatar === selectedAvatar);
-
-  options.forEach(btn => {
-    btn.classList.toggle(
-      "selected",
-      btn.dataset.avatar === selectedAvatar
-    );
+  avatarGrid.querySelectorAll(".pf-avatar-opt").forEach(btn => {
+    const selected = btn.dataset.avatar === selectedAvatar;
+    btn.classList.toggle("selected", selected);
+    btn.setAttribute("aria-pressed", String(selected));
   });
-
-  avatarUploadTile.classList.toggle("selected", isUploaded);
 }
 
 avatarGrid.addEventListener("click", e => {
-  const option = e.target.closest(".avatar-option[data-avatar]");
+  const option = e.target.closest(".pf-avatar-opt");
 
   if (!option) return;
 
   selectedAvatar = option.dataset.avatar;
 
-  updateAvatarPreview();
+  hideStatus();
+  profilePreviewImg.src = selectedAvatar;
   highlightSelectedAvatar();
+  refresh();
 });
 
 /* =========================
@@ -185,6 +331,7 @@ avatarFileInput.addEventListener("change", async () => {
     URL.revokeObjectURL(localPreviewUrl);
 
     selectedAvatar = avatar;
+    saved.avatar = avatar;
     profilePreviewImg.src = avatar;
     profileAvatar.src = avatar;
 
@@ -194,7 +341,8 @@ avatarFileInput.addEventListener("change", async () => {
     });
 
     highlightSelectedAvatar();
-    showUploadStatus("Photo updated ✨");
+    refresh();
+    showUploadStatus("Photo updated");
   } catch (err) {
     console.error("Avatar upload failed:", err);
     selectedAvatar = previousAvatar;
@@ -220,12 +368,17 @@ function hideUploadStatus() {
    SAVE PROFILE
 ========================= */
 
-function showStatus(message) {
+function showStatus(message, isError = false) {
+  clearTimeout(statusTimer);
   profileStatus.textContent = message;
+  profileStatus.classList.toggle("pf-status-error", isError);
   profileStatus.classList.remove("hidden");
+
+  if (!isError) statusTimer = setTimeout(hideStatus, 3000);
 }
 
 function hideStatus() {
+  clearTimeout(statusTimer);
   profileStatus.textContent = "";
   profileStatus.classList.add("hidden");
 }
@@ -235,43 +388,41 @@ profileForm.addEventListener("submit", async e => {
 
   const user = auth.currentUser;
 
-  if (!user) return;
+  if (!user || pfSave.disabled) return;
 
-  const submitBtn = profileForm.querySelector(".continue-btn");
-
-  submitBtn.disabled = true;
-  submitBtn.textContent = "Saving...";
+  pfSave.disabled = true;
+  pfDiscard.disabled = true;
+  pfSave.textContent = "Saving...";
 
   try {
-    const newUsername = profileUsername.value.trim().toLowerCase();
-    const priorUsername = currentProfile()?.username || "";
+    const next = formValues();
 
-    if (newUsername !== priorUsername) {
-      await setUsername(newUsername);
-      setProfile({ ...(currentProfile() || {}), username: newUsername });
+    if (next.username !== saved.username) {
+      await setUsername(next.username);
+      saved.username = next.username;
+      setProfile({ ...(currentProfile() || {}), username: next.username });
     }
 
-    const updated = {
-      displayName: profileName.value.trim(),
-      avatar: selectedAvatar
-    };
+    const updated = { displayName: next.displayName, avatar: next.avatar };
 
     await updateProfile(user.uid, updated);
 
-    profileAvatar.src = selectedAvatar;
+    saved = { ...saved, ...updated };
+    profileAvatar.src = saved.avatar;
 
     setProfile({
       ...(currentProfile() || {}),
       ...updated
     });
 
-    showStatus("Profile updated ✨");
+    renderHero();
+    showStatus("Profile updated");
   } catch (err) {
     console.error(err);
-    showStatus(err.message || "Couldn't save changes");
+    showStatus(err.message || "Couldn't save changes", true);
   } finally {
-    submitBtn.disabled = false;
-    submitBtn.textContent = "Save changes";
+    pfSave.textContent = "Save changes";
+    refresh();
   }
 });
 

@@ -341,7 +341,6 @@ body.v2 .tools-menu-hint {
   body.v2 .header-wrapper,
   body.v2 .signature,
   body.v2 .controls,
-  body.v2 .footer,
   body.v2 .sidebar-open-btn,
   body.v2 .hero-logo,
   body.v2 .sb2 .sidebar-header,
@@ -1073,7 +1072,6 @@ body.v2 .people-section {
   font-family: "IBM Plex Sans", system-ui, sans-serif;
 }
 
-body.v2 .profile-panel h2,
 body.v2 .gallery-title,
 body.v2 .people-title {
   font: 600 24px "Space Grotesk", system-ui, sans-serif;
@@ -1098,89 +1096,8 @@ body.v2 .people-back-btn:hover {
 
 body.v2 .close-btn .icon,
 body.v2 .people-close-btn .icon,
-body.v2 .people-back-btn .icon,
-body.v2 .profile-setrow-icon img,
-body.v2 .avatar-upload-option .icon {
+body.v2 .people-back-btn .icon {
   filter: var(--ifx);
-}
-
-body.v2 .profile-avatar-preview img {
-  box-shadow: none;
-  border-color: var(--bd2);
-}
-
-body.v2 .avatar-option {
-  border-color: transparent;
-}
-
-body.v2 .avatar-upload-option {
-  background: var(--hv);
-  border: 1px solid var(--bd2);
-}
-
-body.v2 .avatar-option.selected {
-  border-color: var(--ac);
-  box-shadow: 0 0 0 3px var(--bd2);
-}
-
-body.v2 .profile-settings {
-  background: var(--s2);
-  border: 1px solid var(--bd);
-  box-shadow: none;
-}
-
-body.v2 .profile-setrow {
-  color: var(--tx);
-  border-color: var(--bd);
-}
-
-body.v2 .profile-setrow-link:hover {
-  background: var(--hv);
-}
-
-body.v2 .profile-setrow-icon {
-  background: var(--hv);
-  box-shadow: none;
-}
-
-body.v2 .profile-setrow-chevron {
-  color: var(--mu);
-}
-
-body.v2 .theme-swatch {
-  border: 1px solid var(--bd2);
-}
-
-body.v2 .theme-swatch.active {
-  box-shadow: 0 0 0 2px var(--ac);
-}
-
-body.v2 .profile-toggle {
-  background: var(--bd2);
-}
-
-body.v2 .profile-toggle.on {
-  background: var(--vi);
-}
-
-body.v2 .field-label {
-  color: var(--mu);
-}
-
-body.v2 .field-hint {
-  color: var(--mu);
-}
-
-body.v2 .profile-panel input {
-  background: var(--s2);
-  border: 1px solid var(--bd2);
-  color: var(--tx);
-  box-shadow: none;
-}
-
-body.v2 .profile-panel input:focus {
-  border-color: var(--vi);
-  box-shadow: none;
 }
 
 body.v2 .continue-btn {
@@ -1188,17 +1105,6 @@ body.v2 .continue-btn {
   color: var(--acink);
   border: 0;
   box-shadow: none;
-}
-
-body.v2 .logout-btn {
-  background: none;
-  border: 1px solid var(--bd2);
-  color: var(--tx2);
-  box-shadow: none;
-}
-
-body.v2 .people-tab {
-  color: var(--mu);
 }
 
 body.v2 .people-tab.active {
@@ -1209,14 +1115,6 @@ body.v2 .people-tab.active {
 /* An older mobile rule gives the profile panel its own navy; the id wins it back. */
 body.v2 #profileOverlay .profile-panel {
   background: var(--bg);
-}
-
-body.v2 .theme-swatch[data-mode="light"] {
-  background: #faf8f5;
-}
-
-body.v2 .theme-swatch[data-mode="dark"] {
-  background: #0e0e10;
 }
 
 @media (max-width: 768px) {
@@ -1313,8 +1211,7 @@ body.v2 .auth-success {
   color: var(--ok);
 }
 
-body.v2 .auth-toggle,
-body.v2 .auth-modal .otp-resend {
+body.v2 .auth-toggle {
   color: var(--mu);
 }
 
@@ -1352,17 +1249,6 @@ body.v2 .auth-modal .otp-box {
 
 body.v2 .auth-modal .otp-box:focus {
   border-color: var(--vi);
-}
-
-/* =========================================================
-   Desktop: the Appearance / Sound / My images box in the profile panel
-   duplicates the sidebar menu and the Gallery row, so it is not shown.
-   Mobile keeps it (the tabs have no equivalent).
-========================================================= */
-@media (min-width: 769px) {
-  body.v2 #profileSettings {
-    display: none;
-  }
 }
 
 /* Generated images: no glow, same hairline as everything else. */

@@ -1,0 +1,398 @@
+/* =========================================================
+   Dark theme overrides
+   .dark variants of the components above
+   (from the former style.css — see theme.css for load order)
+========================================================= */
+/*=====================Dark Mode===================*/
+
+.dark{
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(139,125,255,.10),
+      transparent 40%
+    ),
+
+    linear-gradient(
+      180deg,
+      #050816,
+      #080d1d,
+      #050816
+    );
+
+  color: white;
+
+  --accent1: #8b7dff;
+
+  --accent2: #6e8fff;
+
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.aurora {
+
+  position: fixed;
+  inset: 0;
+
+  pointer-events: none;
+
+  z-index: 0;
+
+  overflow: hidden;
+}
+
+/* These two blobs were the missing piece: .aurora had no background
+   of its own, and auroraMove1/auroraMove2 below were defined but
+   never referenced anywhere, so this whole layer rendered as nothing.
+   Colors match the app's own aurora palette (loadingScreen.js
+   RIBBON_COLORS). Sits behind .clouds/.mountains in the stack, as a
+   soft, slow-drifting wash rather than the tighter ambient blobs. */
+.aurora::before,
+.aurora::after {
+  content: "";
+  position: absolute;
+  top: -15%;
+  width: 70vw;
+  height: 70vw;
+  max-width: 640px;
+  max-height: 640px;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.35;
+  will-change: transform;
+}
+
+.aurora::before {
+  left: -15%;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.55), transparent 70%);
+  animation: auroraMove1 22s ease-in-out infinite;
+}
+
+.aurora::after {
+  right: -15%;
+  background: radial-gradient(circle, rgba(167, 139, 250, 0.5), transparent 70%);
+  animation: auroraMove2 26s ease-in-out infinite;
+}
+
+@keyframes auroraMove1 {
+
+  0%,100% {
+
+    transform:
+      translate(0,0)
+      scale(1);
+  }
+
+  50% {
+
+    transform:
+      translate(120px,80px)
+      scale(1.2);
+  }
+}
+
+@keyframes auroraMove2 {
+
+  0%,100% {
+
+    transform:
+      translate(0,0)
+      scale(1);
+  }
+
+  50% {
+
+    transform:
+      translate(-100px,-70px)
+      scale(1.15);
+  }
+} 
+
+.dark::after {
+  content: "";
+
+  position: fixed;
+
+  inset: 0;
+
+  pointer-events: none;
+
+  z-index: 0;
+
+  background-image:
+    radial-gradient(
+      2px 2px at 20px 30px,
+      rgba(255, 255, 255, 0.9),
+      transparent
+    ),
+    radial-gradient(
+      1.5px 1.5px at 140px 80px,
+      rgba(255, 255, 255, 0.8),
+      transparent
+    ),
+    radial-gradient(
+      2px 2px at 260px 120px,
+      rgba(255, 255, 255, 0.75),
+      transparent
+    ),
+    radial-gradient(
+      1.5px 1.5px at 380px 40px,
+      rgba(255, 255, 255, 0.9),
+      transparent
+    ),
+    radial-gradient(
+      2px 2px at 520px 160px,
+      rgba(255, 255, 255, 0.7),
+      transparent
+    ),
+    radial-gradient(
+      1.5px 1.5px at 700px 70px,
+      rgba(255, 255, 255, 0.85),
+      transparent
+    );
+
+  background-repeat: repeat;
+
+  background-size: 800px 300px;
+
+  opacity: 0.18;
+
+  filter: blur(.3px);
+
+  animation:
+  starFloat 120s linear infinite;
+}
+
+@keyframes starFloat{
+  from{
+    transform:translateY(0);
+  }
+
+  to{
+    transform:translateY(-80px);
+  }
+}
+
+@keyframes starMove {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(-300px);
+  }
+}
+
+.dark .header,
+.dark .input-area,
+.dark .bot .chat,
+.dark .typing{
+
+  background:
+  rgba(255,255,255,.035);
+
+  border:
+  1px solid rgba(255,255,255,.08);
+
+  backdrop-filter:
+  blur(24px);
+
+  box-shadow:
+  0 8px 30px rgba(0,0,0,.20);
+}
+
+.dark .icon-btn.listening {
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--accent2),
+      var(--accent1)
+    );
+
+  box-shadow:
+    0 0 30px rgba(139,92,246,.45),
+    0 0 60px rgba(99,102,241,.25);
+}
+
+.dark .icon-btn.listening img {
+
+  filter: brightness(0) invert(1);
+}
+
+.dark .bot img {
+
+  animation:
+    botAura 4s ease-in-out infinite;
+}
+
+@keyframes botAura {
+
+  0%,100% {
+
+    box-shadow:
+      0 0 18px rgba(139,92,246,.35);
+  }
+
+  50% {
+
+    box-shadow:
+      0 0 30px rgba(139,92,246,.55),
+      0 0 60px rgba(99,102,241,.2);
+  }
+}
+
+.dark .user img {
+
+  border:
+    2px solid rgba(96,165,250,.45);
+
+  box-shadow:
+    0 0 18px rgba(96,165,250,.35),
+    0 0 35px rgba(96,165,250,.15);
+}
+
+.dark .signup-btn::after {
+
+  content: "";
+
+  position: absolute;
+
+  inset: -15px;
+
+  border-radius: inherit;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(139,125,255,.12),
+      transparent 70%
+    );
+
+  z-index: -1;
+}
+
+.dark .icon-btn,
+.dark #sendBtn,
+.dark #themeBtn,
+.dark .signup-btn {
+
+  background:
+    linear-gradient(
+      135deg,
+      #7b7dff,
+      #9a87ff
+    );
+
+  border:
+    1px solid rgba(255,255,255,.10);
+
+  color: white;
+
+  backdrop-filter: blur(20px);
+
+  box-shadow:
+    0 8px 24px rgba(123,125,255,.18);
+
+  transition:
+    transform .25s ease,
+    box-shadow .25s ease,
+    filter .25s ease;
+
+  position: relative;
+
+  overflow: hidden;
+}
+
+.dark .icon-btn img,
+.dark #sendBtn img,
+.dark #themeBtn img,
+.dark .signup-btn img {
+
+  filter:
+    brightness(0)
+    invert(1);
+
+  opacity: .95;
+
+  transition:
+    transform .25s ease,
+    filter .25s ease;
+}
+
+.dark .icon-btn:hover,
+.dark #sendBtn:hover,
+.dark #themeBtn:hover,
+.dark .signup-btn:hover {
+
+  transform:
+    translateY(-2px);
+
+  filter:
+    brightness(1.05);
+
+  box-shadow:
+    0 12px 30px rgba(123,125,255,.25);
+}
+
+.dark .icon-btn:hover img,
+.dark #sendBtn:hover img,
+.dark #themeBtn:hover img,
+.dark .signup-btn:hover img {
+
+  transform:
+    scale(1.05);
+
+  filter:
+    brightness(0)
+    invert(1);
+}
+
+.dark .icon-btn:active,
+.dark #sendBtn:active,
+.dark #themeBtn:active,
+.dark .signup-btn:active {
+
+  transform:
+    translateY(1px);
+
+  box-shadow:
+    0 4px 12px rgba(123,125,255,.15);
+}
+
+.dark .icon-btn::before,
+.dark #sendBtn::before,
+.dark #themeBtn::before,
+.dark .signup-btn::before {
+
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: -150%;
+
+  width: 50%;
+  height: 100%;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255,255,255,.15),
+      transparent
+    );
+
+  transition:
+    left .8s ease;
+}
+
+.dark .icon-btn:hover::before,
+.dark #sendBtn:hover::before,
+.dark #themeBtn:hover::before,
+.dark .signup-btn:hover::before {
+
+  left: 150%;
+}
+

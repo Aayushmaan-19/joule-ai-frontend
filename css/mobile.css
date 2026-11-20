@@ -1,29 +1,15 @@
 /* =================================================================
    MOBILE.CSS — every mobile-only rule for Joule AI, in one place.
 
-   Loaded only on screens <=768px via a media-attributed <link> in
-   index.html, so desktop never downloads or evaluates this file at
+   Loaded only on screens <=768px: theme.css imports it with a media
+   condition, so desktop never downloads or evaluates this file at
    all. Every rule here targets viewport widths already gated by
-   either its own @media block or the file's link[media] — nothing
-   in here should ever need a max-width check against desktop, since
-   desktop physically never loads this file.
-
-   Extracted verbatim from style.css's mobile media queries — same
-   rules, same order, just no longer interleaved with desktop CSS.
+   either its own @media block or that import condition.
 ================================================================= */
 
 @media (max-width: 768px) {
   #main {
     height: 100dvh;
-  }
-
-  /* .input-area floats over the scrolling chat for the entire
-     session — on mobile Safari a backdrop-filter layer that sits
-     above continuously-scrolling content is a well-known jank
-     source. Same frosted look at a smaller, cheaper radius. */
-  .input-area {
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
   }
 
   /* .ambient/.aurora blobs now actually animate (see base rules) —
@@ -663,118 +649,7 @@
     box-shadow: none;
   }
 
-  .profile-settings {
-    margin: 18px 0;
-    border-radius: 14px;
-    background: var(--joule-paper);
-    border: 1px solid var(--joule-line);
-    overflow: hidden;
-  }
-
-  .profile-setrow {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    padding: 13px 14px;
-    border: none;
-    border-bottom: 1px solid var(--joule-line);
-    background: none;
-    font-size: 14px;
-    color: var(--joule-ink);
-    text-align: left;
-  }
-
-  .profile-setrow:last-child {
-    border-bottom: none;
-  }
-
-  .profile-setrow-left {
-    display: flex;
-    align-items: center;
-    gap: 11px;
-  }
-
-  .profile-setrow-icon {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background: var(--joule-paper-2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-
-  .profile-setrow-icon img {
-    width: 15px;
-    height: 15px;
-  }
-
-  .profile-setrow-chevron {
-    width: 15px;
-    height: 15px;
-    color: var(--joule-ink-2);
-    flex-shrink: 0;
-  }
-
-  .theme-swatches {
-    display: flex;
-    gap: 8px;
-  }
-
-  .theme-swatch {
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    border: 2px solid var(--joule-paper);
-    box-shadow: 0 0 0 1px var(--joule-line);
-    padding: 0;
-  }
-
-  .theme-swatch[data-mode="light"] {
-    background: var(--joule-paper-2);
-  }
-
-  .theme-swatch[data-mode="dark"] {
-    background: #170f33;
-  }
-
-  .theme-swatch.active {
-    box-shadow: 0 0 0 2px var(--joule-current);
-  }
-
-  .profile-toggle {
-    width: 38px;
-    height: 22px;
-    border-radius: 11px;
-    border: none;
-    background: var(--joule-line);
-    position: relative;
-    flex-shrink: 0;
-  }
-
-  .profile-toggle::after {
-    content: "";
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: #fff;
-    transition: left 0.15s ease;
-  }
-
-  .profile-toggle.on {
-    background: var(--joule-current);
-  }
-
-  .profile-toggle.on::after {
-    left: 18px;
-  }
-
-  /* ---------- Lock overlay (auth-gated tabs) ---------- */
+                                  /* ---------- Lock overlay (auth-gated tabs) ---------- */
 
   .mobile-lock-overlay.hidden {
     display: none;
@@ -874,29 +749,6 @@
 
   .mobile-lock-secondary.hidden {
     display: none;
-  }
-}
-
-@media (max-width: 600px) {
-  .legal-modal {
-    max-height: 88vh;
-    border-radius: 20px;
-  }
-
-  .legal-modal-header {
-    padding: 24px 20px 16px;
-  }
-
-  .legal-modal-body {
-    padding: 20px 20px 28px;
-  }
-
-  .legal-modal-title {
-    font-size: 18px;
-  }
-
-  .footer {
-    gap: 18px;
   }
 }
 
@@ -1155,15 +1007,4 @@
     border-color: rgba(242, 236, 255, 0.35);
     color: #f2ecff;
   }
-
-  /* ---------- Footer reachable on mobile ----------
-     Was display:none here (the bottom tab bar is the nav now) but
-     that left no in-app way to reach Privacy/Terms/About/Contact on
-     mobile. Left as normal flow, so it's reachable below the 100vh
-     app shell (same place it'd sit without a tab bar) — just a bit
-     of safe-area padding so it doesn't land flush against a phone's
-     home-indicator once scrolled to. */
-  .footer {
-    padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
   }
-}

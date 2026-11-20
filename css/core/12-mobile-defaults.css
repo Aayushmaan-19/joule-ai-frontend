@@ -1,0 +1,54 @@
+/* =========================================================
+   Mobile-only component defaults
+   display:none defaults for components that only exist on mobile (tab bar, lock overlay, sidebar search + FAB) — mobile.css turns them on
+   (from the former style.css — see theme.css for load order)
+========================================================= */
+/* =================================
+   MOBILE RESPONSIVE FIXES
+
+   Sizing technique: clamp(MIN, calc(INTERCEPT + COEFFICIENTvw), BASE).
+   This is NOT the same as calc(BASE * var(--ui-scale)) from earlier —
+   that relied on dividing one length by another inside calc()
+   ( (100vw - 320px) / (768px - 320px) ), which silently produces an
+   invalid value in this browser (verified directly: even the trivial
+   calc(10px / 2px) falls back to invalid here, while calc(10px / 2)
+   — dividing by a plain number — works fine). That's what caused the
+   giant/flattened elements. The fix avoids dividing lengths entirely:
+   INTERCEPT and COEFFICIENT are precomputed constants (not computed
+   by the browser), so the browser only ever does length + (number*vw),
+   both always-valid operations. At 768px this resolves to exactly
+   the desktop BASE value; it shrinks fluidly down to a 0.78 floor
+   at 320px. Structural changes (popover, overlay sidebar) are kept
+   separate below — those are an information-density fix, not sizing.
+================================= */
+
+/* Both mobile-only, new components with no existing "display:contents"
+   parent to hide behind (unlike .topbar-mobile's children) — explicit
+   display:none here, overridden to display:flex inside the mobile
+   media query below. Correct on desktop regardless of any class
+   state a script might otherwise set on them. */
+.mobile-tabbar {
+  display: none;
+}
+
+.mobile-lock-overlay {
+  display: none;
+}
+
+/* Same story, missed in that pass: the sidebar search bar and FAB
+   (js/ui/sidebar.js) have been mobile-only since the commit that
+   introduced them — .sidebar-search/.sidebar-fab were only ever
+   declared inside the mobile media query (now mobile.css), never
+   given a desktop rule. Their <svg> icons have no width/height
+   attributes either, so with no CSS to size them and no display:none
+   to hide them, desktop fell back to the browser's default
+   replaced-element box — the oversized search/plus icons. Hidden by
+   default here; mobile.css's existing `display: flex` on both
+   selectors already restores them on mobile. */
+.sidebar-search {
+  display: none;
+}
+
+.sidebar-fab {
+  display: none;
+}

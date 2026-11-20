@@ -3,12 +3,6 @@
   <head>
     <meta charset="UTF-8" />
 
-    <!-- Every relative asset path in this app (avatars, icons, song
-         files, the favicon/manifest below) was written assuming the
-         page is always served at "/". Now that routes like
-         /social/directory are real URLs, the browser would otherwise
-         resolve those same relative paths against the current route
-         instead of the site root — this pins them back to root. -->
     <base href="/" />
 
     <link rel="stylesheet" href="css/theme.css" />
@@ -57,10 +51,6 @@
     />
     <meta name="twitter:image" content="https://joule-ai.vercel.app/Assets/logo/og-image.jpg" />
 
-    <!-- Opens the connection to Google Fonts before the CSS request
-         needs it — DNS/TLS were the slow part of that request, not
-         the file itself, so this shrinks how long .loading-text (or
-         anything else using Allura) can be waiting on it. -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&family=Space+Grotesk:wght@500;600&display=swap"
@@ -202,6 +192,12 @@
             <span></span>
           </div>
           <button class="google-btn">Continue with Google</button>
+
+          <p class="auth-legal">
+            By continuing you agree to our
+            <a href="/terms.html" target="_blank" rel="noopener">Terms</a> and
+            <a href="/privacy-policy.html" target="_blank" rel="noopener">Privacy Policy</a>.
+          </p>
         </div>
 
         <!-- OTP VERIFICATION VIEW -->
@@ -271,133 +267,148 @@
 
     <!-- PROFILE PANEL -->
     <div id="profileOverlay" class="modal-overlay hidden">
-      <div class="profile-panel">
-        <button id="closeProfile" class="close-btn">×</button>
-        <h2>Your Profile</h2>
+      <div class="profile-panel pf" role="dialog" aria-modal="true" aria-labelledby="pfName">
+        <button id="closeProfile" class="close-btn" type="button" aria-label="Close">×</button>
 
-        <div class="profile-avatar-preview">
-          <img
-            id="profilePreviewImg"
-            src="Assets/Avatars/avatar1.png"
-            alt="Avatar"
-          />
-          <div class="avatar-upload-spinner hidden" id="avatarUploadSpinner"></div>
-        </div>
+        <header class="pf-hero">
+          <button type="button" class="pf-avatar" id="avatarUploadTile" aria-label="Upload your own photo">
+            <img id="profilePreviewImg" src="Assets/Avatars/avatar1.png" alt="" />
+            <span class="pf-avatar-cam" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span>
+            <span class="pf-spinner hidden" id="avatarUploadSpinner"></span>
+          </button>
+          <div class="pf-ident">
+            <h2 id="pfName">Your profile</h2>
+            <p class="pf-handle" id="pfHandle"></p>
+            <span class="pf-verified hidden" id="pfVerified">Email verified</span>
+          </div>
+        </header>
+        <input type="file" id="avatarFileInput" accept="image/*" class="hidden" />
+        <p class="pf-note hidden" id="avatarUploadStatus" role="status"></p>
 
-        <input
-          type="file"
-          id="avatarFileInput"
-          accept="image/*"
-          class="hidden"
-        />
-        <p class="avatar-upload-status hidden" id="avatarUploadStatus"></p>
+        <section class="pf-section">
+          <h3 class="pf-h">Avatar</h3>
+          <div class="pf-avatars" id="avatarGrid" role="group" aria-label="Choose an avatar">
+            <button type="button" class="pf-avatar-opt" data-avatar="Assets/Avatars/avatar1.png" aria-label="Avatar 1" aria-pressed="false">
+              <img src="Assets/Avatars/avatar1.png" alt="" />
+            </button>
+            <button type="button" class="pf-avatar-opt" data-avatar="Assets/Avatars/avatar2.png" aria-label="Avatar 2" aria-pressed="false">
+              <img src="Assets/Avatars/avatar2.png" alt="" />
+            </button>
+            <button type="button" class="pf-avatar-opt" data-avatar="Assets/Avatars/avatar3.png" aria-label="Avatar 3" aria-pressed="false">
+              <img src="Assets/Avatars/avatar3.png" alt="" />
+            </button>
+            <button type="button" class="pf-avatar-opt" data-avatar="Assets/Avatars/avatar4.png" aria-label="Avatar 4" aria-pressed="false">
+              <img src="Assets/Avatars/avatar4.png" alt="" />
+            </button>
+            <button type="button" class="pf-avatar-opt" data-avatar="Assets/Avatars/avatar5.png" aria-label="Avatar 5" aria-pressed="false">
+              <img src="Assets/Avatars/avatar5.png" alt="" />
+            </button>
+            <button type="button" class="pf-avatar-opt" data-avatar="Assets/Avatars/avatar6.png" aria-label="Avatar 6" aria-pressed="false">
+              <img src="Assets/Avatars/avatar6.png" alt="" />
+            </button>
+          </div>
+        </section>
 
-        <div class="avatar-grid" id="avatarGrid">
-          <button
-            type="button"
-            class="avatar-option avatar-upload-option"
-            id="avatarUploadTile"
-            aria-label="Upload your own photo"
-          >
-            <img src="Assets/Icons/camera.svg" class="icon" alt="" />
-          </button>
-          <button
-            class="avatar-option"
-            data-avatar="Assets/Avatars/avatar1.png"
-          >
-            <img src="Assets/Avatars/avatar1.png" alt="" />
-          </button>
-          <button
-            class="avatar-option"
-            data-avatar="Assets/Avatars/avatar2.png"
-          >
-            <img src="Assets/Avatars/avatar2.png" alt="" />
-          </button>
-          <button
-            class="avatar-option"
-            data-avatar="Assets/Avatars/avatar3.png"
-          >
-            <img src="Assets/Avatars/avatar3.png" alt="" />
-          </button>
-          <button
-            class="avatar-option"
-            data-avatar="Assets/Avatars/avatar4.png"
-          >
-            <img src="Assets/Avatars/avatar4.png" alt="" />
-          </button>
-          <button
-            class="avatar-option"
-            data-avatar="Assets/Avatars/avatar5.png"
-          >
-            <img src="Assets/Avatars/avatar5.png" alt="" />
-          </button>
-          <button
-            class="avatar-option"
-            data-avatar="Assets/Avatars/avatar6.png"
-          >
-            <img src="Assets/Avatars/avatar6.png" alt="" />
-          </button>
-        </div>
+        <form id="profileForm" class="pf-section" novalidate>
+          <h3 class="pf-h">Account</h3>
 
-        <div class="profile-settings" id="profileSettings">
-          <div class="profile-setrow">
-            <div class="profile-setrow-left">
-              <span class="profile-setrow-icon"><img src="Assets/Icons/sun.svg" class="icon" alt="" /></span>
-              Appearance
+          <div class="pf-field">
+            <label for="profileUsername">Username</label>
+            <div class="pf-input">
+              <span class="pf-at" aria-hidden="true">@</span>
+              <input
+                id="profileUsername"
+                type="text"
+                placeholder="your_name"
+                maxlength="20"
+                autocapitalize="off"
+                autocorrect="off"
+                spellcheck="false"
+                autocomplete="off"
+                aria-describedby="pfUsernameMsg"
+              />
             </div>
-            <div class="theme-swatches" id="themeSwatches">
-              <button type="button" class="theme-swatch" data-mode="light" aria-label="Light"></button>
-              <button type="button" class="theme-swatch" data-mode="dark" aria-label="Dark"></button>
+            <p class="pf-msg" id="pfUsernameMsg">Lowercase letters, numbers and _ · 3–20 characters. Needed for People &amp; Messages.</p>
+          </div>
+
+          <div class="pf-field">
+            <label for="profileName">Display name</label>
+            <div class="pf-input">
+              <input id="profileName" type="text" placeholder="Your name" maxlength="40" autocomplete="name" />
+              <span class="pf-count" id="pfNameCount" aria-hidden="true">0/40</span>
             </div>
           </div>
-          <button type="button" class="profile-setrow profile-setrow-link" id="profileMusicRow">
-            <div class="profile-setrow-left">
-              <span class="profile-setrow-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></span>
-              Music
-            </div>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="profile-setrow-chevron"><polyline points="9 18 15 12 9 6"/></svg>
-          </button>
-          <button type="button" class="profile-setrow profile-setrow-link" id="profileGalleryRow">
-            <div class="profile-setrow-left">
-              <span class="profile-setrow-icon"><img src="Assets/Icons/images.svg" class="icon" alt="" /></span>
-              Gallery
-            </div>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="profile-setrow-chevron"><polyline points="9 18 15 12 9 6"/></svg>
-          </button>
-          <button type="button" class="profile-setrow profile-setrow-link" id="profileAdminRow">
-            <div class="profile-setrow-left">
-              <span class="profile-setrow-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 4.5 3.2 8 8 9 4.8-1 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/></svg></span>
-              Admin console
-            </div>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="profile-setrow-chevron"><polyline points="9 18 15 12 9 6"/></svg>
-          </button>
-        </div>
 
-        <form id="profileForm">
-          <label class="field-label" for="profileUsername">Username</label>
-          <input
-            id="profileUsername"
-            type="text"
-            placeholder="lowercase, numbers, _"
-            maxlength="20"
-            autocapitalize="off"
-            autocorrect="off"
-          />
-          <p class="field-hint">Needed to use People &amp; messaging. 3-20 characters.</p>
-          <label class="field-label" for="profileName">Display name</label>
-          <input
-            id="profileName"
-            type="text"
-            placeholder="Your name"
-            maxlength="40"
-          />
-          <label class="field-label">Email</label>
-          <input id="profileEmail" type="email" disabled />
-          <p id="profileStatus" class="auth-success hidden"></p>
-          <button type="submit" class="continue-btn">Save changes</button>
+          <div class="pf-field">
+            <label for="profileEmail">Email</label>
+            <div class="pf-input pf-input-locked">
+              <input id="profileEmail" type="email" disabled />
+              <svg class="pf-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+            </div>
+          </div>
+
+          <p id="profileStatus" class="pf-status hidden" role="status"></p>
+          <div class="pf-actions">
+            <button type="button" class="pf-ghost" id="pfDiscard" disabled>Discard</button>
+            <button type="submit" class="continue-btn pf-save" id="pfSave" disabled>Save changes</button>
+          </div>
         </form>
 
-        <button id="logoutBtn" class="logout-btn">Log out</button>
+        <section class="pf-section">
+          <h3 class="pf-h">Preferences</h3>
+          <div class="pf-list" id="profileSettings">
+            <div class="pf-row pf-row-static">
+              <span class="pf-row-ic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span>
+              <span class="pf-row-label">Appearance</span>
+              <div class="pf-seg" id="themeSwatches" role="group" aria-label="Appearance">
+                <button type="button" class="pf-seg-btn" data-mode="light" aria-pressed="false">Light</button>
+                <button type="button" class="pf-seg-btn" data-mode="dark" aria-pressed="false">Dark</button>
+              </div>
+            </div>
+            <button type="button" class="pf-row" id="profileMusicRow">
+              <span class="pf-row-ic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></span>
+              <span class="pf-row-label">Music</span>
+              <svg class="pf-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+            <button type="button" class="pf-row" id="profileGalleryRow">
+              <span class="pf-row-ic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg></span>
+              <span class="pf-row-label">Gallery</span>
+              <svg class="pf-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+        </section>
+
+        <section class="pf-section hidden" id="pfUsage">
+          <h3 class="pf-h">Usage today</h3>
+          <div class="pf-usage">
+            <div class="pf-usage-bar"><span id="pfUsageFill"></span></div>
+            <p id="pfUsageText"></p>
+          </div>
+        </section>
+
+        <section class="pf-section">
+          <h3 class="pf-h">About Joule</h3>
+          <nav class="pf-list" aria-label="About and legal">
+            <a class="pf-row" href="/about.html" target="_blank" rel="noopener">
+              <span class="pf-row-label">About us</span>
+              <svg class="pf-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>
+            </a>
+            <a class="pf-row" href="/privacy-policy.html" target="_blank" rel="noopener">
+              <span class="pf-row-label">Privacy policy</span>
+              <svg class="pf-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>
+            </a>
+            <a class="pf-row" href="/terms.html" target="_blank" rel="noopener">
+              <span class="pf-row-label">Terms of service</span>
+              <svg class="pf-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>
+            </a>
+            <a class="pf-row" href="/contact.html" target="_blank" rel="noopener">
+              <span class="pf-row-label">Contact</span>
+              <svg class="pf-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>
+            </a>
+          </nav>
+        </section>
+
+        <button id="logoutBtn" class="pf-logout" type="button">Log out</button>
       </div>
     </div>
 
@@ -410,13 +421,9 @@
       </div>
     </div>
 
-    <!-- PEOPLE / MESSAGES — a full-screen section of its own, not a
-         modal. Swaps in over the whole app while open (see
-         #app.people-open in style.css) rather than sitting above a
-         dimmed backdrop like the overlays above. -->
     <div id="peopleSection" class="people-section hidden">
       <nav class="people-rail" aria-label="Social navigation">
-        <button type="button" class="people-rail-btn people-rail-home" id="peopleRailHome" aria-label="Back to Joule" title="Back to Joule"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3 5 13h6l-1 8 8-10h-6z"/></svg></button>
+        <button type="button" class="people-rail-btn people-rail-home" id="peopleRailHome" aria-label="Back to Joule" title="Back to Joule"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5H10v-5.5h4v5.5h4.5V10"/></svg></button>
         <button type="button" class="people-rail-btn" data-rail-tab="messages" aria-label="Messages" title="Messages"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H10l-4 4v-4H4z"/></svg><span class="people-rail-dot hidden" id="peopleRailMsgDot"></span></button>
         <button type="button" class="people-rail-btn" data-rail-tab="directory" aria-label="People" title="People"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="9" r="3.2"/><path d="M3 20c0-3.5 2.7-5.5 6-5.5s6 2 6 5.5"/><path d="M16 6.5a3 3 0 0 1 0 5.8M18.5 15c1.6.8 2.5 2.4 2.5 5"/></svg><span class="people-rail-badge hidden" id="peopleRailBadge">0</span></button>
         <span class="people-rail-spacer"></span>
@@ -510,11 +517,7 @@
 
       <!-- MAIN COLUMN -->
       <div id="main">
-        <!-- On desktop this wrapper is display:contents (a no-op — its
-             three children lay out exactly as before, independently).
-             On mobile it becomes the single fixed top bar: hamburger +
-             logo on the left, auth/more cluster pushed right via
-             margin-left:auto. See MOBILE RESPONSIVE FIXES in style.css. -->
+
         <div class="topbar-mobile">
           <button
             id="sidebarOpenBtn"
@@ -553,10 +556,6 @@
         </div>
         <!-- /.topbar-mobile -->
 
-        <!-- Mobile only (see .hero-logo in style.css). The real
-             brand mark, not the inline-SVG "J" .header uses on
-             desktop — starts centered on an empty chat, docks to
-             the top-left once a message exists. -->
         <img
           src="Assets/logo/icon-512.png"
           alt="Joule"
@@ -667,11 +666,6 @@
       </div>
       <!-- /#main -->
 
-      <!-- MOBILE TAB BAR — mobile-only (see @media in style.css).
-           Desktop navigation (topbar icons, sidebar drawer, profile
-           modal) is completely untouched and still works exactly as
-           before; this is an additional mobile-only entry point that
-           drives the same underlying panels via mobileNav.js. -->
       <nav class="mobile-tabbar" id="mobileTabBar">
         <button type="button" class="mobile-tab active" data-tab="chat" aria-label="AI Chat">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
@@ -712,12 +706,5 @@
     <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
     <script type="module" src="./js/main.js"></script>
-
-    <footer class="footer">
-      <a href="/privacy-policy.html" data-legal="privacy">Privacy Policy</a>
-      <a href="/terms.html" data-legal="terms">Terms of Service</a>
-      <a href="/about.html" data-legal="about">About Us</a>
-      <a href="/contact.html" data-legal="contact">Contact</a>
-    </footer>
   </body>
 </html>

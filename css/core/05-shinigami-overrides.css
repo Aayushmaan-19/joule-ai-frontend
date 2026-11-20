@@ -1,0 +1,271 @@
+/* =========================================================
+   Shinigami theme overrides
+   .shinigami variants of the components above (NOT the Shinigami realm UI — that is ../shinigami.css)
+   (from the former style.css — see theme.css for load order)
+========================================================= */
+/*=====================Shinigami Mode===================*/
+
+.shinigami .signup-btn {
+  background: linear-gradient(135deg, #ff2e2e, #b30000);
+
+  color: white;
+
+  border: none;
+
+  box-shadow: 0 8px 30px rgba(255, 0, 0, 0.35);
+}
+
+.shinigami .signup-btn:hover {
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 0 25px rgba(255, 0, 0, 0.5),
+    0 12px 35px rgba(255, 0, 0, 0.25);
+}
+
+.shinigami {
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.28)),
+    url("https://w.wallhaven.cc/full/l3/wallhaven-l3my9p.png");
+
+  background-size: cover;
+
+  background-position: center center;
+
+  background-repeat: no-repeat;
+
+  background-attachment: scroll;
+
+  min-height: 100vh;
+
+  color: white;
+
+  position: relative;
+
+  overflow-x: hidden;
+}
+
+.shinigami .clouds,
+.shinigami .mountains {
+  display: none;
+}
+
+.shinigami .header {
+  background: rgba(10, 10, 10, 0.75);
+  border: 1px solid rgba(255, 0, 0, 0.15);
+
+  backdrop-filter: blur(18px);
+
+  box-shadow:
+    0 0 18px rgba(255, 0, 0, 0.12),
+    0 12px 35px rgba(0, 0, 0, 0.6);
+}
+
+.shinigami .logo-text {
+  color: #ff3b3b;
+
+  text-shadow:
+    0 0 12px rgba(255, 0, 0, 0.6),
+    0 0 30px rgba(255, 0, 0, 0.25);
+}
+
+.shinigami .j-path,
+.shinigami .j-tail {
+  stroke: #ff3b3b;
+  filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.6));
+}
+
+.shinigami .signature {
+  color: #ff9a9a;
+
+  text-shadow: 0 0 10px rgba(255, 0, 0, 0.2);
+}
+
+.shinigami .bot .chat {
+  background: rgba(0, 0, 0, 0.75);
+  border: 1px solid rgba(255, 0, 0, 0.12);
+
+  backdrop-filter: blur(14px);
+
+  color: #f3f3f3;
+}
+
+.shinigami .user .chat {
+  background: linear-gradient(135deg, #7a0000, #ff1e1e);
+  box-shadow: 0 0 18px rgba(255, 0, 0, 0.25);
+}
+
+.shinigami .icon-btn {
+  background: rgba(20, 0, 0, 0.55);
+
+  border: 1px solid rgba(255, 0, 0, 0.22);
+
+  box-shadow:
+    0 2px 14px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.shinigami .icon-btn img {
+  filter: brightness(0) invert(1);
+
+  opacity: 0.92;
+}
+
+.shinigami .icon-btn:hover {
+  background: rgba(40, 0, 0, 0.7);
+
+  border-color: rgba(255, 0, 0, 0.4);
+
+  box-shadow:
+    0 0 18px rgba(255, 0, 0, 0.25),
+    0 2px 14px rgba(0, 0, 0, 0.5);
+}
+
+.shinigami .icon-btn.listening {
+  background: linear-gradient(135deg, #ff2e2e, #7a0000);
+
+  border-color: rgba(255, 0, 0, 0.5);
+
+  box-shadow: 0 0 30px rgba(255, 0, 0, 0.5);
+}
+
+.shinigami .icon-btn.listening img {
+  filter: brightness(0) invert(1);
+}
+
+.shinigami .bot img {
+
+  border:
+    2px solid rgba(255,0,0,.45);
+
+  box-shadow:
+    0 0 20px rgba(255,0,0,.45),
+    0 0 40px rgba(255,0,0,.2);
+}
+
+.shinigami .user img {
+
+  border:
+    2px solid rgba(255,255,255,.15);
+
+  box-shadow:
+    0 0 12px rgba(255,255,255,.08);
+}
+
+.shinigami .icon-btn:hover {
+  transform: translateY(-3px) scale(1.08);
+
+  box-shadow: 0 0 18px rgba(255, 0, 0, 0.25);
+}
+
+.shinigami .typing {
+  background: rgba(0, 0, 0, 0.75);
+  border: 1px solid rgba(255, 0, 0, 0.15);
+}
+
+.shinigami .dot {
+  background: #ff2e2e;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
+}
+
+/* ---------- VOICE OVERLAY ---------- */
+
+.shinigami #voiceOverlay {
+  background:
+    radial-gradient(
+      circle at top,
+      rgba(255, 0, 0, 0.14),
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at bottom,
+      rgba(120, 0, 0, 0.12),
+      transparent 50%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(8, 0, 0, 0.95),
+      rgba(2, 0, 0, 0.98)
+    );
+}
+
+.shinigami .voice-status {
+  color: #ff6b6b;
+
+  text-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+}
+
+.shinigami .voice-hint {
+  color: rgba(255, 107, 107, 0.6);
+}
+
+.shinigami .voice-transcript {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.shinigami .ring {
+  border-color: rgba(255, 0, 0, 0.12);
+}
+
+.shinigami .mic-ring {
+  border-color: rgba(255, 0, 0, 0.4);
+}
+
+.shinigami .chat-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.shinigami .chat-container::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #2a0000, #ff0000);
+  border-radius: 20px;
+}
+
+.shinigami .input-area::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 20%;
+
+  width: 60%;
+  height: 1px;
+
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(255, 0, 0, 0.6),
+    transparent
+  );
+}
+
+.shinigami .input-area {
+  background: rgba(15, 15, 15, 0.72);
+
+  border: 1px solid rgba(255, 0, 0, 0.2);
+
+  backdrop-filter: blur(20px);
+
+  box-shadow: 0 0 25px rgba(255, 0, 0, 0.08);
+}
+
+.shinigami #input {
+  background: rgba(20, 20, 20, 0.85);
+
+  color: #fafafa;
+
+  border: 1px solid rgba(255, 60, 60, 0.15);
+
+  border-radius: 18px;
+}
+
+.shinigami input::placeholder {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.shinigami input:focus {
+  border-color: rgba(255, 60, 60, 0.45);
+
+  box-shadow: 0 0 14px rgba(255, 0, 0, 0.18);
+}
+

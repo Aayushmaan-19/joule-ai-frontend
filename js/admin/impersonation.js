@@ -23,9 +23,8 @@ document.body.appendChild(bar);
 const text = bar.querySelector(".imp-text strong");
 const exitBtn = bar.querySelector(".imp-exit");
 
-window.addEventListener("joule:session", event => {
-  const session = event.detail;
-
+/** Called by main.js with the session that caused this module to load, and by the listener below for every later change. */
+export function sync(session) {
   if (session?.impersonatedBy) {
     text.textContent = auth.currentUser?.email || "this user";
     bar.classList.remove("hidden");
@@ -34,7 +33,9 @@ window.addEventListener("joule:session", event => {
     bar.classList.add("hidden");
     document.body.classList.remove("imp-active");
   }
-});
+}
+
+window.addEventListener("joule:session", event => sync(event.detail));
 
 exitBtn.addEventListener("click", async () => {
   exitBtn.disabled = true;

@@ -1,0 +1,483 @@
+/* =========================================================
+   Account: profile button, auth views, OTP, profile card, usage hint, password toggle
+   navbar avatar button, login/signup/OTP views, the profile card container (its content is styled by ../profile.css), usage hint, password show/hide
+   (from the former style.css — see theme.css for load order)
+========================================================= */
+/* =========================================================
+   PROFILE BUTTON (navbar)
+========================================================= */
+
+.profile-btn {
+  width: 46px;
+  height: 46px;
+
+  padding: 0;
+
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  cursor: pointer;
+  overflow: hidden;
+
+  box-shadow:
+    0 6px 20px rgba(59, 130, 246, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.profile-btn:hover {
+  transform: translateY(-2px) scale(1.04);
+
+  box-shadow: 0 10px 26px rgba(59, 130, 246, 0.2);
+}
+
+.profile-btn img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  display: block;
+}
+
+.dark .profile-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* =========================================================
+   AUTH MODAL: views, errors, toggle
+========================================================= */
+
+.auth-view {
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+
+  animation: authViewFade 0.32s ease both;
+}
+
+@keyframes authViewFade {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.auth-error {
+  margin-top: 14px;
+  margin-bottom: 0;
+
+  padding: 12px 14px;
+
+  border-radius: 14px;
+
+  background: rgba(248, 113, 113, 0.14);
+  border: 1px solid rgba(248, 113, 113, 0.35);
+
+  color: #b91c1c;
+
+  font-size: 13.5px;
+  line-height: 1.4;
+}
+
+.dark .auth-error {
+  background: rgba(248, 113, 113, 0.12);
+  border-color: rgba(248, 113, 113, 0.3);
+  color: #fca5a5;
+}
+
+.auth-success {
+  margin-top: 14px;
+  margin-bottom: 0;
+
+  padding: 12px 14px;
+
+  border-radius: 14px;
+
+  background: rgba(74, 222, 128, 0.14);
+  border: 1px solid rgba(74, 222, 128, 0.35);
+
+  color: #15803d;
+
+  font-size: 13.5px;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.dark .auth-success {
+  background: rgba(74, 222, 128, 0.12);
+  border-color: rgba(74, 222, 128, 0.3);
+  color: #86efac;
+}
+
+.auth-toggle {
+  margin-top: 18px;
+  margin-bottom: 0;
+
+  text-align: center;
+
+  font-size: 13.5px;
+
+  color: rgba(30, 58, 138, 0.65);
+}
+
+.dark .auth-toggle {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.link-btn {
+  background: none;
+  border: none;
+
+  padding: 0;
+  margin-left: 4px;
+
+  color: #2563eb;
+  font-weight: 600;
+  font-size: 13.5px;
+
+  cursor: pointer;
+
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.dark .link-btn {
+  color: #93c5fd;
+}
+
+.link-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
+/* =========================================================
+   OTP VERIFICATION VIEW
+========================================================= */
+
+.otp-form {
+  display: flex;
+  flex-direction: column;
+
+  margin-top: 6px;
+}
+
+.otp-inputs {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+
+  margin-top: 8px;
+}
+
+.otp-box {
+  width: 100%;
+  aspect-ratio: 1;
+
+  text-align: center;
+
+  font-size: 22px;
+  font-weight: 700;
+
+  border-radius: 14px;
+  border: 1px solid rgba(191, 219, 254, 0.75);
+
+  background: rgba(255, 255, 255, 0.55);
+
+  color: #1e3a8a;
+
+  outline: none;
+
+  transition: all 0.25s ease;
+}
+
+.otp-box:focus {
+  border-color: rgba(96, 165, 250, 0.9);
+
+  background: rgba(255, 255, 255, 0.78);
+
+  box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.14);
+}
+
+.dark .otp-box {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #f8fafc;
+}
+
+/* =========================================================
+   PROFILE PANEL
+========================================================= */
+
+.profile-panel {
+  position: relative;
+
+  width: min(430px, 92vw);
+
+  padding: 42px;
+
+  border-radius: 32px;
+
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.72),
+    rgba(219, 234, 254, 0.42)
+  );
+
+  border: 1px solid rgba(255, 255, 255, 0.55);
+
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+
+  box-shadow:
+    0 20px 60px rgba(96, 165, 250, 0.18),
+    0 8px 24px rgba(59, 130, 246, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.65);
+
+  animation: modalEnter 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.dark .profile-panel {
+  background: linear-gradient(
+    180deg,
+    rgba(85, 53, 173, 0.82),
+    rgba(45, 2, 146, 0.68)
+  );
+
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================
+   PROFILE BUTTON: shinigami theme
+========================================================= */
+
+.shinigami .profile-btn {
+  border-color: rgba(248, 113, 113, 0.3);
+
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* ---------- AUTH MODAL + OTP ---------- */
+
+.shinigami .modal-overlay {
+  background: rgba(20, 0, 0, 0.45);
+}
+
+.shinigami .auth-modal {
+  background: linear-gradient(
+    180deg,
+    rgba(40, 0, 0, 0.88),
+    rgba(10, 0, 0, 0.92)
+  );
+
+  border: 1px solid rgba(255, 0, 0, 0.18);
+
+  box-shadow:
+    0 20px 60px rgba(255, 0, 0, 0.12),
+    0 8px 24px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.shinigami .auth-modal h2,
+.shinigami .close-btn,
+.shinigami .auth-modal input,
+.shinigami .otp-box {
+  color: #f8e8e8;
+}
+
+.shinigami .subtitle,
+.shinigami .auth-modal input::placeholder {
+  color: rgba(255, 200, 200, 0.45);
+}
+
+.shinigami .auth-modal input,
+.shinigami .otp-box {
+  background: rgba(255, 255, 255, 0.04);
+
+  border: 1px solid rgba(255, 0, 0, 0.16);
+}
+
+.shinigami .auth-modal input:focus,
+.shinigami .otp-box:focus {
+  border-color: rgba(255, 46, 46, 0.55);
+
+  background: rgba(255, 0, 0, 0.06);
+
+  box-shadow: 0 0 0 4px rgba(255, 0, 0, 0.12);
+}
+
+.shinigami .close-btn,
+.shinigami .google-btn {
+  background: rgba(255, 255, 255, 0.04);
+
+  border: 1px solid rgba(255, 0, 0, 0.16);
+
+  color: #f8e8e8;
+}
+
+.shinigami .continue-btn {
+  background: linear-gradient(135deg, #ff2e2e, #8a0000);
+
+  box-shadow: 0 12px 30px rgba(255, 0, 0, 0.3);
+}
+
+.shinigami .password-toggle {
+  color: rgba(255, 180, 180, 0.55);
+}
+
+.shinigami .password-toggle:hover {
+  color: rgba(255, 200, 200, 0.85);
+
+  background: rgba(255, 0, 0, 0.1);
+}
+
+.shinigami .link-btn {
+  color: #ff6b6b;
+}
+
+.shinigami .auth-toggle {
+  color: rgba(255, 200, 200, 0.55);
+}
+
+.shinigami .auth-error {
+  background: rgba(248, 113, 113, 0.14);
+  border: 1px solid rgba(248, 113, 113, 0.4);
+
+  color: #ffb4b4;
+}
+
+.shinigami .auth-success {
+  background: rgba(74, 222, 128, 0.1);
+  border: 1px solid rgba(74, 222, 128, 0.3);
+
+  color: #86efac;
+}
+
+.shinigami .divider span {
+  background: rgba(255, 0, 0, 0.18);
+}
+
+.shinigami .divider p {
+  color: rgba(255, 180, 180, 0.5);
+}
+
+/* ---------- PROFILE PANEL ---------- */
+
+.shinigami .profile-panel {
+  background: linear-gradient(
+    180deg,
+    rgba(40, 0, 0, 0.88),
+    rgba(10, 0, 0, 0.92)
+  );
+
+  border: 1px solid rgba(255, 0, 0, 0.18);
+
+  box-shadow:
+    0 20px 60px rgba(255, 0, 0, 0.12),
+    0 8px 24px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+/* =========================================================
+   USAGE HINT (remaining messages indicator)
+========================================================= */
+
+.usage-hint {
+  margin-top: 8px;
+
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+
+  color: rgba(217, 119, 6, 0.85);
+
+  opacity: 0.9;
+}
+
+.dark .usage-hint {
+  color: rgba(253, 230, 138, 0.85);
+}
+
+/* =========================================================
+   PASSWORD SHOW/HIDE TOGGLE
+========================================================= */
+
+.password-field {
+  position: relative;
+
+  width: 100%;
+
+  margin-top: 16px;
+}
+
+.password-field input {
+  margin-top: 0;
+  padding-right: 48px;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 32px;
+  height: 32px;
+
+  padding: 0;
+
+  border: none;
+  border-radius: 50%;
+
+  background: transparent;
+
+  color: rgba(30, 58, 138, 0.55);
+
+  cursor: pointer;
+
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.password-toggle:hover {
+  color: rgba(30, 58, 138, 0.85);
+
+  background: rgba(96, 165, 250, 0.12);
+}
+
+.password-toggle svg {
+  display: block;
+}
+
+.dark .password-toggle {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.dark .password-toggle:hover {
+  color: rgba(255, 255, 255, 0.85);
+
+  background: rgba(255, 255, 255, 0.08);
+}
+

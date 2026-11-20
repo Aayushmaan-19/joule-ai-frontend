@@ -1,0 +1,277 @@
+/* =========================================================
+   Loading screen
+   aurora condensation loader, logo/text reveal, progress bar
+   (from the former style.css — see theme.css for load order)
+========================================================= */
+/* =========================================================
+   LOADING SCREEN
+========================================================= */
+
+.loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 99999;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+
+  background:
+    radial-gradient(circle at 30% 30%, #1a1a4e 0%, #0b0b24 55%, #050510 100%);
+
+  overflow: hidden;
+
+  transition: opacity 0.55s ease, visibility 0.55s ease;
+}
+
+.loading-screen.loading-done {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.loading-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+
+  display: block;
+
+  pointer-events: none;
+}
+
+.loading-logo {
+  position: relative;
+
+  width: 132px;
+  height: 132px;
+
+  border-radius: 50%;
+
+  /* Starts invisible — JS adds .logo-reveal-active at the right frame
+     so it's always in sync with the aurora canvas, never before it */
+  opacity: 0;
+  transform: scale(0.3);
+
+  filter: drop-shadow(0 0 28px rgba(99, 102, 241, 0.55));
+
+  /* Transition ready — but won't play until JS triggers the class */
+  transition: none;
+}
+
+/* JS adds this class at exactly LOGO_REVEAL_AT_MS */
+.loading-logo.logo-reveal-active {
+  animation: logoReveal 0.85s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes logoReveal {
+  0% {
+    opacity: 0;
+    transform: scale(0.25);
+  }
+
+  60% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+
+  80% {
+    transform: scale(0.96);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.loading-text {
+  font-family: "Allura", cursive;
+
+  font-size: 38px;
+  letter-spacing: 4px;
+
+  color: #e0e7ff;
+
+  text-shadow: 0 0 18px rgba(129, 140, 248, 0.5);
+
+  /* Starts invisible — JS adds .text-reveal-active at the right
+     frame, same pattern as .loading-logo above. This used to run
+     on its own CSS animation-delay: a second clock, independent of
+     the one driving the aurora/logo, racing the stylesheet and the
+     Allura webfont load. On a slow first load that race could lose,
+     showing default black system-font text for a frame before
+     snapping to its real look — the "black text pops" flash. */
+  opacity: 0;
+  transform: translateY(8px);
+  animation: none;
+}
+
+/* JS adds this class shortly after LOGO_REVEAL_AT_MS */
+.loading-text.text-reveal-active {
+  animation: loadingTextIn 0.6s ease forwards;
+}
+
+@keyframes loadingTextIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Rotating status caption ("Initializing...", "Waking up the
+   servers...", etc.) — driven entirely by loadingScreen.js toggling
+   .status-visible on and off between lines. Fixed min-height so the
+   line-length changing between phrases never shifts the bar below it. */
+.loading-status {
+  min-height: 16px;
+
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+
+  color: rgba(224, 231, 255, 0.65);
+
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.loading-status.status-visible {
+  opacity: 1;
+}
+
+/* ---- Loading bar ---- */
+
+/* ---- Loading bar: cinematic aurora theme ---- */
+
+/* Outer container: percentage above bar */
+.loading-bar-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.loading-bar-track {
+  position: relative;
+  width: 320px;
+  height: 8px;
+  border-radius: 999px;
+
+  /* Dark recessed track with subtle inner shadow */
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow:
+    inset 0 1px 4px rgba(0, 0, 0, 0.4);
+
+  overflow: hidden;
+  opacity: 1;
+}
+
+/* Outer ambient glow around the track */
+.loading-bar-track::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 999px;
+  background: transparent;
+  box-shadow: 0 0 18px 2px rgba(99, 102, 241, 0.25);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.loading-bar-fill {
+  position: relative;
+  width: 0%;
+  height: 100%;
+  border-radius: 999px;
+  z-index: 1;
+
+  /* Aurora gradient: cyan → indigo → violet — matches ribbon colors */
+  background: linear-gradient(
+    90deg,
+    #38bdf8 0%,
+    #818cf8 45%,
+    #c084fc 80%,
+    #38bdf8 100%
+  );
+  background-size: 200% 100%;
+
+  /* Pulse the gradient horizontally for living-aurora feel */
+  animation: barAuroraFlow 2.5s linear infinite;
+
+  box-shadow:
+    0 0 8px rgba(129, 140, 248, 0.9),
+    0 0 20px rgba(99, 102, 241, 0.5),
+    0 0 36px rgba(192, 132, 252, 0.25);
+
+  transition: width 0.15s ease-out;
+  overflow: hidden;
+}
+
+@keyframes barAuroraFlow {
+  0%   { background-position: 0% 0%; }
+  100% { background-position: 200% 0%; }
+}
+
+/* Bright white shimmer sweep over the fill */
+.loading-bar-fill::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -80%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.55) 50%,
+    transparent 100%
+  );
+  animation: barShimmer 1.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes barShimmer {
+  0%   { left: -80%; }
+  100% { left: 140%; }
+}
+
+/* Percentage — styled as a glowing number, not just plain text */
+.loading-percent {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+
+  /* Aurora-matched tint */
+  color: rgba(192, 132, 252, 0.9);
+  text-shadow:
+    0 0 12px rgba(129, 140, 248, 0.8),
+    0 0 24px rgba(99, 102, 241, 0.4);
+
+  opacity: 1;
+  font-variant-numeric: tabular-nums;
+
+  /* Subtle pulse so it feels alive */
+  animation: percentPulse 2s ease-in-out infinite;
+}
+
+@keyframes percentPulse {
+  0%, 100% { opacity: 0.85; }
+  50%       { opacity: 1; }
+}
+

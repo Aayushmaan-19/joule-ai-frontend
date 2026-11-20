@@ -1,8 +1,24 @@
-@import "./style.css";
+@import "./core/01-base-header.css";
+@import "./core/02-controls-voice.css";
+@import "./core/03-chat.css";
+@import "./core/04-auth-buttons.css";
+@import "./core/05-shinigami-overrides.css";
+@import "./core/06-dark-overrides.css";
+@import "./core/07-input-area.css";
+@import "./core/08-account.css";
+@import "./core/09-loading.css";
+@import "./core/10-sidebar.css";
+@import "./core/11-bubble-actions.css";
+@import "./core/12-mobile-defaults.css";
+@import "./core/13-password-gallery.css";
+@import "./core/14-people.css";
+
 @import "./mobile.css" screen and (max-width: 768px);
+
 @import "./redesign.css";
 @import "./keyboard.css";
 @import "./music.css";
 @import "./shinigami.css";
 @import "./admin.css";
 @import "./social.css";
+@import "./profile.css";

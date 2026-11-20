@@ -15,7 +15,6 @@
 .mp-mini {
   --mp-h: 260;
   --mp-accent: hsl(var(--mp-h) 95% 68%);
-  --mp-accent-soft: hsl(var(--mp-h) 95% 68% / 0.18);
   font-family: "IBM Plex Sans", system-ui, sans-serif;
   transition: --mp-h 0.9s ease;
 }

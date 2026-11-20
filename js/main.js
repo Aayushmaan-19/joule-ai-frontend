@@ -39,8 +39,6 @@ import { initializeTheme } from "./ui/themeManager.js";
 
 import { initMusicPlayer } from "./ui/musicPlayer.js";
 import "./ui/keyboardInset.js";
-import "./admin/adminPanel.js";
-import "./admin/impersonation.js";
 import "./ui/modalManager.js";
 import "./ui/profileManager.js";
 import "./ui/toolsMenu.js";
@@ -48,7 +46,6 @@ import "./ui/gallery.js";
 import "./ui/mobileNav.js";
 import "./ui/idleHero.js";
 import { initAnimationManager } from "./ui/animationManager.js";
-import "./ui/legalModal.js";
 import { initRouter } from "./ui/router.js";
 import { initLoadingScreen } from "./ui/loadingScreen.js";
 
@@ -124,6 +121,26 @@ function setupMusicEvents() {
 }
 
 /* =========================
+   ADMIN TOOLS
+   Loaded only for the sessions that need them: an admin's own session,
+   or an "open as user" session (which needs its way back). Everyone else
+   never downloads, builds or renders any of it. The backend re-checks
+   every admin endpoint, so this is about not shipping the tooling to
+   people who can never use it — not about security.
+========================= */
+
+function setupAdminTools() {
+  window.addEventListener("joule:session", ({ detail }) => {
+    if (detail?.isAdmin) {
+      import("./admin/adminPanel.js").then(m => m.sync(detail));
+    }
+    if (detail?.impersonatedBy) {
+      import("./admin/impersonation.js").then(m => m.sync(detail));
+    }
+  });
+}
+
+/* =========================
    SIDEBAR AUTO-RENAME LISTENER
    chatHistory.js dispatches this event after auto-naming completes
 ========================= */
@@ -142,6 +159,8 @@ function initializeApp() {
   loadSettings();
 
   initializeTheme();
+
+  setupAdminTools();
 
   initializeAuthState();
 

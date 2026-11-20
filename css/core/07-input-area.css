@@ -1,0 +1,367 @@
+/* =========================================================
+   Input area + shared theme surfaces
+   body background per theme, composer (.input-area) in all three themes
+   (from the former style.css — see theme.css for load order)
+========================================================= */
+/*=====================Input Area + Logo and Textures===================*/
+
+body,
+.input-area,
+.bot .chat,
+.user .chat,
+.icon-btn,
+.typing,
+input,
+.logo-text,
+.signature,
+.clouds,
+.mountains {
+  transition:
+    background 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    color 0.55s ease,
+    border-color 0.55s ease,
+    box-shadow 0.7s ease,
+    transform 0.35s ease,
+    opacity 0.7s ease,
+    filter 0.7s ease;
+}
+
+body {
+  transition:
+    background 1s cubic-bezier(0.22, 1, 0.36, 1),
+    color 0.6s ease;
+}
+
+.input-area,
+.bot .chat,
+.typing {
+  transition:
+    background 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    backdrop-filter 0.8s ease,
+    border-color 0.6s ease,
+    box-shadow 0.8s ease;
+}
+
+.icon-btn img {
+  transition:
+    transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
+    filter 0.5s ease,
+    opacity 0.4s ease;
+}
+
+.icon-btn img {
+  width: 20px;
+
+  will-change: transform;
+
+  backface-visibility: hidden;
+
+  transform: translateZ(0);
+}
+
+/* .icon-btn svg already pops on hover (line ~575) — most of this
+   app's icon-btns use <img>, not <svg>, and had no equivalent. The
+   spring transition above was already defined and just never had
+   a hover state to trigger it. */
+.icon-btn:hover img {
+  transform: translateZ(0) scale(1.08);
+}
+
+@keyframes smoothSpin {
+  0% {
+    transform: translateZ(0) rotate(0deg) scale(1);
+  }
+
+  50% {
+    transform: translateZ(0) rotate(180deg) scale(1.18);
+  }
+
+  100% {
+    transform: translateZ(0) rotate(360deg) scale(1);
+  }
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+
+  pointer-events: none;
+  z-index: 9999;
+
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 255, 255, 0.18),
+    transparent 55%
+  );
+
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+body.switching::before {
+  opacity: 1;
+}
+
+.dark .input-area {
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(76,29,149,.45),
+      rgba(30,41,59,.75)
+    );
+
+  border:
+    1px solid rgba(196,181,253,.15);
+
+  backdrop-filter: blur(30px);
+
+  box-shadow:
+    0 0 40px rgba(139,92,246,.15),
+    inset 0 1px 0 rgba(255,255,255,.06);
+}
+
+.dark #input {
+
+  background: transparent;
+
+  color: #f8fafc;
+
+  font-size: 15px;
+
+  font-weight: 500;
+}
+
+.dark #input::placeholder {
+
+  color:
+    rgba(
+      196,
+      181,
+      253,
+      .55
+    );
+}
+
+.dark .input-area:focus-within {
+
+  border-color:
+    rgba(
+      167,
+      139,
+      250,
+      .5
+    );
+
+  box-shadow:
+    0 0 0 4px rgba(139,92,246,.12),
+    0 0 45px rgba(139,92,246,.25),
+    0 15px 50px rgba(0,0,0,.4);
+
+  transform:
+    translateY(-2px);
+}
+
+.dark .input-area::after {
+
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  border-radius: inherit;
+
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(196,181,253,.08),
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at bottom right,
+      rgba(139,92,246,.08),
+      transparent 40%
+    );
+
+  pointer-events: none;
+} 
+
+.dark input::placeholder {
+  color: #94a3b8;
+}
+
+.dark .user .chat {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+
+  color: white;
+
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
+}
+
+.dark .bot .chat {
+  color: #f1f5f9;
+}
+
+.dark .logo-text {
+  color: #93c5fd;
+
+  text-shadow: 0 0 12px rgba(147, 197, 253, 0.45);
+}
+
+.dark .signature {
+  color: #c4b5fd;
+}
+
+.dark .dot {
+  background: #e2e8f0;
+}
+
+.dark .mountains {
+  background: linear-gradient(to top, rgba(30, 41, 59, 0.85), transparent);
+
+  opacity: 0.7;
+}
+
+.dark .clouds {
+  opacity: 0.08;
+}
+
+.input-area {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 12px;
+  z-index: 15;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  width: min(900px, 94%);
+  margin: 0 auto 16px;
+
+  padding: 12px 14px;
+
+  border-radius: 28px;
+
+  background: rgba(255, 255, 255, 0.65);
+
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+
+  border: 1px solid rgba(255, 255, 255, 0.45);
+
+  box-shadow:
+    0 10px 35px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+
+  transition: all 0.35s ease;
+}
+
+#input {
+  flex: 1;
+  min-width: 0;
+
+  background: transparent;
+
+  border: none;
+
+  outline: none;
+
+  padding: 14px 8px;
+
+  font-size: 15px;
+
+  color: #1e293b;
+
+  font-weight: 500;
+}
+
+/* .icon-btn has overflow:hidden, which per the flexbox spec makes
+   its automatic (min-width:auto) shrink floor effectively 0 — so
+   on a narrow row it was squeezed to make room for #input instead
+   of #input shrinking (that needed min-width:0 above). Icons should
+   never shrink; only the input field should absorb width changes. */
+.input-area .tools-wrapper,
+.input-area .icon-btn {
+  flex-shrink: 0;
+}
+
+.input-area:focus-within {
+  transform: translateY(-2px);
+
+  border-color: rgba(96, 165, 250, 0.45);
+
+  box-shadow:
+    0 0 0 4px rgba(96, 165, 250, 0.12),
+    0 15px 40px rgba(59, 130, 246, 0.12);
+}
+
+input:focus {
+  border-color: #4da6ff;
+  box-shadow: 0 0 0 2px rgba(77, 166, 255, 0.2);
+}
+
+.input-area::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  border-radius: inherit;
+
+  background: radial-gradient(
+    circle at top,
+    rgba(255, 255, 255, 0.35),
+    transparent 70%
+  );
+
+  pointer-events: none;
+}
+
+.message:not(.user) {
+  width: 100%;
+}
+
+.bot .chat {
+  /* Width is owned by .bot-bubble-wrapper now — this just fills it */
+  flex: 0 1 auto;
+  width: 100%;
+  max-width: 100%;
+}
+
+.message.bot {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.icon-btn.listening {
+  background: #111;
+
+  animation: pulseMic 1.6s infinite;
+
+  transform: scale(1.05);
+}
+
+.icon-btn.listening svg {
+  stroke: white;
+}
+
+@keyframes pulseMic {
+  0% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.6);
+  }
+
+  70% {
+    box-shadow: 0 0 0 18px rgba(59, 130, 246, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+  }
+}

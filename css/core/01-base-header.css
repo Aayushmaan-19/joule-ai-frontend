@@ -1,0 +1,277 @@
+/* =========================================================
+   Page base + header
+   html/body reset, scrollbars, cloud/mountain textures, sidebar icon tokens, header (logo, J mark), signature
+   (from the former style.css — see theme.css for load order)
+========================================================= */
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+
+/* Hide scrollbar everywhere but keep scroll functionality.
+   overflow-x is set here too, not just on body: html is the actual
+   root scrolling element, and position:fixed descendants (this page
+   has several) don't reliably respect a hidden-overflow ancestor
+   that isn't the root — body-only was the gap letting mobile browsers
+   rubber-band a few px sideways. */
+html {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  overflow-x: hidden;
+}
+
+html::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+/* Buttons already carry their own custom :active press animations
+   (scale transforms) — without this, the browser's default tap
+   highlight/flash renders on top of those on mobile, and manipulation
+   removes any residual double-tap-zoom delay on touch. */
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(255, 255, 255, 0.6),
+      transparent 60%
+    ),
+    linear-gradient(180deg, #dbeafe 0%, #e0f2fe 40%, #ecfdf5 100%);
+}
+
+/*=====================Textures===================*/
+
+.clouds,
+.mountains {
+  pointer-events: none;
+  z-index: 0;
+}
+
+.clouds {
+  position: fixed;
+  width: 200%;
+  height: 200px;
+  background-image:
+    radial-gradient(ellipse 120px 40px at 10% 45%, rgba(255, 255, 255, 0.55), transparent 70%),
+    radial-gradient(ellipse 160px 50px at 32% 25%, rgba(255, 255, 255, 0.45), transparent 70%),
+    radial-gradient(ellipse 140px 45px at 58% 55%, rgba(255, 255, 255, 0.5), transparent 70%),
+    radial-gradient(ellipse 180px 55px at 82% 30%, rgba(255, 255, 255, 0.4), transparent 70%);
+  background-repeat: repeat-x;
+  background-size: 400px 200px;
+  opacity: 0.25;
+  animation: cloudMove 60s linear infinite;
+}
+
+@keyframes cloudMove {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.mountains {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 180px;
+  background: linear-gradient(to top, #c7d2fe, transparent);
+  backdrop-filter: blur(6px);
+  opacity: 0.5;
+}
+
+/*=====================Theme Sidebar Icon Colors===================*/
+:root {
+  --sidebar-icon-stroke: #1976d2; /* blue for light */
+}
+.dark {
+  --sidebar-icon-stroke: #a259f7; /* purple for dark */
+}
+.shinigami {
+  --sidebar-icon-stroke: #e53935; /* red for shinigami */
+}
+
+/*=====================Header===================*/
+
+/* Chat is the base layer: it fills #main edge-to-edge and sits
+   lowest in the stack. The header group (logo, signature, icon
+   controls) stays in normal flow on top of it — not a separate
+   block pushing chat down, but floating chrome sharing the same
+   space, above the chat. Padding on .chat-container (below) keeps
+   messages clear of that chrome. */
+
+.header-wrapper,
+.signature,
+.controls {
+  position: relative;
+  z-index: 20;
+  flex-shrink: 0;
+}
+
+.chat-container {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.header-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 25px;
+  /* Fade curtain below header-wrapper so chat scrolling
+     under it looks natural, not like a hard cut */
+  padding-bottom: 8px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  padding: 16px 34px;
+
+  border-radius: 50px;
+
+  /* Most opaque element on the page — this is the topmost
+     floating layer, it should never look transparent */
+  background: rgba(255, 255, 255, 0.92);
+
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+
+  /* Stronger shadow so elevation above scrolling chat is obvious */
+  box-shadow:
+    0 12px 32px rgba(30, 64, 175, 0.16),
+    0 2px 8px rgba(0, 0, 0, 0.08);
+
+  transform: translateZ(0);
+
+  will-change: transform;
+
+  backface-visibility: hidden;
+
+  transition:
+    transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.45s ease,
+    background 0.5s ease;
+}
+
+.header:hover {
+  transform: translateY(-4px);
+
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.16);
+}
+
+.header:active {
+  transform: translateY(-1px) scale(0.985);
+}
+
+.header-wrapper {
+  transform: translateZ(0);
+
+  will-change: transform;
+}
+
+.logo-svg {
+  width: 60px;
+  height: 60px;
+}
+
+.j-path {
+  stroke: #60a5fa;
+  stroke-width: 5;
+  fill: none;
+  stroke-dasharray: 220;
+  stroke-dashoffset: 220;
+
+  animation: drawJ 1.8s cubic-bezier(0.65, 0.05, 0.36, 1) forwards;
+  animation-delay: 0.6s;
+}
+
+.j-tail {
+  stroke: #3b82f6;
+  stroke-width: 4;
+  fill: none;
+  stroke-dasharray: 140;
+  stroke-dashoffset: 140;
+
+  animation: drawTail 1.2s ease forwards;
+  animation-delay: 1.2s;
+}
+
+@keyframes drawJ {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes drawTail {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.logo-text {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #2563eb;
+}
+
+/*=====================Aayushmaan Signature Drop===================*/
+
+.signature {
+  text-align: center;
+  font-family: "Allura";
+  font-size: 20px;
+  margin-top: 8px;
+  color: #330066;
+
+  opacity: 0;
+  transform: translateY(-80px);
+
+  animation: signatureDrop 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation-delay: 2.2s;
+}
+
+@keyframes signatureDrop {
+  0% {
+    opacity: 0;
+    transform: translateY(-80px);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+

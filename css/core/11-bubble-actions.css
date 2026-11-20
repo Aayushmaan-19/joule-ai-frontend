@@ -1,0 +1,91 @@
+/* =========================================================
+   Bubble action buttons
+   copy / speak buttons under bot messages
+   (from the former style.css — see theme.css for load order)
+========================================================= */
+/* ===================== Bubble Action Buttons ===================== */
+
+.bot-bubble-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  max-width: 100%;
+  gap: 4px;
+}
+
+.bubble-actions {
+  display: flex;
+  gap: 4px;
+  padding-left: 2px;
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+
+.message.bot:hover .bubble-actions {
+  opacity: 1;
+}
+
+.bubble-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 5px;
+  border-radius: 6px;
+  color: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s ease, background 0.15s ease;
+  line-height: 1;
+}
+
+.bubble-btn:hover {
+  color: rgba(0, 0, 0, 0.65);
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.bubble-btn.copied {
+  color: #22c55e;
+}
+
+.bubble-btn.speaking {
+  color: #4da6ff;
+}
+
+/* Dark mode */
+.dark .bubble-btn {
+  color: rgba(255, 255, 255, 0.28);
+}
+
+.dark .bubble-btn:hover {
+  color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.dark .bubble-btn.copied {
+  color: #22c55e;
+}
+
+.dark .bubble-btn.speaking {
+  color: #60a5fa;
+}
+
+/* Shinigami mode */
+.shinigami .bubble-btn {
+  color: rgba(220, 50, 50, 0.35);
+}
+
+.shinigami .bubble-btn:hover {
+  color: rgba(255, 80, 80, 0.9);
+  background: rgba(220, 50, 50, 0.08);
+}
+
+.shinigami .bubble-btn.copied {
+  color: #ff4444;
+}
+
+.shinigami .bubble-btn.speaking {
+  color: #ff2e2e;
+}
+
+

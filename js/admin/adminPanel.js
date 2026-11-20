@@ -11,9 +11,11 @@ import {
 } from "./adminApi.js";
 
 /**
- * Admin console — only reachable for accounts the backend recognises as
- * admins (ADMIN_EMAILS). The button is hidden for everyone else, and every
- * endpoint behind it re-checks on the server, so hiding is cosmetic only.
+ * Admin console — loaded by main.js only for a session the backend has
+ * recognised as an admin (ADMIN_EMAILS). Nothing about it exists in the page
+ * for anyone else: this module isn't downloaded, its panel isn't built and
+ * its entry row isn't rendered. Every endpoint behind it also re-checks on
+ * the server.
  */
 
 const esc = value =>
@@ -324,14 +326,33 @@ function close() {
 
 document.body.appendChild(panel);
 
-document.getElementById("profileAdminRow")?.addEventListener("click", () => {
+/* ---------- entry row (profile panel, admins only) ---------- */
+
+const entry = document.createElement("button");
+entry.type = "button";
+entry.className = "pf-row";
+entry.innerHTML = `
+  <span class="pf-row-ic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 4.5 3.2 8 8 9 4.8-1 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/></svg></span>
+  <span class="pf-row-label">Admin console</span>
+  <svg class="pf-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+`;
+entry.addEventListener("click", () => {
   document.getElementById("closeProfile")?.click();
   open();
 });
 
-// A different person signing in / out must never inherit an open console.
-window.addEventListener("joule:session", () => {
+/** Called by main.js with the session that caused this module to load, and by the listener below for every later change. */
+export function sync(session) {
+  // A different person signing in / out must never inherit an open console.
   panel.classList.add("hidden");
   panel.classList.remove("in");
   selectedUid = null;
-});
+
+  if (session?.isAdmin) {
+    document.getElementById("profileSettings")?.append(entry);
+  } else {
+    entry.remove();
+  }
+}
+
+window.addEventListener("joule:session", event => sync(event.detail));
