@@ -1,0 +1,377 @@
+/* =========================================================
+   Image generation stage
+   Markup + behaviour: js/chat/imageGenStage.js. Shown inside a bot bubble
+   while an image is generated, then replaced by the normal image markup.
+
+   Layer order inside .igs-frame (bottom -> top):
+     canvas (live field) · glow · scan · orbit(s) · core spark
+     · the real <img> (clipped away until the reveal)
+     · flash · ring · burst · spinning border
+   The <img> starts as a transparent 1024x1024 placeholder styled by the
+   normal .generated-image rules, so the stage takes exactly the space the
+   finished image will — no jump when they swap.
+   Colours come from the v2 tokens (--ac, --vi, --tx2, --mu).
+========================================================= */
+
+@property --igs-a {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.igs-frame {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  max-width: 420px;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #0e0e10;
+}
+
+.igs-canvas,
+.igs-layer,
+.igs-flash,
+.igs-ring,
+.igs-burst {
+  position: absolute;
+  pointer-events: none;
+}
+
+.igs-canvas {
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  animation: igsDrift 9s ease-in-out infinite;
+}
+
+.igs-layer {
+  inset: 0;
+  z-index: 2;
+}
+
+/* ---------- the real image (hidden until the reveal) ---------- */
+
+body.v2 .message .chat .igs .igs-img {
+  position: relative;
+  z-index: 3;
+  max-width: 100%;
+  border-color: transparent;
+  clip-path: circle(0% at 50% 50%);
+  animation: none;
+}
+
+/* ---------- breathing light ---------- */
+
+.igs-glow {
+  z-index: 1;
+  background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0) 62%);
+  mix-blend-mode: soft-light;
+  animation: igsBreath 3.2s ease-in-out infinite;
+}
+
+/* ---------- scan line ---------- */
+
+.igs-scan {
+  inset: auto 0 100% 0;
+  height: 38%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.34) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  mix-blend-mode: overlay;
+  animation: igsScan 2.9s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+/* ---------- orbiting sparks ---------- */
+
+.igs-orbit {
+  inset: 17%;
+  animation: igsRotate 7s linear infinite;
+}
+
+.igs-orbit-in {
+  inset: 31%;
+  animation-duration: 4.6s;
+  animation-direction: reverse;
+}
+
+.igs-orbit i {
+  position: absolute;
+  inset: 0;
+  transform: rotate(calc(var(--i) * 60deg));
+}
+
+.igs-orbit-in i {
+  transform: rotate(calc(var(--i) * 120deg));
+}
+
+.igs-orbit i::after {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: calc(50% - 4px);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 10px 3px rgba(255, 255, 255, 0.75), 0 0 22px 6px var(--ac);
+}
+
+.igs-orbit-in i::after {
+  width: 5px;
+  height: 5px;
+  top: -2.5px;
+  left: calc(50% - 2.5px);
+  box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.7), 0 0 18px 4px var(--vi);
+}
+
+/* ---------- centre spark ---------- */
+
+.igs-core {
+  display: grid;
+  place-items: center;
+  color: #fff;
+}
+
+.igs-core svg {
+  width: 16%;
+  height: auto;
+  filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.95)) drop-shadow(0 0 28px var(--ac));
+  animation: igsPulse 1.7s ease-in-out infinite, igsRotate 9s linear infinite;
+}
+
+/* ---------- spinning light border ---------- */
+
+.igs-border {
+  z-index: 5;
+  padding: 2px;
+  border-radius: 12px;
+  background: conic-gradient(
+    from var(--igs-a),
+    rgba(255, 255, 255, 0) 0 52%,
+    var(--ac) 72%,
+    #fff 86%,
+    var(--vi) 95%,
+    rgba(255, 255, 255, 0)
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  animation: igsSpin 2.4s linear infinite;
+}
+
+/* ---------- status line ---------- */
+
+.igs-status {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  margin: 2px 0 0;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--tx2, inherit);
+}
+
+.igs-phrase.in {
+  animation: igsPhrase 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.igs-dots i {
+  font-style: normal;
+  animation: igsBlink 1.2s infinite both;
+}
+
+.igs-dots i:nth-child(2) { animation-delay: 0.2s; }
+.igs-dots i:nth-child(3) { animation-delay: 0.4s; }
+
+.igs-time {
+  margin-left: 10px;
+  font-size: 12px;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  color: var(--mu, inherit);
+}
+
+.igs-prompt {
+  max-width: 420px;
+  margin: 0;
+  overflow: hidden;
+  font-size: 12.5px;
+  font-style: italic;
+  color: var(--mu, inherit);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* =========================================================
+   REVEAL  (.igs.is-done)
+========================================================= */
+
+.igs.is-done .igs-layer {
+  animation: igsFadeOut 0.45s ease forwards;
+}
+
+.igs.is-done .igs-canvas {
+  animation: igsDrift 9s ease-in-out infinite, igsSettle 1.2s ease 0.3s forwards;
+}
+
+body.v2 .message .chat .igs.is-done .igs-img {
+  border-color: var(--bd);
+  animation: igsBloom 1.15s cubic-bezier(0.2, 0.75, 0.2, 1) 0.25s both;
+}
+
+.igs-flash {
+  inset: 0;
+  z-index: 4;
+  background: radial-gradient(circle at 50% 50%, #fff 0%, rgba(255, 255, 255, 0) 62%);
+  opacity: 0;
+}
+
+.igs.is-done .igs-flash {
+  animation: igsFlash 0.8s ease-out 0.12s both;
+}
+
+.igs-ring {
+  z-index: 4;
+  left: 50%;
+  top: 50%;
+  width: 30%;
+  aspect-ratio: 1 / 1;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 18px 2px var(--ac);
+  opacity: 0;
+}
+
+.igs.is-done .igs-ring {
+  animation: igsRing 1s cubic-bezier(0.1, 0.7, 0.2, 1) 0.2s both;
+}
+
+.igs-burst {
+  inset: 0;
+  z-index: 4;
+}
+
+.igs-burst b {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  margin: -3.5px 0 0 -3.5px;
+  border-radius: 50%;
+  background: var(--c);
+  box-shadow: 0 0 10px 2px var(--c);
+  animation: igsBurst 1s cubic-bezier(0.1, 0.8, 0.2, 1) both;
+}
+
+.igs.is-done .igs-border {
+  animation: igsFadeOut 0.4s ease forwards;
+}
+
+.igs.is-done .igs-phrase {
+  color: var(--ok, inherit);
+}
+
+/* =========================================================
+   KEYFRAMES
+========================================================= */
+
+@keyframes igsSpin   { to { --igs-a: 360deg; } }
+@keyframes igsRotate { to { transform: rotate(360deg); } }
+
+@keyframes igsDrift {
+  0%, 100% { transform: scale(1.04) translate(0, 0); }
+  50%      { transform: scale(1.12) translate(-1.5%, 1.2%); }
+}
+
+@keyframes igsBreath {
+  0%, 100% { transform: scale(0.8);  opacity: 0.55; }
+  50%      { transform: scale(1.18); opacity: 1; }
+}
+
+@keyframes igsScan {
+  0%   { transform: translateY(0);     opacity: 0; }
+  12%  { opacity: 1; }
+  88%  { opacity: 1; }
+  100% { transform: translateY(360%);  opacity: 0; }
+}
+
+@keyframes igsPulse {
+  0%, 100% { scale: 0.86; opacity: 0.85; }
+  50%      { scale: 1.18; opacity: 1; }
+}
+
+@keyframes igsBlink {
+  0%, 80%, 100% { opacity: 0.15; }
+  40%           { opacity: 1; }
+}
+
+@keyframes igsPhrase {
+  from { opacity: 0; transform: translateY(6px); filter: blur(3px); }
+  to   { opacity: 1; transform: none;            filter: blur(0); }
+}
+
+@keyframes igsFadeOut { to { opacity: 0; } }
+
+@keyframes igsSettle {
+  to { filter: blur(6px) saturate(1.4); }
+}
+
+@keyframes igsBloom {
+  0% {
+    clip-path: circle(0% at 50% 50%);
+    filter: blur(18px) saturate(1.7);
+    transform: scale(1.1);
+  }
+  100% {
+    clip-path: circle(78% at 50% 50%);
+    filter: blur(0) saturate(1);
+    transform: scale(1);
+  }
+}
+
+@keyframes igsFlash {
+  0%   { opacity: 0;   transform: scale(0.3); }
+  25%  { opacity: 0.95; }
+  100% { opacity: 0;   transform: scale(2.2); }
+}
+
+@keyframes igsRing {
+  0%   { opacity: 0.95; transform: translate(-50%, -50%) scale(0.2); }
+  100% { opacity: 0;    transform: translate(-50%, -50%) scale(3.6); }
+}
+
+@keyframes igsBurst {
+  0%   { opacity: 1; transform: translate(0, 0) scale(1.5); }
+  100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0); }
+}
+
+/* =========================================================
+   REDUCED MOTION — no loops; the image just fades in.
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .igs *,
+  .igs *::before,
+  .igs *::after {
+    animation: none !important;
+  }
+
+  .igs-scan,
+  .igs-orbit,
+  .igs-border,
+  .igs-flash,
+  .igs-ring {
+    display: none;
+  }
+
+  body.v2 .message .chat .igs.is-done .igs-img {
+    clip-path: none;
+    border-color: var(--bd);
+  }
+}

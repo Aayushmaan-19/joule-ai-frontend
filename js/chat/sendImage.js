@@ -11,6 +11,7 @@ import { render as renderSidebar } from "../ui/sidebar.js";
 import state from "../config/state.js";
 import { auth } from "../auth/firebase.js";
 import { openModal, openVerificationFlow } from "../ui/modalManager.js";
+import { mountImageStage } from "./imageGenStage.js";
 
 const DOWNLOAD_ICON_SVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg>`;
 
@@ -51,10 +52,15 @@ export async function sendImage() {
   input.value = "";
   sendBtn.disabled = true;
 
-  const botBubble = addMessage("🎨 Generating your image…", "bot");
+  const botBubble = addMessage("", "bot");
+  const stage = mountImageStage(botBubble, prompt);
 
   try {
     const data = await getGeneratedImage(prompt);
+
+    // Plays the reveal, then the stage is swapped for the normal image
+    // markup below — which is also what gets saved to history.
+    await stage.reveal(data.image);
 
     const extension = extensionForDataUrl(data.image);
     const filename = `joule-image-${Date.now()}.${extension}`;
@@ -86,6 +92,8 @@ export async function sendImage() {
 
   } catch (err) {
     console.error("Image generation failed:", err);
+
+    stage.stop();
 
     let displayMessage = `⚠️ ${err.message || "Something went wrong. Please try again."}`;
 
